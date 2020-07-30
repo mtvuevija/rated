@@ -1,0 +1,6 @@
+framework module Pods_Rated_RatedUITests {
+  umbrella header "Pods-Rated-RatedUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}
