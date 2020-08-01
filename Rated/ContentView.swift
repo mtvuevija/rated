@@ -51,7 +51,7 @@ struct FrontView: View {
     
     var body: some View {
         ZStack {
-            VStack(spacing: 15) {
+            VStack() {
                 
                 Image("rating(temp)")
                     .resizable()
@@ -77,6 +77,8 @@ struct FrontView: View {
                         .background(Color("purp").opacity(0.4))
                         .cornerRadius(20)
                 }
+                
+                LabelledDivider(label: "or").frame(width: screenwidth/1.45)
                 
                 Button(action: {
                     UserDefaults.standard.set(true, forKey: "signup")
@@ -1122,14 +1124,32 @@ struct SignUpView: View {
                 }.frame(width: screenwidth, height: screenheight)
                 
                 //MARK: Your Profile
-                VStack {
-                    Text("Select Prompts To Make Your Bio")
-                        .font(Font.custom("Gilroy-Light", size: 20))
-                        .fontWeight(.semibold)
-                        .foregroundColor(Color("purp").opacity(0.8))
-                    
-                    Profile(images: self.$profilepics)
-                    
+                VStack(spacing: 0) {
+                    Spacer()
+                    ZStack {
+                        VStack {
+                            Text("Your Profile")
+                                .font(Font.custom("Gilroy-Light", size: 20))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color("purp").opacity(0.8))
+                            
+                            Profile(images: self.$profilepics, selected: self.$selectedprompts, bio: self.$text, name: self.$name, age: self.$age).frame(width: self.screenwidth - 20, height: self.screenheight/1.15)
+                        }
+                        VStack {
+                            Spacer()
+                            Button(action: {
+                                
+                            }) {
+                                Text("Next")
+                                    .font(Font.custom("Gilroy-Light", size: 16))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.white)
+                                    .frame(width: 100, height: 40)
+                                    .background(Color("purp"))
+                                    .cornerRadius(20)
+                            }.padding(.bottom, 25)
+                        }
+                    }
                 }.frame(width: screenwidth, height: screenheight)
                 
             }.animation(.spring()).offset(x: screenwidth*9/2 + next).sheet(isPresented: self.$picker) {
@@ -1150,10 +1170,15 @@ struct SignUpView: View {
                             self.count -= 1
                         }
                     }) {
-                        Image(systemName: "chevron.left.circle")
+                        if self.count == 10 {
+                            
+                        }
+                        else {
+                            Image(systemName: "chevron.left.circle")
                             .resizable()
                             .frame(width: 35, height: 35)
                             .foregroundColor(Color("purp"))
+                        }
                     }.padding(.leading, 15)
                     
                     Spacer()
@@ -1228,6 +1253,13 @@ struct SignUpView: View {
                         CreateUser(name: self.name, age: Int(self.age) ?? 0, gender: self.gender, percentage: Double(self.percentage/10).truncate(places: 2), selfrating: selfratingg, profilepics: self.profilepics, photopostion: self.position)
                     }
                     else {*/
+                    if self.count == 9 {
+                        for num in 0...9 {
+                            if self.selectedprompts[num] {
+                                self.text[num] = "1" + String(num) + self.text[num]
+                            }
+                        }
+                    }
                         self.next -= self.screenwidth
                         self.count += 1
                     //}
@@ -1282,6 +1314,8 @@ struct SignUpView: View {
                             .background(Color("purp"))
                             .cornerRadius(20)
                     }
+                    else if self.count == 10 {
+                    }
                     else {
                         Text("Next")
                             .font(Font.custom("Gilroy-Light", size: 16))
@@ -1302,10 +1336,12 @@ struct SignUpView: View {
 //MARK: Profile
 struct Profile: View {
     @Binding var images: [Data]
-    @State var name = ""
-    @State var age = ""
-    @State var bio = [String]()
+    @Binding var selected: [Bool]
+    @Binding var bio: [String]
+    @Binding var name: String
+    @Binding var age: String
     @State var count: Int = 0
+    @State var index: Int = 0
     @State var screenwidth = UIScreen.main.bounds.width
     @State var screenheight = UIScreen.main.bounds.height
     
@@ -1315,72 +1351,195 @@ struct Profile: View {
                 VStack {
                     Image(uiImage: UIImage(data: self.images[count])!)
                         .resizable()
-                        .frame(width: screenwidth - 20, height: (screenwidth - 20)*1.33)
-                        .animation(.easeInOut)
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: screenwidth - 20, height: (screenwidth - 20)*1.3)
+                        .animation(nil)
                     Spacer()
-                }.frame(width: screenwidth-20, height: screenheight/1.5)
+                }.frame(width: screenwidth-20, height: screenheight/1.15)
                     .cornerRadius(20)
             }
             VStack {
-                HStack(spacing: 5) {
-                    if count == 0 {
-                        Circle()
-                            .foregroundColor(Color("purp"))
-                            .frame(width: 10, height: 10)
-                    }
-                    else {
-                        Circle()
-                            .foregroundColor(Color(.gray).opacity(0.3))
-                            .frame(width: 10, height: 10)
-                    }
-                    if count == 1 {
-                        Circle()
-                            .foregroundColor(Color("purp"))
-                            .frame(width: 10, height: 10)
-                    }
-                    else {
-                        Circle()
-                            .foregroundColor(Color(.gray).opacity(0.3))
-                            .frame(width: 10, height: 10)
-                    }
-                    if count == 2 {
-                        Circle()
-                            .foregroundColor(Color("purp"))
-                            .frame(width: 10, height: 10)
-                    }
-                    else {
-                        Circle()
-                            .foregroundColor(Color(.gray).opacity(0.3))
-                            .frame(width: 10, height: 10)
-                    }
-                    if count == 3 {
-                        Circle()
-                            .foregroundColor(Color("purp"))
-                            .frame(width: 10, height: 10)
-                    }
-                    else {
-                        Circle()
-                            .foregroundColor(Color(.gray).opacity(0.3))
-                            .frame(width: 10, height: 10)
-                    }
-                }.padding(.top, 20).background(Color(.white).frame(width: 60, height: 15).cornerRadius(7.5))
                 Spacer()
-                Button(action: {
-                    if self.count == 3 {
-                        self.count = 0
+                ZStack {
+                    ZStack {
+                        Color("lightgray")
+                            .opacity(0.95)
+                            .frame(width: screenwidth - 20, height: screenheight/3.25)
+                            .clipShape(BottomShape())
+                            .cornerRadius(20)
+                        
+                        VStack(spacing: 10) {
+                            Spacer()
+                            
+                            //MARK: Bio
+                            ScrollView(.vertical, showsIndicators: false) {
+                                HStack {
+                                    Text(name)
+                                        .font(Font.custom("Gilroy-Light", size: 24))
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(Color("purp"))
+                                        .padding(.leading, 20)
+                                    Text(age)
+                                        .font(Font.custom("Gilroy-Light", size: 24))
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(Color("purp").opacity(0.5))
+                                    Spacer()
+                                }
+                                
+                                Divider()
+                                    .frame(width: self.screenwidth-80)
+                                    .foregroundColor(.white)
+                                    .padding(.bottom, 5)
+                                
+                                ForEach(bio, id: \.self) { str in
+                                    VStack {
+                                        if String(str.prefix(1)) == "1" {
+                                            BioCardsFP(index: (String(str.prefix(2)).suffix(1) as NSString).integerValue, text: String(str)[2..<str.count])
+                                            Divider()
+                                                .frame(width: self.screenwidth-80)
+                                                .foregroundColor(.white)
+                                        }
+                                        else {
+                                        }
+                                    }.frame(width: self.screenwidth - 40)
+                                }
+                            }.frame(width: screenwidth - 40, height: screenheight/3.25 - 100)
+                                //.background(Color(.white).opacity(0.75)).cornerRadius(10)
+                            
+                        }.frame(width: screenwidth - 40, height: screenheight/3.25 - 140)
                     }
-                    else {
-                        self.count += 1
-                    }
-                }) {
-                    Image(systemName: "arrow.right.circle.fill")
-                        .resizable()
-                        .frame(width: 50, height: 50)
-                        .foregroundColor(Color("purp"))
-                        //.padding(.bottom, 50)
+                    
+                    //MARK: Left Right and Rate
+                    HStack(spacing: 0) {
+                        Button(action: {
+                            if self.count == 0 {
+                                self.count = 3
+                            }
+                            else {
+                                self.count -= 1
+                            }
+                        }) {
+                            Image(systemName: "arrow.left.circle")
+                                .resizable()
+                                .frame(width: 50, height: 50)
+                                .foregroundColor(Color("purp"))
+                                .background(Circle().foregroundColor(.white).opacity(0.7))
+                        }
+                        
+                        Button(action: {
+                            
+                        }) {
+                            ZStack {
+                                Circle()
+                                    .foregroundColor(Color(.white).opacity(0.7))
+                                    .frame(width: 80, height: 80)
+                                
+                                Image("rating(temp)")
+                                    .resizable()
+                                    .frame(width: 60, height: 60)
+                            }
+                        }.padding(.horizontal, (screenwidth-20)/8).buttonStyle(PlainButtonStyle())
+                        
+                        Button(action: {
+                            if self.count == 3 {
+                                self.count = 0
+                            }
+                            else {
+                                self.count += 1
+                            }
+                        }) {
+                            Image(systemName: "arrow.right.circle")
+                                .resizable()
+                                .frame(width: 50, height: 50)
+                                .foregroundColor(Color("purp"))
+                                .background(Circle().foregroundColor(.white).opacity(0.7))
+                        }
+                    }.padding(.bottom, (screenheight/3.25))
                 }
-            }.frame(width: screenwidth - 20, height: screenheight/1.5)
+            }.frame(width: screenwidth-20, height: screenheight/1.15)
+            .cornerRadius(20)
+            VStack {
+                ImageIndicator(count: self.$count)
+                Spacer()
+            }.frame(width: screenwidth - 20, height: screenheight/1.15)
         }
+    }
+}
+
+//MARK: BioCardsForProfile
+struct BioCardsFP: View {
+    @State var index: Int = 0
+    @State var text = ""
+    @State var categories = ["General", "Education", "Occupation", "Music", "Sports", "Movies", "TV-Shows", "Hobbies", "Motto", "Future"]
+    let screenwidth = UIScreen.main.bounds.width
+    let screenheight = UIScreen.main.bounds.height
+    var body: some View {
+        VStack(spacing: 5) {
+            HStack {
+                Image(self.categories[self.index])
+                    .resizable()
+                    .frame(width: 25, height: 25)
+                Text(self.categories[self.index] + ":")
+                    .font(Font.custom("Gilroy-Light", size: 20))
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color("purp").opacity(0.75))
+                Spacer()
+            }.padding(.leading, 10)
+            Text(self.text)
+                .font(Font.custom("Gilroy-Light", size: 16))
+                .fontWeight(.semibold)
+                .foregroundColor(Color("purp").opacity(0.4))
+                .padding(.horizontal, 20)
+        }
+    }
+}
+
+//MARK: ImageIndicator
+struct ImageIndicator: View {
+    @Binding var count: Int
+    var body: some View {
+        HStack(spacing: 5) {
+            if count == 0 {
+                Circle()
+                    .foregroundColor(Color("purp"))
+                    .frame(width: 10, height: 10)
+            }
+            else {
+                Circle()
+                    .foregroundColor(Color(.gray).opacity(0.3))
+                    .frame(width: 10, height: 10)
+            }
+            if count == 1 {
+                Circle()
+                    .foregroundColor(Color("purp"))
+                    .frame(width: 10, height: 10)
+            }
+            else {
+                Circle()
+                    .foregroundColor(Color(.gray).opacity(0.3))
+                    .frame(width: 10, height: 10)
+            }
+            if count == 2 {
+                Circle()
+                    .foregroundColor(Color("purp"))
+                    .frame(width: 10, height: 10)
+            }
+            else {
+                Circle()
+                    .foregroundColor(Color(.gray).opacity(0.3))
+                    .frame(width: 10, height: 10)
+            }
+            if count == 3 {
+                Circle()
+                    .foregroundColor(Color("purp"))
+                    .frame(width: 10, height: 10)
+            }
+            else {
+                Circle()
+                    .foregroundColor(Color(.gray).opacity(0.3))
+                    .frame(width: 10, height: 10)
+            }
+        }.padding(.top, 20).background(Color(.white).opacity(0.75).frame(width: 64, height: 19).cornerRadius(9.5).padding(.top, 20))
     }
 }
 
@@ -1573,6 +1732,7 @@ struct BioCards: View {
         }
     }
 }
+
 //MARK: Loader
 struct Loader : UIViewRepresentable {
     func makeUIView(context: UIViewRepresentableContext<Loader>) -> UIActivityIndicatorView {
@@ -1724,7 +1884,7 @@ extension Double {
 }
 
 //MARK: CreateUser
-func CreateUser(name: String, age: Int, gender: String, percentage: Double, selfrating: Double, profilepics: [Data], photopostion: [Int]) {
+func CreateUser(name: String, age: Int, gender: String, percentage: Double, selfrating: Double, profilepics: [Data], photopostion: [Int], bio: [String]) {
     let db = Firestore.firestore()
     let storage = Storage.storage().reference()
     let uid = Auth.auth().currentUser?.uid
@@ -1758,7 +1918,6 @@ func CreateUser(name: String, age: Int, gender: String, percentage: Double, self
 //MARK: ResizingTextField
 struct ResizingTextField: UIViewRepresentable {
     @Binding var text: String
-    
     func makeCoordinator() -> ResizingTextField.Coordinator {
         return ResizingTextField.Coordinator(parent1: self)
     }
@@ -1775,19 +1934,15 @@ struct ResizingTextField: UIViewRepresentable {
         }
         view.backgroundColor = UIColor(named: "lightgray")!.withAlphaComponent(0.3)
         view.delegate = context.coordinator
-        
         view.isEditable = true
         view.isUserInteractionEnabled = true
         view.isScrollEnabled = true
         return view
     }
-    
     func updateUIView(_ uiView: UITextView, context: UIViewRepresentableContext<ResizingTextField>) {
     }
-    
     class Coordinator : NSObject, UITextViewDelegate {
         var parent: ResizingTextField
-        
         init(parent1: ResizingTextField) {
             parent = parent1
         }
@@ -1798,5 +1953,65 @@ struct ResizingTextField: UIViewRepresentable {
         func textViewDidChange(_ textView: UITextView) {
             self.parent.text = textView.text!
         }
+    }
+}
+
+//MARK: Blur and Bottom
+struct BottomShape : Shape {
+    func path(in rect: CGRect) -> Path {
+        return Path{path in
+            path.move(to: CGPoint(x: 0, y: 0))
+            path.addLine(to: CGPoint(x: 0, y: rect.height))
+            path.addLine(to: CGPoint(x: rect.width, y: rect.height))
+            path.addLine(to: CGPoint(x: rect.width, y: 0))
+            path.addArc(center: CGPoint(x: rect.width / 8 + 24, y: 0), radius: 30, startAngle: .zero, endAngle: .init(degrees: 180), clockwise: false)
+            path.addArc(center: CGPoint(x: rect.width / 2, y: 0), radius: 45, startAngle: .zero, endAngle: .init(degrees: 180), clockwise: false)
+            path.addArc(center: CGPoint(x: 7*rect.width / 8 - 24, y: 0), radius: 30, startAngle: .zero, endAngle: .init(degrees: 180), clockwise: false)
+        }
+    }
+}
+
+//MAKR: Substring Extension
+extension String {
+    var length: Int {
+        return count
+    }
+    subscript (i: Int) -> String {
+        return self[i ..< i + 1]
+    }
+    func substring(fromIndex: Int) -> String {
+        return self[min(fromIndex, length) ..< length]
+    }
+    func substring(toIndex: Int) -> String {
+        return self[0 ..< max(0, toIndex)]
+    }
+    subscript (r: Range<Int>) -> String {
+        let range = Range(uncheckedBounds: (lower: max(0, min(length, r.lowerBound)),
+                                            upper: min(length, max(0, r.upperBound))))
+        let start = index(startIndex, offsetBy: range.lowerBound)
+        let end = index(start, offsetBy: range.upperBound - range.lowerBound)
+        return String(self[start ..< end])
+    }
+}
+
+//MARK: LabeledDivider
+struct LabelledDivider: View {
+    let label: String
+    let horizontalPadding: CGFloat
+    let color: Color
+    init(label: String, horizontalPadding: CGFloat = 20, color: Color = .gray) {
+        self.label = label
+        self.horizontalPadding = horizontalPadding
+        self.color = color
+    }
+    var body: some View {
+        HStack {
+            line
+            Text(label).foregroundColor(color)
+            line
+        }
+    }
+    var line: some View {
+        VStack { Divider().background(color) }.padding(horizontalPadding)
     }
 }
