@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -18,6 +18,7 @@
 		C036563724C2810100B98A75 /* RatedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C036563624C2810100B98A75 /* RatedTests.swift */; };
 		C036564224C2810100B98A75 /* RatedUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C036564124C2810100B98A75 /* RatedUITests.swift */; };
 		C036565024C2841500B98A75 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C036564F24C2841500B98A75 /* GoogleService-Info.plist */; };
+		C03DAF1924D9081900CF9497 /* SwiftUICharts in Frameworks */ = {isa = PBXBuildFile; productRef = C03DAF1824D9081900CF9497 /* SwiftUICharts */; };
 		C040B2F324CAB1EA00F7A31A /* Proxima Nova Alt Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = C040B2EC24CAB11700F7A31A /* Proxima Nova Alt Bold.otf */; };
 		C040B2F424CAB1EE00F7A31A /* Proxima Nova Alt Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = C040B2F124CAB11C00F7A31A /* Proxima Nova Alt Light.otf */; };
 		C040B2F524CAB1F000F7A31A /* Proxima Nova Alt Thin.otf in Resources */ = {isa = PBXBuildFile; fileRef = C040B2ED24CAB11800F7A31A /* Proxima Nova Alt Thin.otf */; };
@@ -91,6 +92,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DF33118BFCF92EE7221C290D /* Pods_Rated.framework in Frameworks */,
+				C03DAF1924D9081900CF9497 /* SwiftUICharts in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -235,6 +237,9 @@
 			dependencies = (
 			);
 			name = Rated;
+			packageProductDependencies = (
+				C03DAF1824D9081900CF9497 /* SwiftUICharts */,
+			);
 			productName = Rated;
 			productReference = C036561C24C280FF00B98A75 /* Rated.app */;
 			productType = "com.apple.product-type.application";
@@ -310,6 +315,9 @@
 				Base,
 			);
 			mainGroup = C036561324C280FF00B98A75;
+			packageReferences = (
+				C03DAF1724D9081900CF9497 /* XCRemoteSwiftPackageReference "ChartView" */,
+			);
 			productRefGroup = C036561D24C280FF00B98A75 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -794,6 +802,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C03DAF1724D9081900CF9497 /* XCRemoteSwiftPackageReference "ChartView" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/AppPear/ChartView";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C03DAF1824D9081900CF9497 /* SwiftUICharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C03DAF1724D9081900CF9497 /* XCRemoteSwiftPackageReference "ChartView" */;
+			productName = SwiftUICharts;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C036561424C280FF00B98A75 /* Project object */;
 }

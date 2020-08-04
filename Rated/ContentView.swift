@@ -11,16 +11,40 @@ import Firebase
 import FirebaseAuth
 import FirebaseStorage
 import SDWebImageSwiftUI
+import SwiftUICharts
 
 //MARK: MainView
 struct MainView: View {
     @State var status = UserDefaults.standard.value(forKey: "status") as? Bool ?? false
     @State var signup = UserDefaults.standard.value(forKey: "signup") as? Bool ?? false
     @State var login = UserDefaults.standard.value(forKey: "login") as? Bool ?? false
+    @State var profile = UserDefaults.standard.value(forKey: "profile") as? Bool ?? false
+    @State var images = UserDefaults.standard.value(forKey: "ProfilePics")
     var body: some View {
         VStack {
             if status {
-                
+                if profile {
+                    VStack {
+                        HStack {
+                            Button(action: {
+                                UserDefaults.standard.set(false, forKey: "profile")
+                                NotificationCenter.default.post(name: NSNotification.Name("StatusChange"), object: nil)
+
+                            }) {
+                                Image(systemName: "chevron.left.circle")
+                                    .resizable()
+                                    .frame(width: 35, height: 35)
+                                    .foregroundColor(Color("purp"))
+                            }.padding(.leading, 15)
+                            Spacer()
+                        }
+                        HomeProfile(images: UserDefaults.standard.value(forKey: "ProfilePics") as! [String], bio: UserDefaults.standard.value(forKey: "Bio") as! [String], name: UserDefaults.standard.value(forKey: "Name") as! String, age: UserDefaults.standard.value(forKey: "Age") as! String)
+                            .animation(nil)
+                    }
+                }
+                else {
+                    HomeView().transition(.slide)
+                }
             }
             else {
                 if signup {
@@ -30,7 +54,7 @@ struct MainView: View {
                     LoginView()
                 }
                 else {
-                    FrontView()
+                    FrontView().transition(.slide)
                 }
             }
         }.animation(.easeIn)
@@ -39,6 +63,7 @@ struct MainView: View {
                     self.status = UserDefaults.standard.value(forKey: "status") as? Bool ?? false
                     self.signup = UserDefaults.standard.value(forKey: "signup") as? Bool ?? false
                     self.login = UserDefaults.standard.value(forKey: "login") as? Bool ?? false
+                    self.profile = UserDefaults.standard.value(forKey: "profile") as? Bool ?? false
                 }
             }
     }
@@ -157,9 +182,6 @@ struct SignUpView: View {
     @State var current: [CGSize] = [.zero, .zero, .zero, .zero]
     @State var newcor: [CGSize] = [.zero, .zero, .zero, .zero]
     
-    //Your Profile
-    @State var imagecounter = 0
-    
     
     //Account Info
     @State var name = ""
@@ -173,7 +195,7 @@ struct SignUpView: View {
     var body: some View {
         ZStack {
             HStack(spacing: 0) {
-                //MARK: Phone Number
+                //MARK: Phone Number 1
                 VStack() {
                     
                     Spacer()
@@ -217,7 +239,7 @@ struct SignUpView: View {
                     
                 }.frame(width: screenwidth, height: screenheight)
                 
-                //MARK: Verification Code
+                //MARK: Verification Code 2
                 VStack {
                     
                     Spacer()
@@ -248,7 +270,7 @@ struct SignUpView: View {
                     
                 }.frame(width: screenwidth, height: screenheight)
                 
-                //MARK: Name
+                //MARK: Name 3
                 VStack {
                     
                     Spacer()
@@ -278,7 +300,7 @@ struct SignUpView: View {
                     
                 }.frame(width: screenwidth, height: screenheight)
                 
-                //MARK: Age
+                //MARK: Age 4
                 VStack {
                     
                     Spacer()
@@ -309,7 +331,7 @@ struct SignUpView: View {
                     
                 }.frame(width: screenwidth, height: screenheight)
                 
-                //MARK: Gender
+                //MARK: Gender 5
                 VStack {
                     
                     Spacer()
@@ -403,7 +425,7 @@ struct SignUpView: View {
                     
                 }.animation(.spring()).frame(width: screenwidth, height: screenheight)
                 
-                //MARK: What Matters?
+                //MARK: What Matters? 6
                 ZStack {
                     VStack {
                         HStack {
@@ -493,7 +515,7 @@ struct SignUpView: View {
                     }
                 }
                 
-                //MARK: Rate Yourself
+                //MARK: Rate Yourself 7
                 ZStack {
                     VStack {
                         Image("rating(temp)")
@@ -573,7 +595,7 @@ struct SignUpView: View {
                     }
                 }
                 
-                //MARK: Profile Pictures
+                //MARK: Profile Pictures 8
                 VStack {
                     
                     Image("profilepic")
@@ -1093,7 +1115,7 @@ struct SignUpView: View {
                     
                 }.frame(width: screenwidth, height: screenheight)
                 
-                //MARK: Prompts Select
+                //MARK: Prompts Select 9
                 VStack {
                     
                     Text("Select Topics To Build Your Bio")
@@ -1123,7 +1145,7 @@ struct SignUpView: View {
                         .cornerRadius(20)
                 }.frame(width: screenwidth, height: screenheight)
                 
-                //MARK: Your Profile
+                //MARK: Your Profile 10
                 VStack(spacing: 0) {
                     Spacer()
                     ZStack {
@@ -1133,12 +1155,14 @@ struct SignUpView: View {
                                 .fontWeight(.semibold)
                                 .foregroundColor(Color("purp").opacity(0.8))
                             
-                            Profile(images: self.$profilepics, selected: self.$selectedprompts, bio: self.$text, name: self.$name, age: self.$age).frame(width: self.screenwidth - 20, height: self.screenheight/1.15)
+                            Profile(images: self.$profilepics, bio: self.$text, name: self.$name, age: self.$age).frame(width: self.screenwidth - 20, height: self.screenheight/1.15)
                         }
                         VStack {
                             Spacer()
                             Button(action: {
-                                
+                                UserDefaults.standard.set(false, forKey: "signup")
+                                UserDefaults.standard.set(true, forKey: "status")
+                                NotificationCenter.default.post(name: NSNotification.Name("StatusChange"), object: nil)
                             }) {
                                 Text("Next")
                                     .font(Font.custom("Gilroy-Light", size: 16))
@@ -1189,8 +1213,8 @@ struct SignUpView: View {
                 
                 //MARK: Send/Next Button
                 Button(action: {
-                    /*self.loading.toggle()
-                    if self.count == 1 {
+                    self.loading.toggle()
+                    /*if self.count == 1 {
                         PhoneAuthProvider.provider().verifyPhoneNumber(self.ccode + self.phonenumber, uiDelegate: nil) { (verificationID, error) in
                             if error != nil {
                                 self.msg = (error?.localizedDescription)!
@@ -1249,17 +1273,46 @@ struct SignUpView: View {
                         self.confirm.toggle()
                     }
                     else if self.count == 8 {
-                        let selfratingg = Double(Double(self.selfratingpersonality)*Double(self.percentage/10).truncate(places: 2) + Double(self.selfratingappearance)*Double(1-self.percentage/10).truncate(places: 2)).truncate(places: 1)
-                        CreateUser(name: self.name, age: Int(self.age) ?? 0, gender: self.gender, percentage: Double(self.percentage/10).truncate(places: 2), selfrating: selfratingg, profilepics: self.profilepics, photopostion: self.position)
-                    }
-                    else {*/
-                    if self.count == 9 {
-                        for num in 0...9 {
-                            if self.selectedprompts[num] {
-                                self.text[num] = "1" + String(num) + self.text[num]
+                        var all = true
+                        for check in self.showimage {
+                            if !check {
+                                all = false
                             }
                         }
+                        if all {
+                            var temp = [Data]()
+                            for index in self.position {
+                                temp.append(self.profilepics[index])
+                            }
+                            self.profilepics = temp
+                            self.next -= self.screenwidth
+                            self.count += 1
+                        }
+                        else {
+                            self.msg = "You need to select 4 images."
+                            self.alert.toggle()
+                        }
                     }
+                    else if self.count == 9 {
+                        for num in self.biocards {
+                            let index = (num.prefix(2) as NSString).integerValue
+                            if self.selectedprompts[index] {
+                                self.text[index] = "1" + String(num.prefix(2)) + self.text[index]
+                            }
+                        }
+                        let selfratingg = Double(Double(self.selfratingpersonality)*Double(self.percentage/10).truncate(places: 2) + Double(self.selfratingappearance)*Double(1-self.percentage/10).truncate(places: 2)).truncate(places: 1)
+                        CreateUser(name: self.name.uppercased(), age: Int(self.age) ?? 0, gender: self.gender, percentage: Double(self.percentage/10).truncate(places: 2), selfrating: selfratingg, profilepics: self.profilepics, photopostion: self.position, bio: self.text) { (complete) in
+                            
+                            if complete {
+                                self.loading.toggle()
+                                self.next -= self.screenwidth
+                                self.count += 1
+                                AddImages()
+                            }
+                        }
+                        print(UserDefaults.standard.value(forKey: "ProfilePics") as! [String])
+                    }
+                    else {*/
                         self.next -= self.screenwidth
                         self.count += 1
                     //}
@@ -1314,6 +1367,20 @@ struct SignUpView: View {
                             .background(Color("purp"))
                             .cornerRadius(20)
                     }
+                    else if self.count == 9 {
+                        if self.loading {
+                            Loader()
+                        }
+                        else {
+                            Text("Next")
+                                .font(Font.custom("Gilroy-Light", size: 16))
+                                .fontWeight(.semibold)
+                                .foregroundColor(.white)
+                                .frame(width: 100, height: 40)
+                                .background(Color("purp"))
+                                .cornerRadius(20)
+                        }
+                    }
                     else if self.count == 10 {
                     }
                     else {
@@ -1333,15 +1400,165 @@ struct SignUpView: View {
     }
 }
 
+
+//MARK: HomeView
+struct HomeView: View {
+    @State var show: Bool = false
+    @State var index: Int = 0
+    let screenwidth = UIScreen.main.bounds.width
+    let screenheight = UIScreen.main.bounds.height
+    var body: some View {
+        ZStack {
+            //MARK: White Border
+            VStack {
+                HStack {
+                    RoundedRectangle(cornerRadius: 10)
+                        .frame(width: 115, height: 40)
+                        .foregroundColor(Color(.white).opacity(0.5))
+                        .padding(.leading, 10)
+                        .offset(y: CGFloat(index)*40)
+                    Spacer()
+                }.padding(.top, 172.5)
+                Spacer()
+            }.background(Color("appearance").edgesIgnoringSafeArea(.all))
+            .edgesIgnoringSafeArea(.all)
+                
+            //MARK: Menu
+            HStack {
+                VStack(alignment: .leading, spacing: 15) {
+                    Text("Menu")
+                        .font(Font.custom("Gilroy-Light", size: 28))
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color("personality"))
+                    Button(action: {
+                        self.index = 0
+                        self.show.toggle()
+                    }) {
+                        HStack {
+                            Image("home")
+                                .resizable()
+                                .frame(width: 25, height: 25)
+                            Text("Home")
+                                .font(Font.custom("Gilroy-Light", size: 20))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color("personality"))
+                            Spacer()
+                        }.frame(width: 120).padding(.leading, 10)
+                    }.buttonStyle(PlainButtonStyle())
+                    Button(action: {
+                        self.index = 1
+                        self.show.toggle()
+                    }) {
+                        HStack {
+                            Image("profile")
+                                .resizable()
+                                .frame(width: 25, height: 25)
+                            Text("Profile")
+                                .font(Font.custom("Gilroy-Light", size: 20))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color("personality"))
+                            Spacer()
+                        }.frame(width: 120).padding(.leading, 10)
+                    }.buttonStyle(PlainButtonStyle())
+                    Rectangle().frame(width: 120, height: 2).foregroundColor(Color("personality")).padding(.vertical, 15)
+                    Button(action: {
+                        UserDefaults.standard.set(false, forKey: "status")
+                        NotificationCenter.default.post(name: NSNotification.Name("StatusChange"), object: nil)
+                    }) {
+                        HStack {
+                            Image("signout")
+                                .resizable()
+                                .frame(width: 25, height: 25)
+                            Text("LogOut")
+                                .font(Font.custom("Gilroy-Light", size: 20))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color("personality"))
+                            Spacer()
+                        }.frame(width: 120).padding(.leading, 10)
+                    }.buttonStyle(PlainButtonStyle())
+                    Spacer()
+                }.padding(.top, 130).padding(.leading, 10)
+                Spacer()
+            }.edgesIgnoringSafeArea(.all)
+            
+            VStack {
+                //MARK: Profile
+                if self.index == 1 {
+                    HStack {
+                        Button(action: {
+                            self.show.toggle()
+
+                        }) {
+                            Image(systemName: "line.horizontal.3")
+                                .resizable()
+                                .frame(width: 31, height: 25)
+                                .foregroundColor(Color("personality"))
+                        }.padding(.leading, 15)
+                        Spacer()
+                    }.padding(.top, 45)
+                    HomeProfile(images: UserDefaults.standard.value(forKey: "ProfilePics") as! [String], bio: UserDefaults.standard.value(forKey: "Bio") as! [String], name: UserDefaults.standard.value(forKey: "Name") as! String, age: UserDefaults.standard.value(forKey: "Age") as! String)
+                    Spacer()
+                }
+                //MARK: Home
+                else if self.index == 0 {
+                    HStack {
+                        Button(action: {
+                            self.show.toggle()
+                        }) {
+                            Image(systemName: "line.horizontal.3")
+                                .resizable()
+                                .frame(width: 31, height: 25)
+                                .foregroundColor(Color("personality"))
+                        }.padding(.leading, 15)
+                        Spacer()
+                    }.padding(.top, 45)
+                    RecentRatings()
+                    Spacer()
+                }
+            }.frame(width: screenwidth, height: screenheight).background(Color("gray").edgesIgnoringSafeArea(.all))
+                .animation(.spring())
+                .cornerRadius(self.show ? 30 : 0)
+                .scaleEffect(self.show ? 0.9 : 1)
+                .offset(x: self.show ? screenwidth / 3 : 0, y: self.show ? 2 : 0)
+                .rotationEffect(.init(degrees: self.show ? -1.5 : 0))
+        }.edgesIgnoringSafeArea(.all)
+    }
+}
+
+//MARK: Recent Ratings
+struct RecentRatings: View {
+    @State var test: [CGFloat] = [9.2, 8.8, 9.0, 6.5]
+    let screenwidth = UIScreen.main.bounds.width
+    var body: some View {
+        VStack(spacing: 5) {
+            HStack {
+                Text("Recent Ratings")
+                    .font(Font.custom("Gilroy-Light", size: 24))
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color("personality"))
+                    .padding(.leading, 40)
+                Spacer()
+            }
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack {
+                    ForEach(test, id: \.self) {rate in
+                        Bar(percent: rate)
+                    }
+                }.padding(.horizontal, 10)
+            }.frame(width: screenwidth/1.25, height: 190)
+                .background(Color("personality"))
+                .cornerRadius(15)
+        }
+    }
+}
+
 //MARK: Profile
 struct Profile: View {
     @Binding var images: [Data]
-    @Binding var selected: [Bool]
     @Binding var bio: [String]
     @Binding var name: String
     @Binding var age: String
     @State var count: Int = 0
-    @State var index: Int = 0
     @State var screenwidth = UIScreen.main.bounds.width
     @State var screenheight = UIScreen.main.bounds.height
     
@@ -1374,7 +1591,7 @@ struct Profile: View {
                             //MARK: Bio
                             ScrollView(.vertical, showsIndicators: false) {
                                 HStack {
-                                    Text(name)
+                                    Text(name.uppercased())
                                         .font(Font.custom("Gilroy-Light", size: 24))
                                         .fontWeight(.semibold)
                                         .foregroundColor(Color("purp"))
@@ -1394,10 +1611,10 @@ struct Profile: View {
                                 ForEach(bio, id: \.self) { str in
                                     VStack {
                                         if String(str.prefix(1)) == "1" {
-                                            BioCardsFP(index: (String(str.prefix(2)).suffix(1) as NSString).integerValue, text: String(str)[2..<str.count])
+                                            BioCardsFP(index: (String(str.prefix(3)).suffix(2) as NSString).integerValue, text: String(str)[3..<str.count])
                                             Divider()
                                                 .frame(width: self.screenwidth-80)
-                                                .foregroundColor(.white)
+                                                .foregroundColor(.white).padding(.bottom, 10)
                                         }
                                         else {
                                         }
@@ -1466,6 +1683,139 @@ struct Profile: View {
     }
 }
 
+
+//MARK: HomeProfile
+struct HomeProfile: View {
+    @State var images = [String]()
+    @State var bio = [String]()
+    @State var name = ""
+    @State var age = ""
+    @State var count: Int = 0
+    @State var screenwidth = UIScreen.main.bounds.width
+    @State var screenheight = UIScreen.main.bounds.height
+    
+    var body: some View {
+        ZStack {
+            if self.images[count].count != 0 {
+                VStack {
+                    WebImage(url: URL(string: self.images[self.count]))
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: screenwidth - 20, height: (screenwidth - 20)*1.3)
+                        .animation(nil)
+                    Spacer()
+                }.frame(width: screenwidth-20, height: screenheight/1.15)
+                    .cornerRadius(20)
+            }
+            VStack {
+                Spacer()
+                ZStack {
+                    ZStack {
+                        Color("lightgray")
+                            .opacity(0.95)
+                            .frame(width: screenwidth - 20, height: screenheight/3.25)
+                            .clipShape(BottomShape())
+                            .cornerRadius(20)
+                        
+                        VStack(spacing: 10) {
+                            Spacer()
+                            
+                            //MARK: Bio
+                            ScrollView(.vertical, showsIndicators: false) {
+                                HStack {
+                                    Text(name.uppercased())
+                                        .font(Font.custom("Gilroy-Light", size: 24))
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(Color("purp"))
+                                        .padding(.leading, 20)
+                                    Text(age)
+                                        .font(Font.custom("Gilroy-Light", size: 24))
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(Color("purp").opacity(0.5))
+                                    Spacer()
+                                }
+                                
+                                Divider()
+                                    .frame(width: self.screenwidth-80)
+                                    .foregroundColor(.white)
+                                    .padding(.bottom, 5)
+                                
+                                ForEach(bio, id: \.self) { str in
+                                    VStack {
+                                        if String(str.prefix(1)) == "1" {
+                                            BioCardsFP(index: (String(str.prefix(3)).suffix(2) as NSString).integerValue, text: String(str)[3..<str.count])
+                                            Divider()
+                                                .frame(width: self.screenwidth-80)
+                                                .foregroundColor(.white).padding(.bottom, 10)
+                                        }
+                                        else {
+                                        }
+                                    }.frame(width: self.screenwidth - 40)
+                                }
+                            }.frame(width: screenwidth - 40, height: screenheight/3.25 - 100)
+                                //.background(Color(.white).opacity(0.75)).cornerRadius(10)
+                            
+                        }.frame(width: screenwidth - 40, height: screenheight/3.25 - 140)
+                    }
+                    
+                    //MARK: Left Right and Rate
+                    HStack(spacing: 0) {
+                        Button(action: {
+                            if self.count == 0 {
+                                self.count = 3
+                            }
+                            else {
+                                self.count -= 1
+                            }
+                        }) {
+                            Image(systemName: "arrow.left.circle")
+                                .resizable()
+                                .frame(width: 50, height: 50)
+                                .foregroundColor(Color("purp"))
+                                .background(Circle().foregroundColor(.white).opacity(0.7))
+                        }
+                        
+                        Button(action: {
+                            
+                        }) {
+                            ZStack {
+                                Circle()
+                                    .foregroundColor(Color(.white).opacity(0.7))
+                                    .frame(width: 80, height: 80)
+                                
+                                Image("rating(temp)")
+                                    .resizable()
+                                    .frame(width: 60, height: 60)
+                            }
+                        }.padding(.horizontal, (screenwidth-20)/8).buttonStyle(PlainButtonStyle())
+                        
+                        Button(action: {
+                            if self.count == 3 {
+                                self.count = 0
+                            }
+                            else {
+                                self.count += 1
+                            }
+                        }) {
+                            Image(systemName: "arrow.right.circle")
+                                .resizable()
+                                .frame(width: 50, height: 50)
+                                .foregroundColor(Color("purp"))
+                                .background(Circle().foregroundColor(.white).opacity(0.7))
+                        }
+                    }.padding(.bottom, (screenheight/3.25))
+                }
+            }.frame(width: screenwidth-20, height: screenheight/1.15)
+            .cornerRadius(20)
+            VStack {
+                ImageIndicator(count: self.$count)
+                Spacer()
+            }.frame(width: screenwidth - 20, height: screenheight/1.15)
+        }
+    }
+}
+
+
 //MARK: BioCardsForProfile
 struct BioCardsFP: View {
     @State var index: Int = 0
@@ -1493,6 +1843,7 @@ struct BioCardsFP: View {
         }
     }
 }
+
 
 //MARK: ImageIndicator
 struct ImageIndicator: View {
@@ -1542,6 +1893,7 @@ struct ImageIndicator: View {
         }.padding(.top, 20).background(Color(.white).opacity(0.75).frame(width: 64, height: 19).cornerRadius(9.5).padding(.top, 20))
     }
 }
+
 
 //MARK: BioCards
 struct BioCards: View {
@@ -1679,52 +2031,22 @@ struct BioCards: View {
                         self.showinfo[self.index] = true
                     }) {
                         HStack {
-                            Text(title)
+                            Text(title + ":")
                                 .font(Font.custom("Gilroy-Light", size: 24))
                                 .fontWeight(.semibold)
                                 .foregroundColor(Color("purp").opacity(0.8))
-                            /*Image(title)
-                                .resizable()
-                                .frame(width: 30, height: 30)
-                                .foregroundColor(Color("purp"))*/
                         }
-                    }//.padding(.leading, 10)
+                    }
                     Spacer()
-                    if self.confirm {
-                        HStack {
-                             Button(action: {
-                                for num in 0...8 {
-                                    self.showinfo[num] = false
-                                }
-                                 self.edit.toggle()
-                             }) {
-                                 Image(systemName: "pencil")
-                                     .resizable()
-                                     .frame(width: 23, height: 23)
-                                     .foregroundColor(Color("purp").opacity(0.8))
-                             }
-                            Button(action: {
-                                self.confirm.toggle()
-                                self.selected[self.index] = false
-                            }) {
-                                Image(systemName: "xmark.circle")
-                                    .resizable()
-                                    .frame(width: 30, height: 30)
-                                    .foregroundColor(Color("purp").opacity(0.8))
-                            }
-                        }.padding(.trailing, 10)
-                    }
-                    else {
-                        Button(action: {
-                            self.confirm.toggle()
-                            self.selected[self.index] = true
-                        }) {
-                            Image(systemName: "checkmark.circle")
-                                .resizable()
-                                .frame(width: 30, height: 30)
-                                .foregroundColor(Color("purp").opacity(0.8))
-                        }.padding(.trailing, 10)
-                    }
+                    Button(action: {
+                        self.edit.toggle()
+                        self.selected[self.index] = true
+                    }) {
+                        Image(systemName: "checkmark.circle")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(Color("purp").opacity(0.8))
+                    }.padding(.trailing, 10)
                 }.frame(width: screenwidth - 85, height: 65)
                     .background(Color(.white))
                     .cornerRadius(10)
@@ -1732,6 +2054,7 @@ struct BioCards: View {
         }
     }
 }
+
 
 //MARK: Loader
 struct Loader : UIViewRepresentable {
@@ -1743,6 +2066,7 @@ struct Loader : UIViewRepresentable {
     func updateUIView(_ uiView: UIActivityIndicatorView, context: UIViewRepresentableContext<Loader>) {
     }
 }
+
 
 //MARK: PercentageSlider
 struct PercentageSlider: View {
@@ -1801,6 +2125,7 @@ struct PercentageSlider: View {
     }
 }
 
+
 //MARK: VerticalSlider
 struct VerticalSlider: View {
     @Binding var percentage: Float
@@ -1841,6 +2166,7 @@ struct VerticalSlider: View {
     }
 }
 
+
 //MARK: ImagePicker
 struct ImagePicker : UIViewControllerRepresentable {
     @Binding var picker : Bool
@@ -1876,6 +2202,7 @@ struct ImagePicker : UIViewControllerRepresentable {
     }
 }
 
+
 //MARK: Double Truncate
 extension Double {
     func truncate(places : Int)-> Double {
@@ -1883,16 +2210,31 @@ extension Double {
     }
 }
 
+
 //MARK: CreateUser
-func CreateUser(name: String, age: Int, gender: String, percentage: Double, selfrating: Double, profilepics: [Data], photopostion: [Int], bio: [String]) {
+func CreateUser(name: String, age: Int, gender: String, percentage: Double, selfrating: Double, profilepics: [Data], photopostion: [Int], bio: [String], complete: @escaping (Bool)-> Void) {
     let db = Firestore.firestore()
     let storage = Storage.storage().reference()
     let uid = Auth.auth().currentUser?.uid
+    var images = [String]()
     
-    db.collection("users").document(uid!).setData(["Name": name, "Age": age, "Gender": gender, "Percentage": percentage, "SelfRating": selfrating, "ProfilePics": [String]()]) { (err) in
+    db.collection("users").document(uid!).setData(["Name": name, "Age": age, "Gender": gender, "Percentage": percentage, "SelfRating": selfrating, "ProfilePics": [String](), "Bio": [String](), "Rates": [String](), "Rating": 0]) { (err) in
         if err != nil{
             print((err?.localizedDescription)!)
+            complete(false)
             return
+        }
+    }
+    
+    for num in 0...9 {
+        if bio[num].prefix(1) == "1" {
+            db.collection("users").document(uid!).updateData(["Bio": FieldValue.arrayUnion([String(bio[num])[1..<bio[num].count]])]) { (err) in
+                if err != nil {
+                    print((err?.localizedDescription)!)
+                    complete(false)
+                    return
+                }
+            }
         }
     }
     
@@ -1901,19 +2243,55 @@ func CreateUser(name: String, age: Int, gender: String, percentage: Double, self
             storage.child("ProfilePics").child(uid! + String(num)).putData(profilepics[num], metadata: nil) { (_, err) in
                 if err != nil {
                     print((err?.localizedDescription)!)
+                    complete(false)
                     return
                 }
                 storage.child("ProfilePics").child(uid! + String(num)).downloadURL { (url, err) in
                     if err != nil{
                         print((err?.localizedDescription)!)
+                        complete(false)
                         return
                     }
-                    db.collection("users").document(uid!).updateData(["ProfilePics": FieldValue.arrayUnion(["\(url!)"])])
+                    images.append(String(num) + "\(url!)")
+                    UserDefaults.standard.set(images, forKey: "ProfilePics")
+                    if num == 3 {
+                        UserDefaults.standard.set(name, forKey: "Name")
+                        UserDefaults.standard.set(String(age), forKey: "Age")
+                        UserDefaults.standard.set(gender, forKey: "Gender")
+                        UserDefaults.standard.set(percentage, forKey: "Percentage")
+                        UserDefaults.standard.set(selfrating, forKey: "SelfRating")
+                        UserDefaults.standard.set(bio, forKey: "Bio")
+                        complete(true)
+                    }
                 }
             }
         }
     }
 }
+
+
+//MARK: AddImages
+func AddImages() {
+    let db = Firestore.firestore()
+    let uid = Auth.auth().currentUser?.uid
+    var images = [String]()
+    var oldim = UserDefaults.standard.value(forKey: "ProfilePics") as! [String]
+    while oldim.count < 4 {
+        oldim = UserDefaults.standard.value(forKey: "ProfilePics") as! [String]
+    }
+    for num in 0...3 {
+        for nu in 0...3 {
+            if num == (oldim[nu].prefix(1) as NSString).integerValue {
+                images.append(oldim[nu].substring(fromIndex: 1))
+            }
+        }
+    }
+    UserDefaults.standard.set(images, forKey: "ProfilePics")
+    for num in 0...3 {
+        db.collection("users").document(uid!).updateData(["ProfilePics": FieldValue.arrayUnion([images[num]])])
+    }
+}
+
 
 //MARK: ResizingTextField
 struct ResizingTextField: UIViewRepresentable {
@@ -1956,6 +2334,7 @@ struct ResizingTextField: UIViewRepresentable {
     }
 }
 
+
 //MARK: Blur and Bottom
 struct BottomShape : Shape {
     func path(in rect: CGRect) -> Path {
@@ -1971,7 +2350,33 @@ struct BottomShape : Shape {
     }
 }
 
-//MAKR: Substring Extension
+
+//MARK: Bar
+struct Bar : View {
+    var percent : CGFloat = 0
+    var body : some View{
+        VStack(spacing: 0) {
+            if percent == 0 {
+            }
+            else {
+                Spacer()
+                Text(String(Double(percent)))
+                    .font(Font.custom("Gilroy-Light", size: 20))
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color(.white))
+                Button(action: {
+                }) {
+                    ZStack {
+                        Rectangle().fill(Color("purp")).frame(width: 60.75, height: 15 * percent).cornerRadius(5)
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+//MARK: Substring Extension
 extension String {
     var length: Int {
         return count
@@ -1993,6 +2398,7 @@ extension String {
         return String(self[start ..< end])
     }
 }
+
 
 //MARK: LabeledDivider
 struct LabelledDivider: View {
