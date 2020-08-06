@@ -18,33 +18,11 @@ struct MainView: View {
     @State var status = UserDefaults.standard.value(forKey: "status") as? Bool ?? false
     @State var signup = UserDefaults.standard.value(forKey: "signup") as? Bool ?? false
     @State var login = UserDefaults.standard.value(forKey: "login") as? Bool ?? false
-    @State var profile = UserDefaults.standard.value(forKey: "profile") as? Bool ?? false
     @State var images = UserDefaults.standard.value(forKey: "ProfilePics")
     var body: some View {
         VStack {
             if status {
-                if profile {
-                    VStack {
-                        HStack {
-                            Button(action: {
-                                UserDefaults.standard.set(false, forKey: "profile")
-                                NotificationCenter.default.post(name: NSNotification.Name("StatusChange"), object: nil)
-
-                            }) {
-                                Image(systemName: "chevron.left.circle")
-                                    .resizable()
-                                    .frame(width: 35, height: 35)
-                                    .foregroundColor(Color("purp"))
-                            }.padding(.leading, 15)
-                            Spacer()
-                        }
-                        HomeProfile(images: UserDefaults.standard.value(forKey: "ProfilePics") as! [String], bio: UserDefaults.standard.value(forKey: "Bio") as! [String], name: UserDefaults.standard.value(forKey: "Name") as! String, age: UserDefaults.standard.value(forKey: "Age") as! String)
-                            .animation(nil)
-                    }
-                }
-                else {
-                    HomeView().transition(.slide)
-                }
+                HomeView().transition(.slide)
             }
             else {
                 if signup {
@@ -63,11 +41,11 @@ struct MainView: View {
                     self.status = UserDefaults.standard.value(forKey: "status") as? Bool ?? false
                     self.signup = UserDefaults.standard.value(forKey: "signup") as? Bool ?? false
                     self.login = UserDefaults.standard.value(forKey: "login") as? Bool ?? false
-                    self.profile = UserDefaults.standard.value(forKey: "profile") as? Bool ?? false
                 }
             }
     }
 }
+
 
 //MARK: FrontView
 struct FrontView: View {
@@ -124,6 +102,7 @@ struct FrontView: View {
     }
 }
 
+
 //MARK: LoginView
 struct LoginView: View {
     var body: some View {
@@ -146,6 +125,7 @@ struct LoginView: View {
         }
     }
 }
+
 
 //MARK: SignUpView
 struct SignUpView: View {
@@ -229,7 +209,7 @@ struct SignUpView: View {
                                 .frame(width: screenwidth - 100, height: 50)
                                 .cornerRadius(7.5)
                             
-                            TextField("( _ _ _ ) - _ _ _ - _ _ _ _", text: $phonenumber)
+                            TextField("Phone Number", text: $phonenumber)
                                 .font(Font.custom("Gilroy-Light", size: 16))
                                 .frame(width: screenwidth - 140, height: 50)
                         }
@@ -261,7 +241,7 @@ struct SignUpView: View {
                             .frame(width: screenwidth - 60, height: 50)
                             .cornerRadius(7.5)
                         
-                        TextField("_ _ _ _ _ _", text: $enteredcode)
+                        TextField("Verification Code", text: $enteredcode)
                             .font(Font.custom("Gilroy-Light", size: 16))
                             .frame(width: screenwidth - 80, height: 50)
                     }
@@ -1214,7 +1194,7 @@ struct SignUpView: View {
                 //MARK: Send/Next Button
                 Button(action: {
                     self.loading.toggle()
-                    /*if self.count == 1 {
+                    if self.count == 1 {
                         PhoneAuthProvider.provider().verifyPhoneNumber(self.ccode + self.phonenumber, uiDelegate: nil) { (verificationID, error) in
                             if error != nil {
                                 self.msg = (error?.localizedDescription)!
@@ -1312,10 +1292,10 @@ struct SignUpView: View {
                         }
                         print(UserDefaults.standard.value(forKey: "ProfilePics") as! [String])
                     }
-                    else {*/
+                    else {
                         self.next -= self.screenwidth
                         self.count += 1
-                    //}
+                    }
                 }) {
                     if self.count <= 2 {
                         if self.loading {
@@ -1403,6 +1383,7 @@ struct SignUpView: View {
 
 //MARK: HomeView
 struct HomeView: View {
+    @EnvironmentObject var observer: observer
     @State var show: Bool = false
     @State var index: Int = 0
     let screenwidth = UIScreen.main.bounds.width
@@ -1414,13 +1395,13 @@ struct HomeView: View {
                 HStack {
                     RoundedRectangle(cornerRadius: 10)
                         .frame(width: 115, height: 40)
-                        .foregroundColor(Color(.white).opacity(0.5))
+                        .foregroundColor(Color(.white).opacity(0.75))
                         .padding(.leading, 10)
                         .offset(y: CGFloat(index)*40)
                     Spacer()
                 }.padding(.top, 172.5)
                 Spacer()
-            }.background(Color("appearance").edgesIgnoringSafeArea(.all))
+            }.background(Color("lightgray").edgesIgnoringSafeArea(.all))
             .edgesIgnoringSafeArea(.all)
                 
             //MARK: Menu
@@ -1512,23 +1493,61 @@ struct HomeView: View {
                         }.padding(.leading, 15)
                         Spacer()
                     }.padding(.top, 45)
-                    RecentRatings()
+                    if self.observer.userrates.count == 0 {
+                        HStack {
+                            Text("Recent Ratings")
+                                .font(Font.custom("Gilroy-Light", size: 24))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color("personality"))
+                                .padding(.leading, 40)
+                            Spacer()
+                        }
+                        ZStack {
+                            Color(.white)
+                                .frame(width: screenwidth/1.25, height: 190)
+                                .cornerRadius(15)
+                                .shadow(radius: 30)
+                            
+                            Text("No Ratings Yet")
+                                .font(Font.custom("Gilroy-Light", size: 24))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color("purp"))
+                        }
+                    }
+                    else {
+                        RecentRatings()
+                    }
                     Spacer()
+                    ZStack {
+                        Circle()
+                            .frame(width: 80, height: 80)
+                            .foregroundColor(.white)
+                        Button(action: {
+                            
+                        }) {
+                            Image("rating(temp)")
+                                .resizable()
+                                .frame(width: 60, height: 60)
+                        }.buttonStyle(PlainButtonStyle())
+                    }.shadow(radius: 20).padding(.bottom, 70)
                 }
-            }.frame(width: screenwidth, height: screenheight).background(Color("gray").edgesIgnoringSafeArea(.all))
+            }.frame(width: screenwidth, height: screenheight).background(Color("pastelpurp").edgesIgnoringSafeArea(.all))
                 .animation(.spring())
                 .cornerRadius(self.show ? 30 : 0)
                 .scaleEffect(self.show ? 0.9 : 1)
                 .offset(x: self.show ? screenwidth / 3 : 0, y: self.show ? 2 : 0)
                 .rotationEffect(.init(degrees: self.show ? -1.5 : 0))
+            
         }.edgesIgnoringSafeArea(.all)
     }
 }
 
+
 //MARK: Recent Ratings
 struct RecentRatings: View {
-    @State var test: [CGFloat] = [9.2, 8.8, 9.0, 6.5]
+    @EnvironmentObject var observer: observer
     let screenwidth = UIScreen.main.bounds.width
+    @State var rates = UserDefaults.standard.value(forKey: "Rates") as! [String]
     var body: some View {
         VStack(spacing: 5) {
             HStack {
@@ -1539,18 +1558,27 @@ struct RecentRatings: View {
                     .padding(.leading, 40)
                 Spacer()
             }
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(test, id: \.self) {rate in
-                        Bar(percent: rate)
-                    }
-                }.padding(.horizontal, 10)
-            }.frame(width: screenwidth/1.25, height: 190)
-                .background(Color("personality"))
-                .cornerRadius(15)
+            ZStack {
+                Color(.white)
+                    .frame(width: screenwidth/1.25, height: 190)
+                    .cornerRadius(15)
+                    .shadow(radius: 30)
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 20) {
+                        ForEach(self.observer.userrates, id:\.self) {rate in
+                            Bar(rating: ratingtype(overall: CGFloat((rate.prefix(9).suffix(3) as NSString).doubleValue), appearance: CGFloat((rate.prefix(3) as NSString).doubleValue), personality: CGFloat((rate.prefix(6).suffix(3) as NSString).doubleValue)))
+                        }
+                    }.padding(.horizontal, 10).environment(\.layoutDirection, .rightToLeft)
+                }.frame(width: screenwidth/1.25, height: 190)
+                    .cornerRadius(15)
+            }
+        }.onAppear {
+            
         }
     }
 }
+
 
 //MARK: Profile
 struct Profile: View {
@@ -2211,6 +2239,50 @@ extension Double {
 }
 
 
+//MARK: Observer
+class observer: ObservableObject {
+    @Published var users = [UserData]()
+    @Published var userrates = [String]()
+    init() {
+        let db = Firestore.firestore()
+        db.collection("users").getDocuments() { (querySnapshot, err) in
+            if err != nil {
+                print((err?.localizedDescription)!)
+                return
+            }
+            else {
+                for document in querySnapshot!.documents {
+                    if (UserDefaults.standard.value(forKey: "ID") as! String) == (document.get("ID") as! String){
+                        self.userrates = document.get("Rates") as! [String]
+                    }
+                    else if self.users.count < 10 {
+                        var check = true
+                        for rate in document.get("Rates") as! [String] {
+                            if String(rate.suffix(rate.count-9)) == UserDefaults.standard.value(forKey: "ID") as! String {
+                                check = false
+                            }
+                        }
+                        if check {
+                            let age = document.get("Age") as! String
+                            let bio = document.get("Bio") as! [String]
+                            let gender = document.get("Gender") as! String
+                            let id = document.get("String") as! String
+                            let name = document.get("Name") as! String
+                            let percentage = document.get("Percentage") as! Double
+                            let profilepics = document.get("ProfilePics") as! [String]
+                            let rates = document.get("Rates") as! [String]
+                            let rating = document.get("Rating") as! Double
+                            let selfrating = document.get("SelfRating") as! Double
+                            self.users.append(UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, Rating: rating, SelfRating: selfrating))
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
 //MARK: CreateUser
 func CreateUser(name: String, age: Int, gender: String, percentage: Double, selfrating: Double, profilepics: [Data], photopostion: [Int], bio: [String], complete: @escaping (Bool)-> Void) {
     let db = Firestore.firestore()
@@ -2218,7 +2290,7 @@ func CreateUser(name: String, age: Int, gender: String, percentage: Double, self
     let uid = Auth.auth().currentUser?.uid
     var images = [String]()
     
-    db.collection("users").document(uid!).setData(["Name": name, "Age": age, "Gender": gender, "Percentage": percentage, "SelfRating": selfrating, "ProfilePics": [String](), "Bio": [String](), "Rates": [String](), "Rating": 0]) { (err) in
+    db.collection("users").document(uid!).setData(["Name": name, "Age": age, "Gender": gender, "Percentage": percentage, "SelfRating": selfrating, "ProfilePics": [String](), "Bio": [String](), "Rates": [String](), "Rating": 0, "ID": uid!]) { (err) in
         if err != nil{
             print((err?.localizedDescription)!)
             complete(false)
@@ -2229,6 +2301,18 @@ func CreateUser(name: String, age: Int, gender: String, percentage: Double, self
     for num in 0...9 {
         if bio[num].prefix(1) == "1" {
             db.collection("users").document(uid!).updateData(["Bio": FieldValue.arrayUnion([String(bio[num])[1..<bio[num].count]])]) { (err) in
+                if err != nil {
+                    print((err?.localizedDescription)!)
+                    complete(false)
+                    return
+                }
+            }
+        }
+    }
+    
+    for num in 0...3 {
+        if profilepics[num].count != 0 {
+            storage.child("ProfilePics").child(uid! + String(num)).putData(profilepics[num], metadata: nil) { (_, err) in
                 if err != nil {
                     print((err?.localizedDescription)!)
                     complete(false)
@@ -2261,6 +2345,7 @@ func CreateUser(name: String, age: Int, gender: String, percentage: Double, self
                         UserDefaults.standard.set(percentage, forKey: "Percentage")
                         UserDefaults.standard.set(selfrating, forKey: "SelfRating")
                         UserDefaults.standard.set(bio, forKey: "Bio")
+                        UserDefaults.standard.set(uid!, forKey: "ID")
                         complete(true)
                     }
                 }
@@ -2275,14 +2360,12 @@ func AddImages() {
     let db = Firestore.firestore()
     let uid = Auth.auth().currentUser?.uid
     var images = [String]()
-    var oldim = UserDefaults.standard.value(forKey: "ProfilePics") as! [String]
-    while oldim.count < 4 {
-        oldim = UserDefaults.standard.value(forKey: "ProfilePics") as! [String]
+    while (UserDefaults.standard.value(forKey: "ProfilePics") as! [String]).count < 4 {
     }
     for num in 0...3 {
         for nu in 0...3 {
-            if num == (oldim[nu].prefix(1) as NSString).integerValue {
-                images.append(oldim[nu].substring(fromIndex: 1))
+            if num == ((UserDefaults.standard.value(forKey: "ProfilePics") as! [String])[nu].prefix(1) as NSString).integerValue {
+                images.append((UserDefaults.standard.value(forKey: "ProfilePics") as! [String])[nu].substring(fromIndex: 1))
             }
         }
     }
@@ -2353,22 +2436,54 @@ struct BottomShape : Shape {
 
 //MARK: Bar
 struct Bar : View {
-    var percent : CGFloat = 0
-    var body : some View{
+    @State var show: Bool = false
+    var rating: ratingtype
+    var body : some View {
         VStack(spacing: 0) {
-            if percent == 0 {
+            if show {
+                Button(action: {
+                    self.show.toggle()
+                }) {
+                    HStack {
+                        VStack {
+                            Spacer()
+                            Text(String(Double(rating.appearance)))
+                                .font(Font.custom("Gilroy-Light", size: 16))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color("purp"))
+                                .animation(nil)
+                            Rectangle().fill(Color("appearance"))
+                                .frame(width: 25, height: 15 * rating.appearance)
+                                .cornerRadius(2.5)
+                        }
+                        VStack {
+                            Spacer()
+                            Text(String(Double(rating.personality)))
+                                .font(Font.custom("Gilroy-Light", size: 16))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color("purp"))
+                                .animation(nil)
+                            Rectangle().fill(Color("personality"))
+                                .frame(width: 25, height: 15 * rating.personality)
+                                .cornerRadius(2.5)
+                        }
+                    }
+                }
             }
             else {
                 Spacer()
-                Text(String(Double(percent)))
+                Text(String(Double(rating.overall)))
                     .font(Font.custom("Gilroy-Light", size: 20))
                     .fontWeight(.semibold)
-                    .foregroundColor(Color(.white))
+                    .foregroundColor(Color("purp"))
                 Button(action: {
+                    self.show.toggle()
                 }) {
-                    ZStack {
-                        Rectangle().fill(Color("purp")).frame(width: 60.75, height: 15 * percent).cornerRadius(5)
-                    }
+                    Rectangle()
+                        .fill(Color("purp"))
+                        .frame(width: 60, height: 15 * rating.overall)
+                        .cornerRadius(5)
+                    
                 }
             }
         }
@@ -2420,4 +2535,26 @@ struct LabelledDivider: View {
     var line: some View {
         VStack { Divider().background(color) }.padding(horizontalPadding)
     }
+}
+
+
+//MARK: Ratingtype
+struct ratingtype {
+    var overall: CGFloat
+    var appearance: CGFloat
+    var personality: CGFloat
+}
+
+//MARK: UserData
+struct UserData: Identifiable {
+    var Age: String
+    var Bio: [String]
+    var Gender: String
+    var id: String
+    var Name: String
+    var Percentage: Double
+    var ProfilePics: [String]
+    var Rates: [String]
+    var Rating: Double
+    var SelfRating: Double
 }
