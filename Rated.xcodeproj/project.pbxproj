@@ -645,8 +645,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Rated/Preview Content\"";
+				DEVELOPMENT_TEAM = 7JWF9M5F83;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Rated/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -665,8 +667,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Rated/Preview Content\"";
+				DEVELOPMENT_TEAM = 7JWF9M5F83;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Rated/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -25,11 +25,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Create the SwiftUI view that provides the window contents.
         let contentView = MainView()
         let obs = observer()
+        //print(UserDefaults.standard.value(forKey: "ProfilePics") as! [String])
         // Use a UIHostingController as window root view controller.
         if let windowScene = scene as? UIWindowScene {
             //refreshRates()
             let window = UIWindow(windowScene: windowScene)
-            window.rootViewController = UIHostingController(rootView: contentView.environmentObject(obs))
+            window.rootViewController = UIHostingController(rootView: contentView.environmentObject(obs).onTapGesture {
+                window.endEditing(true)
+            })
             self.window = window
             window.makeKeyAndVisible()
         }
