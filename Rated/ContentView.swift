@@ -1395,8 +1395,11 @@ struct HomeView: View {
     @State var show: Bool = false
     @State var index: Int = 0
     @State var rating: Bool = false
-    @State var imagecount: Int = 0
+    @State var usercount: Int = 0
     @State var next: Bool = false
+    @State var showrating: Bool = false
+    @State var appearance: Float = 5
+    @State var personality: Float = 5
     let screenwidth = UIScreen.main.bounds.width
     let screenheight = UIScreen.main.bounds.height
     var body: some View {
@@ -1476,40 +1479,55 @@ struct HomeView: View {
             //MARK: RatingView
             VStack {
                 if rating {
-                    ZStack {
-                        VStack {
-                            Spacer()
-                            RatingProfile(index: self.$imagecount, show: self.$next)
-                                .offset(x: 0, y: 0)
-                                .padding(.bottom, 27)
-                                .transition(.flipFromRight)
-                            
-                        }
-                        VStack {
-                            HStack {
-                                Button(action: {
-                                    self.rating.toggle()
-                                }) {
-                                    Image(systemName: "chevron.left.circle")
-                                        .resizable()
-                                        .frame(width: 40, height: 40)
-                                        .foregroundColor(Color("personality"))
-                                }
+                    if self.observer.users.count == 0 || self.observer.users.count == self.usercount {
+                        
+                    }
+                    else {
+                        ZStack {
+                            VStack {
                                 Spacer()
-                            }.padding(.leading, 15)
-                                .padding(.top, 35)
-                            Spacer()
-                            Button(action: {
-                                self.next.toggle()
-                            }) {
-                                Text("Next")
-                                    .font(Font.custom("Gilroy-Light", size: 16))
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.white)
-                                    .frame(width: 100, height: 40)
-                                    .background(Color("personality"))
-                                    .cornerRadius(20)
-                            }.padding(.bottom, 20)
+                                RatingProfile(index: self.$usercount, show: self.$next, appearance: self.$appearance, personality: self.$personality, showrating: self.$showrating)
+                                    .offset(x: 0, y: 0)
+                                    .padding(.bottom, 27)
+                                    .animation(.spring())
+                                    .scaleEffect(self.next ? 0 : 1)
+                                
+                            }
+                            VStack {
+                                HStack {
+                                    Button(action: {
+                                        self.rating.toggle()
+                                    }) {
+                                        Image(systemName: "chevron.left.circle")
+                                            .resizable()
+                                            .frame(width: 40, height: 40)
+                                            .foregroundColor(Color("personality"))
+                                    }
+                                    Spacer()
+                                }.padding(.leading, 15)
+                                    .padding(.top, 35)
+                                Spacer()
+                                Button(action: {
+                                    self.next.toggle()
+                                    UpdateRating(user: self.observer.users[self.usercount], appearance: Double(self.appearance), personality: Double(self.personality))
+                                    self.showrating = false
+                                    let seconds = 0.5
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+                                        self.appearance = 5
+                                        self.personality = 5
+                                        self.usercount += 1
+                                        self.next.toggle()
+                                    }
+                                }) {
+                                    Text("Next")
+                                        .font(Font.custom("Gilroy-Light", size: 16))
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.white)
+                                        .frame(width: 100, height: 40)
+                                        .background(Color("personality"))
+                                        .cornerRadius(20)
+                                }.padding(.bottom, 20)
+                            }
                         }
                     }
                 }
@@ -1708,17 +1726,8 @@ struct RecentRatings: View {
     let screenwidth = UIScreen.main.bounds.width
     let screenheight = UIScreen.main.bounds.height
     @EnvironmentObject var observer: observer
-    @State var rates = ["5.67.57.6", "8.76.77.5"]//UserDefaults.standard.value(forKey: "Rates") as! [String]
     var body: some View {
         VStack(spacing: 5) {
-            /*HStack {
-                Text("Recent Ratings")
-                    .font(Font.custom("Gilroy-Light", size: 24))
-                    .fontWeight(.semibold)
-                    .foregroundColor(Color("personality"))
-                    .padding(.leading, 40)
-                Spacer()
-            }*/
             ZStack {
                 Color(.white)
                     .frame(width: screenwidth/1.25, height: screenheight*0.234)
@@ -1877,11 +1886,9 @@ struct RatingProfile: View {
     @EnvironmentObject var observer: observer
     @Binding var index: Int
     @Binding var show: Bool
-    /*@State var images = [String]()
-    @State var bio = [String]()
-    @State var name = ""
-    @State var age = ""*/
-    @State var showrating: Bool = false
+    @Binding var appearance: Float
+    @Binding var personality: Float
+    @Binding var showrating: Bool
     @State var count: Int = 0
     @State var screenwidth = UIScreen.main.bounds.width
     @State var screenheight = UIScreen.main.bounds.height
@@ -1943,8 +1950,7 @@ struct RatingProfile: View {
                                             .foregroundColor(.white).padding(.bottom, 10)
                                     }.frame(width: self.screenwidth - 40)
                                 }
-                                }.frame(width: screenwidth - 40, height: screenheight/3.25 - 100)
-                                //.background(Color(.white).opacity(0.75)).cornerRadius(10)
+                            }.frame(width: screenwidth - 40, height: screenheight/3.25 - 100)
                             
                         }.frame(width: screenwidth - 40, height: screenheight/3.25 - 140)
                     }
@@ -1962,9 +1968,10 @@ struct RatingProfile: View {
                             Image(systemName: "arrow.left.circle")
                                 .resizable()
                                 .frame(width: 50, height: 50)
-                                .foregroundColor(Color("purp"))
+                                .foregroundColor(Color("personality"))
                                 .background(Circle().foregroundColor(.white).opacity(0.7))
                         }
+                        //MARK: Rating Button
                         ZStack {
                             Button(action: {
                                 self.showrating.toggle()
@@ -1998,16 +2005,29 @@ struct RatingProfile: View {
                                         Spacer()
                                     }.frame(width: 80, height: 260).offset(y: -90)
                                     VStack {
+                                        Spacer()
                                         Button(action: {
                                             self.showrating.toggle()
                                         }) {
                                             Image(systemName: "chevron.down")
                                                 .resizable()
                                                 .frame(width: 30, height: 10)
-                                                .foregroundColor(Color("pastelpurp"))
-                                        }.padding(.top, 15)
-                                        Spacer()
+                                                .foregroundColor(Color("purp"))
+                                        }.padding(.bottom, 20)
                                     }.frame(width: 80, height: 260).offset(y: -90)
+                                    VStack(spacing: 0) {
+                                        Text("Rating: ")
+                                            .font(Font.custom("Gilroy-Light", size: 14))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color("purp"))
+                                            .animation(nil)
+                                        HStack {
+                                            ProfileRatingSlider(percentage: self.$appearance, title: "appearance").accentColor(Color("appearance")).padding(.leading, 15)
+                                            Spacer()
+                                            ProfileRatingSlider(percentage: self.$personality, title: "personality").accentColor(Color("personality")).padding(.trailing, 15)
+                                        }
+                                        Spacer()
+                                    }.frame(width: 160, height: 200).offset(y: -110)
                                 }
                             }
                         }.frame(width: 80, height: 80).padding(.horizontal, (screenwidth-20)/8)
@@ -2023,7 +2043,7 @@ struct RatingProfile: View {
                             Image(systemName: "arrow.right.circle")
                                 .resizable()
                                 .frame(width: 50, height: 50)
-                                .foregroundColor(Color("purp"))
+                                .foregroundColor(Color("personality"))
                                 .background(Circle().foregroundColor(.white).opacity(0.7))
                         }
                     }.padding(.bottom, (screenheight/3.25))
@@ -2034,31 +2054,6 @@ struct RatingProfile: View {
                 ImageIndicator(count: self.$count)
                 Spacer()
             }.frame(width: screenwidth - 20, height: screenheight/1.15)
-            if self.show {
-                VStack {
-                    ZStack {
-                        Rectangle()
-                            .frame(width: screenwidth/2, height: 125)
-                            .cornerRadius(15)
-                            .foregroundColor(Color("lightgray"))
-                        VStack {
-                            Text("Their Rating:")
-                                .font(Font.custom("Gilroy-Light", size: 14))
-                                .fontWeight(.semibold)
-                                .frame(width: screenwidth - 10)
-                                .foregroundColor(Color("purp").opacity(0.8))
-                                .padding(.top, 35)
-                            HStack {
-                                Button(action: {
-                                    
-                                }) {
-                                    Text("Next")
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 }
@@ -2539,6 +2534,42 @@ struct VerticalSlider: View {
 }
 
 
+//MARK: ProfileRatingSlider
+struct ProfileRatingSlider: View {
+    @Binding var percentage: Float
+    @State var title = ""
+    
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack(alignment: .bottom) {
+                Rectangle()
+                    .foregroundColor(Color(.gray).opacity(0.3))
+                Rectangle()
+                    .foregroundColor(.accentColor)
+                    .frame(height: geometry.size.height * CGFloat(self.percentage / 10))
+                    .cornerRadius(0)
+                VStack(spacing: 0) {
+                    Image(self.title.lowercased())
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .padding(.top, 15)
+                    
+                    Text(String(Double(self.percentage).truncate(places: 1)))
+                        .font(Font.custom("Gilroy-LIght", size: 14))
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color(.white))
+                        .animation(nil)
+                    Spacer()
+                }
+            }.cornerRadius(10)
+                .gesture(DragGesture(minimumDistance: 0).onChanged({ value in
+                    self.percentage = 10 - min(max(0, Float(value.location.y / geometry.size.height * 100)), 100)/10
+                }))
+        }
+    }
+}
+
+
 //MARK: ImagePicker
 struct ImagePicker : UIViewControllerRepresentable {
     @Binding var picker : Bool
@@ -2600,7 +2631,6 @@ class observer: ObservableObject {
             else {
                 for document in querySnapshot!.documents {
                     if (UserDefaults.standard.value(forKey: "ID") as! String) == (document.get("ID") as! String) {
-                        print(UserDefaults.standard.value(forKey: "ID") as? String ?? "hold")
                         self.userrates = document.get("Rates") as! [String]
                         self.rating = ratingtype(overall: CGFloat(document.get("OverallRating") as! Double), appearance: CGFloat(document.get("AppearanceRating") as! Double), personality: CGFloat(document.get("PersonalityRating") as! Double))
                     }
@@ -2727,6 +2757,19 @@ func CreateUser(name: String, age: String, gender: String, percentage: Double, o
             }
         }
     }
+}
+
+
+//MARK: UpdateRating
+func UpdateRating(user: UserData, appearance: Double, personality: Double) {
+    let overall = Double(Double(personality)*Double(user.Percentage).truncate(places: 2) + Double(appearance)*Double(1-user.Percentage).truncate(places: 2)).truncate(places: 1)
+    let newoverall = Double(user.OverallRating*Double(user.Rates.count+1) + overall)/Double(user.Rates.count+2).truncate(places: 1)
+    let newappearance = Double(user.AppearanceRating*Double(user.Rates.count+1) + appearance)/Double(user.Rates.count+2).truncate(places: 1)
+    let newpersonality = Double(user.PersonalityRating*Double(user.Rates.count+1) + personality)/Double(user.Rates.count+2).truncate(places: 1)
+    let db = Firestore.firestore()
+    let uid = Auth.auth().currentUser?.uid
+    db.collection("users").document(user.id).updateData(["OverallRating": newoverall, "AppearanceRating": newappearance, "PersonalityRating": newpersonality, "Rates": FieldValue.arrayUnion([String(appearance.truncate(places: 1)) + String(personality.truncate(places: 1)) + String(overall) + uid!])])
+    print(user.Percentage, newappearance, newpersonality, newoverall)
 }
 
 
