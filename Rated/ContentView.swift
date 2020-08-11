@@ -1398,6 +1398,7 @@ struct HomeView: View {
     @State var usercount: Int = 0
     @State var next: Bool = false
     @State var showrating: Bool = false
+    @State var norating: Bool = false
     @State var appearance: Float = 5
     @State var personality: Float = 5
     let screenwidth = UIScreen.main.bounds.width
@@ -1408,7 +1409,7 @@ struct HomeView: View {
             VStack {
                 HStack {
                     RoundedRectangle(cornerRadius: 10)
-                        .frame(width: 115, height: 40)
+                        .frame(width: 130, height: 40)
                         .foregroundColor(Color(.white).opacity(0.75))
                         .padding(.leading, 10)
                         .offset(y: CGFloat(index)*40)
@@ -1455,6 +1456,21 @@ struct HomeView: View {
                             Spacer()
                         }.frame(width: 120).padding(.leading, 10)
                     }.buttonStyle(PlainButtonStyle())
+                    Button(action: {
+                        self.index = 2
+                        self.show.toggle()
+                    }) {
+                        HStack {
+                            Image("settings")
+                                .resizable()
+                                .frame(width: 25, height: 25)
+                            Text("Settings")
+                                .font(Font.custom("Gilroy-Light", size: 20))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color("personality"))
+                            Spacer()
+                        }.frame(width: 120).padding(.leading, 10)
+                    }.buttonStyle(PlainButtonStyle())
                     Rectangle().frame(width: 120, height: 2).foregroundColor(Color("personality")).padding(.vertical, 15)
                     Button(action: {
                         UserDefaults.standard.set(false, forKey: "status")
@@ -1479,8 +1495,29 @@ struct HomeView: View {
             //MARK: RatingView
             VStack {
                 if rating {
-                    if self.observer.users.count == 0 || self.observer.users.count == self.usercount {
-                        
+                    if self.observer.users.count == 0 || self.observer.users.count == self.usercount || self.norating {
+                        VStack {
+                            HStack {
+                                Button(action: {
+                                    self.rating.toggle()
+                                }) {
+                                    Image(systemName: "chevron.left.circle")
+                                        .resizable()
+                                        .frame(width: 40, height: 40)
+                                        .foregroundColor(Color("personality"))
+                                }
+                                Spacer()
+                            }.padding(.leading, 15)
+                                .padding(.top, 35)
+                            
+                            ZStack {
+                                Color(.white)
+                                    .frame(width: screenwidth - 20, height: screenheight/1.25)
+                                    .cornerRadius(20)
+                                PurpLoader()
+                            }.frame(width: screenwidth - 20, height: screenheight/1.25)
+                            Spacer()
+                        }
                     }
                     else {
                         ZStack {
@@ -1490,6 +1527,7 @@ struct HomeView: View {
                                     .offset(x: 0, y: 0)
                                     .padding(.bottom, 27)
                                     .animation(.spring())
+                                    .shadow(radius: 40)
                                     .scaleEffect(self.next ? 0 : 1)
                                 
                             }
@@ -1515,8 +1553,11 @@ struct HomeView: View {
                                     DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
                                         self.appearance = 5
                                         self.personality = 5
-                                        self.usercount += 1
-                                        self.next.toggle()
+                                        if self.observer.users.count != self.usercount+1 {
+                                            self.usercount += 1
+                                            self.next.toggle()
+                                            self.norating = true
+                                        }
                                     }
                                 }) {
                                     Text("Next")
@@ -1532,11 +1573,28 @@ struct HomeView: View {
                     }
                 }
                 else {
+                    //MARK: Settings
+                    if self.index == 2 {
+                        VStack {
+                            HStack {
+                                Button(action: {
+                                    self.show.toggle()
+                                }) {
+                                    Image(systemName: "line.horizontal.3")
+                                        .resizable()
+                                        .frame(width: 37, height: 30)
+                                        .foregroundColor(Color("personality"))
+                                }.padding(.leading, 15)
+                                Spacer()
+                            }.padding(.top, 45)
+                            Spacer()
+                        }
+                    }
                     //MARK: Profile
-                    if self.index == 1 {
+                    else if self.index == 1 {
                         ZStack {
                             VStack {
-                                HomeProfile(images: UserDefaults.standard.value(forKey: "ProfilePics") as! [String], bio: UserDefaults.standard.value(forKey: "Bio") as! [String], name: UserDefaults.standard.value(forKey: "Name") as! String, age: UserDefaults.standard.value(forKey: "Age") as! String).frame(width: screenwidth-20, height: screenheight/1.15).padding(.top, 60)
+                                HomeProfile(images: UserDefaults.standard.value(forKey: "ProfilePics") as! [String], bio: UserDefaults.standard.value(forKey: "Bio") as! [String], name: UserDefaults.standard.value(forKey: "Name") as! String, age: UserDefaults.standard.value(forKey: "Age") as! String).frame(width: screenwidth-20, height: screenheight/1.15).padding(.top, 60).shadow(radius: 40)
                             }
                             VStack {
                                 HStack {
@@ -1665,7 +1723,7 @@ struct HomeView: View {
                 .animation(.spring())
                 .cornerRadius(self.show ? 30 : 0)
                 .scaleEffect(self.show ? 0.9 : 1)
-                .offset(x: self.show ? screenwidth / 3 : 0, y: self.show ? 2 : 0)
+                .offset(x: self.show ? screenwidth / 2.5 : 0, y: self.show ? 2 : 0)
                 .rotationEffect(.init(degrees: self.show ? -1.5 : 0))
         }.edgesIgnoringSafeArea(.all)
     }
@@ -1897,12 +1955,37 @@ struct RatingProfile: View {
         ZStack {
             if self.observer.users[self.index].ProfilePics[count].count != 0 {
                 VStack {
-                    WebImage(url: URL(string: self.observer.users[self.index].ProfilePics[self.count]))
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: screenwidth - 20, height: (screenwidth - 20)*1.3)
-                        .animation(nil)
-                        .cornerRadius(20)
+                    ZStack {
+                        WebImage(url: URL(string: self.observer.users[self.index].ProfilePics[self.count]))
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: screenwidth - 20, height: (screenwidth - 20)*1.3)
+                            .animation(nil)
+                            .cornerRadius(20)
+                        HStack {
+                            Button(action: {
+                                if self.count == 0 {
+                                }
+                                else {
+                                    self.count -= 1
+                                }
+                            }) {
+                                Color(.white).opacity(0.0)
+                                    .frame(width: screenwidth/3, height: (screenwidth - 20)*1.3)
+                            }
+                            Spacer()
+                            Button(action: {
+                                if self.count == 3 {
+                                }
+                                else {
+                                    self.count += 1
+                                }
+                            }) {
+                                Color(.white).opacity(0.0)
+                                    .frame(width: screenwidth/3, height: (screenwidth - 20)*1.3)
+                            }
+                        }.padding(.horizontal, 20)
+                    }
                     Spacer()
                 }.frame(width: screenwidth-20, height: screenheight/1.15)
                     .cornerRadius(20)
@@ -1917,47 +2000,54 @@ struct RatingProfile: View {
                             .clipShape(BottomShape())
                             .cornerRadius(20)
                         
-                        VStack(spacing: 10) {
-                            Spacer()
-                            
-                            //MARK: Bio
-                            ScrollView(.vertical, showsIndicators: false) {
+                        VStack(spacing: 0) {
+                            //MARK: Name and Age
+                            VStack(spacing: 0) {
                                 HStack {
                                     Text(self.observer.users[self.index].Name.uppercased())
                                         .font(Font.custom("Gilroy-Light", size: 24))
                                         .fontWeight(.semibold)
-                                        .foregroundColor(Color("purp"))
-                                        .padding(.leading, 20)
+                                        .foregroundColor(Color("personality"))
+                                        .padding(.leading, 10)
                                         .animation(nil)
                                     Text(self.observer.users[self.index].Age)
                                         .font(Font.custom("Gilroy-Light", size: 24))
                                         .fontWeight(.semibold)
-                                        .foregroundColor(Color("purp").opacity(0.5))
+                                        .foregroundColor(Color("personality").opacity(0.5))
                                         .animation(nil)
                                     Spacer()
                                 }
-                                
-                                Divider()
-                                    .frame(width: self.screenwidth-80)
-                                    .foregroundColor(.white)
-                                    .padding(.bottom, 5)
+                                /*HStack {
+                                    Rectangle()
+                                        .frame(width: self.screenwidth/2, height: 2)
+                                        .foregroundColor(Color("personality"))
+                                        .padding(.bottom, 5)
+                                        .padding(.leading, 10)
+                                    Spacer()
+                                }*/
+                            }.padding(.top, 10)
+                            
+                            //MARK: Bio
+                            ScrollView(.vertical, showsIndicators: false) {
                                 
                                 ForEach(self.observer.users[index].Bio, id: \.self) { str in
                                     VStack {
                                         BioCardsFP(index: (String(str.prefix(2)) as NSString).integerValue, text: String(str)[2..<str.count]).animation(nil)
-                                        Divider()
-                                            .frame(width: self.screenwidth-80)
-                                            .foregroundColor(.white).padding(.bottom, 10)
+                                        Rectangle()
+                                            .frame(width: self.screenwidth-80, height: 2)
+                                            .foregroundColor(Color("personality"))
+                                            .padding(.bottom, 10)
                                     }.frame(width: self.screenwidth - 40)
                                 }
                             }.frame(width: screenwidth - 40, height: screenheight/3.25 - 100)
                             
-                        }.frame(width: screenwidth - 40, height: screenheight/3.25 - 140)
+                            Spacer()
+                        }.frame(width: screenwidth - 40, height: screenheight/3.25 - 80)
                     }
                     
                     //MARK: Left Right and Rate
                     HStack(spacing: 0) {
-                        Button(action: {
+                        /*Button(action: {
                             if self.count == 0 {
                                 self.count = 3
                             }
@@ -1970,7 +2060,7 @@ struct RatingProfile: View {
                                 .frame(width: 50, height: 50)
                                 .foregroundColor(Color("personality"))
                                 .background(Circle().foregroundColor(.white).opacity(0.7))
-                        }
+                        }*/
                         //MARK: Rating Button
                         ZStack {
                             Button(action: {
@@ -1983,11 +2073,11 @@ struct RatingProfile: View {
                                     ZStack {
                                         Circle()
                                             .foregroundColor(Color(.white).opacity(0.7))
-                                            .frame(width: 80, height: 80)
+                                            .frame(width: 40, height: 40)
                                         
                                         Image("rating(temp)")
                                             .resizable()
-                                            .frame(width: 60, height: 60)
+                                            .frame(width: 20, height: 20)
                                     }
                                 }
                             }.buttonStyle(PlainButtonStyle())
@@ -2032,7 +2122,7 @@ struct RatingProfile: View {
                             }
                         }.frame(width: 80, height: 80).padding(.horizontal, (screenwidth-20)/8)
                         
-                        Button(action: {
+                        /*Button(action: {
                             if self.count == 3 {
                                 self.count = 0
                             }
@@ -2045,7 +2135,7 @@ struct RatingProfile: View {
                                 .frame(width: 50, height: 50)
                                 .foregroundColor(Color("personality"))
                                 .background(Circle().foregroundColor(.white).opacity(0.7))
-                        }
+                        }*/
                     }.padding(.bottom, (screenheight/3.25))
                 }
             }.frame(width: screenwidth-20, height: screenheight/1.15)
@@ -2195,15 +2285,15 @@ struct BioCardsFP: View {
             HStack {
                 Image(self.categories[self.index])
                     .resizable()
-                    .frame(width: 25, height: 25)
+                    .frame(width: 15, height: 15)
                 Text(self.categories[self.index] + ":")
-                    .font(Font.custom("Gilroy-Light", size: 20))
+                    .font(Font.custom("Gilroy-Light", size: 16))
                     .fontWeight(.semibold)
                     .foregroundColor(Color("purp").opacity(0.75))
                 Spacer()
             }.padding(.leading, 10)
             Text(self.text)
-                .font(Font.custom("Gilroy-Light", size: 16))
+                .font(Font.custom("Gilroy-Light", size: 12))
                 .fontWeight(.semibold)
                 .foregroundColor(Color("purp").opacity(0.4))
                 .padding(.horizontal, 20)
@@ -2435,6 +2525,19 @@ struct Loader : UIViewRepresentable {
 }
 
 
+//MARK: PurpLoader
+struct PurpLoader : UIViewRepresentable {
+    func makeUIView(context: UIViewRepresentableContext<PurpLoader>) -> UIActivityIndicatorView {
+        let indicator = UIActivityIndicatorView(style: .large)
+        indicator.color = UIColor(named: "purp")
+        indicator.startAnimating()
+        return indicator
+    }
+    func updateUIView(_ uiView: UIActivityIndicatorView, context: UIViewRepresentableContext<PurpLoader>) {
+    }
+}
+
+
 //MARK: PercentageSlider
 struct PercentageSlider: View {
     @Binding var percentage: Float
@@ -2453,36 +2556,29 @@ struct PercentageSlider: View {
                         .resizable()
                         .frame(width: 35, height: 35)
                         .padding(.top, 10)
-                    
                     Text("Appearance")
                         .font(Font.custom("Gilroy-Light", size: 14))
                         .fontWeight(.semibold)
                         .foregroundColor(Color(.white))
-                    
                     Text(String(Int(100 - Double(self.percentage).truncate(places: 1)*10)) + "%" )
                         .font(Font.custom("Gilroy-LIght", size: 24))
                         .fontWeight(.semibold)
                         .foregroundColor(Color(.white))
                         .animation(nil)
-                    
                     Spacer()
-                    
                     Image("personality")
                         .resizable()
                         .frame(width: 35, height: 35)
-                    
                     Text("Personality")
                         .font(Font.custom("Gilroy-Light", size: 16))
                         .fontWeight(.semibold)
                         .foregroundColor(Color(.white))
-                    
                     Text(String(Int(Double(self.percentage).truncate(places: 1)*10)) + "%")
                         .font(Font.custom("Gilroy-LIght", size: 24))
                         .fontWeight(.semibold)
                         .foregroundColor(Color(.white))
                         .animation(nil)
                         .padding(.bottom, 10)
-                    
                 }
             }.cornerRadius(18)
                 .gesture(DragGesture(minimumDistance: 0).onChanged({ value in
@@ -2634,7 +2730,7 @@ class observer: ObservableObject {
                         self.userrates = document.get("Rates") as! [String]
                         self.rating = ratingtype(overall: CGFloat(document.get("OverallRating") as! Double), appearance: CGFloat(document.get("AppearanceRating") as! Double), personality: CGFloat(document.get("PersonalityRating") as! Double))
                     }
-                    else if self.users.count < 10 {
+                    else if self.users.count < 50 {
                         var check = true
                         for rate in document.get("Rates") as! [String] {
                             if String(rate.suffix(rate.count-9)) == UserDefaults.standard.value(forKey: "ID") as! String {
@@ -2686,6 +2782,42 @@ class observer: ObservableObject {
                     if (UserDefaults.standard.value(forKey: "ID") as! String) == (document.get("ID") as! String) {
                         self.userrates = document.get("Rates") as! [String]
                         self.rating = ratingtype(overall: CGFloat(document.get("OverallRating") as! Double), appearance: CGFloat(document.get("AppearanceRating") as! Double), personality: CGFloat(document.get("PersonalityRating") as! Double))
+                    }
+                }
+            }
+        }
+    }
+    func addMoreUsers() {
+        let db = Firestore.firestore()
+        db.collection("users").getDocuments() { (querySnapshot, err) in
+            if err != nil {
+                print((err?.localizedDescription)!)
+                return
+            }
+            else {
+                for document in querySnapshot!.documents {
+                    if (UserDefaults.standard.value(forKey: "ID") as! String) != (document.get("ID") as! String) && self.users.count < 50 {
+                        var check = true
+                        for rate in document.get("Rates") as! [String] {
+                            if String(rate.suffix(rate.count-9)) == UserDefaults.standard.value(forKey: "ID") as! String {
+                                check = false
+                            }
+                        }
+                        if check {
+                            let age = document.get("Age") as! String
+                            let bio = document.get("Bio") as! [String]
+                            let gender = document.get("Gender") as! String
+                            let id = document.get("ID") as! String
+                            let name = document.get("Name") as! String
+                            let percentage = document.get("Percentage") as! Double
+                            let profilepics = document.get("ProfilePics") as! [String]
+                            let rates = document.get("Rates") as! [String]
+                            let overallrating = document.get("OverallRating") as! Double
+                            let appearancerating = document.get("AppearanceRating") as! Double
+                            let personalityrating = document.get("PersonalityRating") as! Double
+                            let selfrating = document.get("SelfRating") as! Double
+                            self.users.append(UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating))
+                        }
                     }
                 }
             }
@@ -2768,7 +2900,7 @@ func UpdateRating(user: UserData, appearance: Double, personality: Double) {
     let newpersonality = Double(user.PersonalityRating*Double(user.Rates.count+1) + personality)/Double(user.Rates.count+2).truncate(places: 1)
     let db = Firestore.firestore()
     let uid = Auth.auth().currentUser?.uid
-    db.collection("users").document(user.id).updateData(["OverallRating": newoverall, "AppearanceRating": newappearance, "PersonalityRating": newpersonality, "Rates": FieldValue.arrayUnion([String(appearance.truncate(places: 1)) + String(personality.truncate(places: 1)) + String(overall) + uid!])])
+    db.collection("users").document(user.id).updateData(["OverallRating": newoverall.truncate(places: 1), "AppearanceRating": newappearance.truncate(places: 1), "PersonalityRating": newpersonality.truncate(places: 1), "Rates": FieldValue.arrayUnion([String(appearance.truncate(places: 1)) + String(personality.truncate(places: 1)) + String(overall) + uid!])])
     print(user.Percentage, newappearance, newpersonality, newoverall)
 }
 
@@ -2834,7 +2966,7 @@ struct ResizingTextField: UIViewRepresentable {
 }
 
 
-//MARK: Blur and Bottom
+//MARK: Bottom
 struct BottomShape : Shape {
     func path(in rect: CGRect) -> Path {
         return Path{path in
@@ -2842,9 +2974,9 @@ struct BottomShape : Shape {
             path.addLine(to: CGPoint(x: 0, y: rect.height))
             path.addLine(to: CGPoint(x: rect.width, y: rect.height))
             path.addLine(to: CGPoint(x: rect.width, y: 0))
-            path.addArc(center: CGPoint(x: rect.width / 8 + 24, y: 0), radius: 30, startAngle: .zero, endAngle: .init(degrees: 180), clockwise: false)
-            path.addArc(center: CGPoint(x: rect.width / 2, y: 0), radius: 45, startAngle: .zero, endAngle: .init(degrees: 180), clockwise: false)
-            path.addArc(center: CGPoint(x: 7*rect.width / 8 - 24, y: 0), radius: 30, startAngle: .zero, endAngle: .init(degrees: 180), clockwise: false)
+            //path.addArc(center: CGPoint(x: rect.width / 8 + 24, y: 0), radius: 30, startAngle: .zero, endAngle: .init(degrees: 180), clockwise: false)
+            path.addArc(center: CGPoint(x: rect.width / 2, y: 0), radius: 25, startAngle: .zero, endAngle: .init(degrees: 180), clockwise: false)
+            //path.addArc(center: CGPoint(x: 7*rect.width / 8 - 24, y: 0), radius: 30, startAngle: .zero, endAngle: .init(degrees: 180), clockwise: false)
         }
     }
 }
@@ -2922,45 +3054,80 @@ struct StatsBar : View {
                     self.show.toggle()
                 }) {
                     HStack {
-                        VStack(spacing: 0) {
-                            Spacer()
-                            Text(String(Double(rating.appearance)))
-                                .font(Font.custom("Gilroy-Light", size: 16))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color("purp"))
-                                .animation(nil)
-                            Rectangle().fill(Color("appearance"))
-                                .frame(width: self.screenwidth*0.1066, height: self.screenheight*0.02*rating.appearance)
-                                .cornerRadius(5)
+                        ZStack {
+                            VStack {
+                                Spacer()
+                                Rectangle().fill(Color("lightgray"))
+                                    .frame(width: self.screenwidth*0.1066, height: self.screenheight*0.22)
+                                    .cornerRadius(5)
+                            }
+                            VStack(spacing: 5) {
+                                Spacer()
+                                Rectangle().fill(Color("appearance"))
+                                    .frame(width: self.screenwidth*0.1066, height: self.screenheight*0.022*rating.appearance)
+                            }
+                            VStack {
+                                Spacer()
+                                Text(String(Double(rating.appearance)))
+                                    .font(Font.custom("Gilroy-Light", size: 16))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color(.white))
+                                    .animation(nil)
+                                    .padding(.bottom, 15)
+                            }
                         }
-                        VStack(spacing: 0) {
-                            Spacer()
-                            Text(String(Double(rating.personality)))
-                                .font(Font.custom("Gilroy-Light", size: 16))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color("purp"))
-                                .animation(nil)
-                            Rectangle().fill(Color("personality"))
-                                .frame(width: self.screenwidth*0.1066, height: self.screenheight*0.02*rating.personality)
-                                .cornerRadius(5)
+                        ZStack {
+                            VStack {
+                                Spacer()
+                                Rectangle().fill(Color("lightgray"))
+                                    .frame(width: self.screenwidth*0.1066, height: self.screenheight*0.22)
+                                    .cornerRadius(5)
+                            }
+                            VStack(spacing: 5) {
+                                Spacer()
+                                Rectangle().fill(Color("personality"))
+                                    .frame(width: self.screenwidth*0.1066, height: self.screenheight*0.022*rating.personality)
+                            }
+                            VStack {
+                                Spacer()
+                                Text(String(Double(rating.personality)))
+                                    .font(Font.custom("Gilroy-Light", size: 16))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color(.white))
+                                    .animation(nil)
+                                    .padding(.bottom, 15)
+                            }
                         }
                     }
                 }
             }
             else {
-                Spacer()
-                Text(String(Double(rating.overall)))
-                    .font(Font.custom("Gilroy-Light", size: 18))
-                    .fontWeight(.semibold)
-                    .foregroundColor(Color("purp"))
-                Button(action: {
-                    self.show.toggle()
-                }) {
-                    Rectangle()
-                        .fill(Color("purp"))
-                        .frame(width: self.screenwidth*0.24, height: self.screenheight*0.019*rating.overall)
-                        .cornerRadius(10)
-                    
+                ZStack {
+                    VStack {
+                        Spacer()
+                        Rectangle()
+                            .fill(Color("lightgray"))
+                            .frame(width: self.screenwidth*0.24, height: self.screenheight*0.22)
+                            .cornerRadius(10)
+                    }
+                    VStack {
+                        Spacer()
+                        Button(action: {
+                            self.show.toggle()
+                        }) {
+                            Rectangle()
+                                .fill(Color("purp"))
+                                .frame(width: self.screenwidth*0.24, height: self.screenheight*0.022*rating.overall)
+                        }
+                    }
+                    VStack {
+                        Spacer()
+                        Text(String(Double(rating.overall)))
+                            .font(Font.custom("Gilroy-Light", size: 18))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color(.white))
+                            .padding(.bottom, 15)
+                    }
                 }
             }
         }
@@ -3029,6 +3196,7 @@ struct ratingtype {
     var appearance: CGFloat
     var personality: CGFloat
 }
+
 
 //MARK: UserData
 struct UserData: Identifiable {
