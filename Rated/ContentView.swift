@@ -1738,6 +1738,22 @@ struct HomeView: View {
 }
 
 
+//MARK: RatingMeter
+struct RatingMeter: View {
+    @EnvironmentObject var observer: observer
+    @State var rating: CGFloat = 0
+    var body: some View {
+        VStack {
+            Spacer()
+            Image("rateneedle")
+                .resizable()
+                .frame(width: 30, height: 60)
+                .rotationEffect(Angle(degrees: Double(observer.rating.overall*18)-90), anchor: UnitPoint(x: 0.5, y: 0.78))
+        }.frame(width: 140, height: 80)
+    }
+}
+
+
 //MARK: Your Statistics
 struct YourStatistics: View {
     let screenwidth = UIScreen.main.bounds.width
@@ -1746,42 +1762,33 @@ struct YourStatistics: View {
     @State var index = 0
     @EnvironmentObject var observer: observer
     var body: some View {
-        VStack {
-            ZStack {
-                Color(.white)
-                    .frame(width: screenwidth/1.25, height: screenheight*0.234)
-                    .cornerRadius(15)
-                    .shadow(radius: 30)
-                HStack {
+        ZStack {
+            Color(.white)
+                .frame(width: screenwidth/1.25, height: screenheight*0.234)
+                .cornerRadius(15)
+                .shadow(radius: 30)
+            VStack(spacing: 0) {
+                Text(String(Double(self.observer.rating.overall)))
+                    .font(Font.custom("ProximaNova-Regular", size: 24))
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color("purp"))
+                    .animation(nil)
+                ZStack {
                     VStack {
-                        Text(UserDefaults.standard.value(forKey: "Name") as! String)
-                            .font(Font.custom("ProximaNova-Regular", size: 20))
-                            .fontWeight(.semibold)
+                        Meter(endangle: Double(self.observer.rating.overall*18))
+                            .rotation(Angle(degrees: 180), anchor: .top)
+                            .frame(width: 140, height: 70)
                             .foregroundColor(Color("purp"))
-                            .padding(.top, 7.5)
-                        Button(action: {
-                            if self.index == 3 {
-                                self.index = 0
-                            }
-                            else {
-                                self.index += 1
-                            }
-                        }) {
-                            WebImage(url: URL(string: self.images[self.index]))
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: (self.screenheight*0.147)/1.33, height: self.screenheight*0.147)
-                                .animation(nil)
-                                .cornerRadius(10)
-                        }.buttonStyle(PlainButtonStyle())
-                    }.padding(.leading, 20)
-                    Rectangle()
-                        .frame(width: 3, height: screenheight*0.2)
-                        .foregroundColor(Color("purp"))
-                        .padding(.horizontal, 30)
-                    StatsBar(rating: ratingtype(overall: self.observer.rating.overall, appearance: self.observer.rating.appearance, personality: self.observer.rating.personality)).padding(.trailing, 20)
-                }.frame(width: screenwidth/1.25, height: screenheight*0.234)
-            }
+                        Spacer()
+                    }
+                    RatingMeter()
+                }.frame(width: 140, height: 80)
+                Text(String(self.observer.userrates.count) + " Ratings")
+                    .font(Font.custom("ProximaNova-Regular", size: 12))
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color("purp"))
+                    .animation(nil)
+            }.frame(height: screenheight*0.234)
         }
     }
 }
@@ -2977,6 +2984,24 @@ struct BottomShape : Shape {
             path.addLine(to: CGPoint(x: rect.width, y: rect.height))
             path.addLine(to: CGPoint(x: rect.width, y: 0))
             path.addArc(center: CGPoint(x: 8*rect.width/10, y: 0), radius: 25, startAngle: .zero, endAngle: .init(degrees: 180), clockwise: false)
+        }
+    }
+}
+
+
+//MARK: Meter
+struct Meter: Shape {
+    var endangle: Double = 0
+    func path(in rect: CGRect) -> Path {
+        return Path {path in
+            path.move(to: CGPoint(x: 0, y: rect.height))
+            path.addArc(center: CGPoint(x: rect.width/2, y: rect.height), radius: rect.width/2, startAngle: .zero, endAngle: .init(degrees: endangle), clockwise: false)
+            //path.addLine(to: CGPoint(x: (rect.width/2)*CGFloat(1+cos((180-endangle)*Double.pi/180)), y: rect.height-(rect.width/2*CGFloat(sin((180-endangle)*Double.pi/180)))))
+            path.addLine(to: CGPoint(x: rect.width/2, y: rect.width/2))
+            path.addLine(to: CGPoint(x: rect.width/2, y: rect.height))
+            path.addLine(to: CGPoint(x: 0, y: rect.height))
+            //path.move(to: CGPoint(x: (rect.width/2)*CGFloat(1+cos((180-endangle)*Double.pi/180)), y: (rect.width/4)*CGFloat(sin((180-endangle)*Double.pi/180))))
+            //path.addArc(center: CGPoint(x: rect.width/2, y: rect.height), radius: rect.width/4, startAngle: .init(degrees: endangle), endAngle: .zero, clockwise: false)*/
         }
     }
 }
