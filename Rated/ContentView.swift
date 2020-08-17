@@ -1636,7 +1636,6 @@ struct HomeView: View {
                         HStack {
                             Button(action: {
                                 self.show.toggle()
-                                print(self.screenwidth, self.screenheight)
                             }) {
                                 Image(systemName: "line.horizontal.3")
                                     .resizable()
@@ -1670,7 +1669,6 @@ struct HomeView: View {
                                     .frame(width: screenwidth/1.25, height: screenheight*0.234)
                                     .cornerRadius(15)
                                     .shadow(radius: 30)
-                                
                                 /*Text("No Ratings Yet")
                                     .font(Font.custom("Gilroy-Light", size: 24))
                                     .fontWeight(.semibold)
@@ -1741,15 +1739,168 @@ struct HomeView: View {
 //MARK: RatingMeter
 struct RatingMeter: View {
     @EnvironmentObject var observer: observer
-    @State var rating: CGFloat = 0
     var body: some View {
         VStack {
             Spacer()
             Image("rateneedle")
                 .resizable()
-                .frame(width: 30, height: 60)
+                .frame(width: 29, height: 60)
                 .rotationEffect(Angle(degrees: Double(observer.rating.overall*18)-90), anchor: UnitPoint(x: 0.5, y: 0.78))
-        }.frame(width: 140, height: 80)
+        }.frame(width: 140, height: 82)
+    }
+}
+
+
+//MARK: OverallMeter
+struct OverallMeter: View {
+    let screenwidth = UIScreen.main.bounds.width
+    let screenheight = UIScreen.main.bounds.height
+    @EnvironmentObject var observer: observer
+    var body: some View {
+        VStack(spacing: 5) {
+            HStack {
+                Text("Overall")
+                    .font(Font.custom("ProximaNova-Regular", size: 24))
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color("purp"))
+                    .padding([.top, .leading], 10)
+                Spacer()
+            }
+            Spacer()
+            Text(String(Double(self.observer.rating.overall)))
+                .font(Font.custom("ProximaNova-Regular", size: 20))
+                .fontWeight(.semibold)
+                .foregroundColor(Color("purp"))
+            ZStack {
+                VStack {
+                    ZStack {
+                        Meter(endangle: 180)
+                            .rotation(Angle(degrees: 180), anchor: .bottom)
+                            .frame(width: 140, height: 70)
+                            .foregroundColor(Color("lightgray"))
+                        Meter(endangle: Double(self.observer.rating.overall*18))
+                            .rotation(Angle(degrees: 180), anchor: .bottom)
+                            .frame(width: 140, height: 70)
+                            .foregroundColor(Color("purp"))
+                            .animation(.spring())
+                        VStack {
+                            Spacer()
+                            Meter(endangle: Double(180))
+                                .rotation(Angle(degrees: 180), anchor: .bottom)
+                                .frame(width: 80, height: 40)
+                                .foregroundColor(Color(.white))
+                        }.frame(width: 140, height: 70)
+                    }
+                    Spacer()
+                }
+                RatingMeter()
+            }.frame(width: 140, height: 80)
+            Text(String(self.observer.userrates.count) + " Ratings")
+                .font(Font.custom("ProximaNova-Regular", size: 12))
+                .fontWeight(.semibold)
+                .foregroundColor(Color("purp"))
+                .padding(.bottom, 15)
+        }.frame(height: screenheight*0.234)
+    }
+}
+
+
+//MARK: DetailsMeter
+struct DetailsMeter: View {
+    let screenwidth = UIScreen.main.bounds.width
+    let screenheight = UIScreen.main.bounds.height
+    @EnvironmentObject var observer: observer
+    var body: some View {
+        VStack {
+            HStack {
+                Text("Appearance")
+                    .font(Font.custom("ProximaNova-Regular", size: 20))
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color("appearance"))
+                    .padding([.top, .leading], 10)
+                Spacer()
+                Text("Personality")
+                    .font(Font.custom("ProximaNova-Regular", size: 20))
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color("personality"))
+                    .padding([.top, .trailing], 10)
+            }.frame(width: self.screenwidth/1.25)
+            Spacer()
+            HStack {
+                VStack(spacing: 5) {
+                    Text(String(Double(self.observer.rating.appearance)))
+                        .font(Font.custom("ProximaNova-Regular", size: 16))
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color("appearance"))
+                    ZStack {
+                        VStack {
+                            ZStack {
+                                Meter(endangle: 180)
+                                    .rotation(Angle(degrees: 180), anchor: .bottom)
+                                    .frame(width: 100, height: 50)
+                                    .foregroundColor(Color("lightgray"))
+                                Meter(endangle: Double(self.observer.rating.appearance*18))
+                                    .rotation(Angle(degrees: 180), anchor: .bottom)
+                                    .frame(width: 100, height: 50)
+                                    .foregroundColor(Color("appearance"))
+                                    .animation(.spring())
+                                VStack {
+                                    Spacer()
+                                    Meter(endangle: Double(180))
+                                        .rotation(Angle(degrees: 180), anchor: .bottom)
+                                        .frame(width: 60, height: 30)
+                                        .foregroundColor(Color(.white))
+                                }.frame(width: 100, height: 50)
+                            }
+                            Spacer()
+                        }
+                        VStack {
+                            Spacer()
+                            Image("rateneedle")
+                                .resizable()
+                                .frame(width: 20, height: 40)
+                                .rotationEffect(Angle(degrees: Double(observer.rating.appearance*18)-90), anchor: UnitPoint(x: 0.5, y: 0.78))
+                        }.frame(width: 100, height: 42)
+                    }.frame(width: 100, height: 60)
+                }
+                VStack(spacing: 5) {
+                    Text(String(Double(self.observer.rating.personality)))
+                        .font(Font.custom("ProximaNova-Regular", size: 16))
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color("personality"))
+                    ZStack {
+                        VStack {
+                            ZStack {
+                                Meter(endangle: 180)
+                                    .rotation(Angle(degrees: 180), anchor: .bottom)
+                                    .frame(width: 100, height: 50)
+                                    .foregroundColor(Color("lightgray"))
+                                Meter(endangle: Double(self.observer.rating.personality*18))
+                                    .rotation(Angle(degrees: 180), anchor: .bottom)
+                                    .frame(width: 100, height: 50)
+                                    .foregroundColor(Color("personality"))
+                                    .animation(.spring())
+                                VStack {
+                                    Spacer()
+                                    Meter(endangle: Double(180))
+                                        .rotation(Angle(degrees: 180), anchor: .bottom)
+                                        .frame(width: 60, height: 30)
+                                        .foregroundColor(Color(.white))
+                                }.frame(width: 100, height: 50)
+                            }
+                            Spacer()
+                        }
+                        VStack {
+                            Spacer()
+                            Image("rateneedle")
+                                .resizable()
+                                .frame(width: 20, height: 40)
+                                .rotationEffect(Angle(degrees: Double(observer.rating.personality*18)-90), anchor: UnitPoint(x: 0.5, y: 0.78))
+                        }.frame(width: 100, height: 42)
+                    }.frame(width: 100, height: 60)
+                }
+            }.padding(.bottom, 15)
+        }.frame(height: screenheight*0.234)
     }
 }
 
@@ -1759,6 +1910,8 @@ struct YourStatistics: View {
     let screenwidth = UIScreen.main.bounds.width
     let screenheight = UIScreen.main.bounds.height
     let images = UserDefaults.standard.value(forKey: "ProfilePics") as! [String]
+    @State var x: CGFloat = 0
+    @State var tempx: CGFloat = 0
     @State var index = 0
     @EnvironmentObject var observer: observer
     var body: some View {
@@ -1767,29 +1920,36 @@ struct YourStatistics: View {
                 .frame(width: screenwidth/1.25, height: screenheight*0.234)
                 .cornerRadius(15)
                 .shadow(radius: 30)
-            VStack(spacing: 0) {
-                Text(String(Double(self.observer.rating.overall)))
-                    .font(Font.custom("ProximaNova-Regular", size: 24))
-                    .fontWeight(.semibold)
-                    .foregroundColor(Color("purp"))
-                    .animation(nil)
-                ZStack {
-                    VStack {
-                        Meter(endangle: Double(self.observer.rating.overall*18))
-                            .rotation(Angle(degrees: 180), anchor: .top)
-                            .frame(width: 140, height: 70)
-                            .foregroundColor(Color("purp"))
-                        Spacer()
+            ScrollView([]) {
+                HStack {
+                    OverallMeter()
+                        .frame(width: screenwidth/1.25)
+                    DetailsMeter()
+                        .frame(width: screenwidth/1.25)
+                }.frame(width: self.screenwidth/1.25)
+                .offset(x: (screenwidth/2.5)+x+tempx)
+                .highPriorityGesture(DragGesture().onChanged({ (value) in
+                    self.tempx = value.translation.width
+                }).onEnded({ (value) in
+                    if value.translation.width < -self.screenwidth/4 && self.index == 0 {
+                        self.x = -self.screenwidth/1.25
+                        self.index = 1
                     }
-                    RatingMeter()
-                }.frame(width: 140, height: 80)
-                Text(String(self.observer.userrates.count) + " Ratings")
-                    .font(Font.custom("ProximaNova-Regular", size: 12))
-                    .fontWeight(.semibold)
-                    .foregroundColor(Color("purp"))
-                    .animation(nil)
+                    else if value.translation.width > self.screenwidth/4 && self.index == 1 {
+                        self.x = 0
+                        self.index = 0
+                    }
+                    else if self.index == 0 {
+                        self.x = 0
+                        
+                    }
+                    else if self.index == 1 {
+                        self.x = -self.screenwidth/1.25
+                    }
+                    self.tempx = 0
+                }))
             }.frame(height: screenheight*0.234)
-        }
+        }.frame(width: screenwidth/1.25)
     }
 }
 
@@ -3023,9 +3183,9 @@ struct Bar : View {
                         VStack {
                             Spacer()
                             Text(String(Double(rating.appearance)))
-                                .font(Font.custom("Gilroy-Light", size: 16))
+                                .font(Font.custom("ProximaNova-Regular", size: 16))
                                 .fontWeight(.semibold)
-                                .foregroundColor(Color("purp"))
+                                .foregroundColor(Color("appearance"))
                                 .animation(nil)
                             Rectangle().fill(Color("appearance"))
                                 .frame(width: self.screenwidth*0.067, height: self.screenheight*0.0185*rating.appearance)
@@ -3034,9 +3194,9 @@ struct Bar : View {
                         VStack {
                             Spacer()
                             Text(String(Double(rating.personality)))
-                                .font(Font.custom("Gilroy-Light", size: 16))
+                                .font(Font.custom("ProximaNova-Regular", size: 16))
                                 .fontWeight(.semibold)
-                                .foregroundColor(Color("purp"))
+                                .foregroundColor(Color("personality"))
                                 .animation(nil)
                             Rectangle().fill(Color("personality"))
                                 .frame(width: self.screenwidth*0.067, height: self.screenheight*0.0185*rating.personality)
@@ -3048,7 +3208,7 @@ struct Bar : View {
             else {
                 Spacer()
                 Text(String(Double(rating.overall)))
-                    .font(Font.custom("Gilroy-Light", size: 20))
+                    .font(Font.custom("ProximaNova-Regular", size: 20))
                     .fontWeight(.semibold)
                     .foregroundColor(Color("purp"))
                 Button(action: {
