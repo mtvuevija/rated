@@ -149,6 +149,7 @@ struct SignUpView: View {
     @State var text: [String] = ["", "", "", "", "", "", "", "", "", ""]
     @State var selectedprompts = [false, false, false, false, false, false, false, false, false, false]
     @State var selectedinfo = [false, false, false, false, false, false, false, false, false, false]
+    @State var showprofile: Bool = false
     
     //Image Picker
     @State var numimage: Int = 0
@@ -187,7 +188,7 @@ struct SignUpView: View {
                         .padding(.bottom, 25)
                     
                     Text("Enter Your Phone Number")
-                        .font(Font.custom("Gilroy-Light", size: 20))
+                        .font(Font.custom("ProximaNova-Regular", size: 20))
                         .fontWeight(.medium)
                         .foregroundColor(Color("purp").opacity(0.8))
                     
@@ -209,7 +210,7 @@ struct SignUpView: View {
                                 .cornerRadius(7.5)
                             
                             TextField("Phone Number", text: $phonenumber)
-                                .font(Font.custom("Gilroy-Light", size: 16))
+                                .font(Font.custom("ProximaNova-Regular", size: 16))
                                 .frame(width: screenwidth - 140, height: 50)
                                 .keyboardType(.numberPad)
                         }
@@ -231,7 +232,7 @@ struct SignUpView: View {
                         .padding(.bottom, 25)
                     
                     Text("Enter The Verification Code")
-                        .font(Font.custom("Gilroy-Light", size: 20))
+                        .font(Font.custom("ProximaNova-Regular", size: 20))
                         .fontWeight(.semibold)
                         .foregroundColor(Color("purp").opacity(0.8))
                     
@@ -242,7 +243,7 @@ struct SignUpView: View {
                             .cornerRadius(7.5)
                         
                         TextField("Verification Code", text: $enteredcode)
-                            .font(Font.custom("Gilroy-Light", size: 16))
+                            .font(Font.custom("ProximaNova-Regular", size: 16))
                             .frame(width: screenwidth - 80, height: 50)
                             .keyboardType(.numberPad)
                     }
@@ -263,7 +264,7 @@ struct SignUpView: View {
                         .padding(.bottom, 25)
                     
                     Text("Enter Your First Name")
-                        .font(Font.custom("Gilroy-Light", size: 20))
+                        .font(Font.custom("ProximaNova-Regular", size: 20))
                         .fontWeight(.semibold)
                         .foregroundColor(Color("purp").opacity(0.8))
                     
@@ -293,7 +294,7 @@ struct SignUpView: View {
                         .padding(.bottom, 25)
                     
                     Text("Enter Your Age")
-                        .font(Font.custom("Gilroy-Light", size: 20))
+                        .font(Font.custom("ProximaNova-Regular", size: 20))
                         .fontWeight(.semibold)
                         .foregroundColor(Color("purp").opacity(0.8))
                     
@@ -324,7 +325,7 @@ struct SignUpView: View {
                         .padding(.bottom, 25)
                     
                     Text("Select Your Gender")
-                        .font(Font.custom("Gilroy-Light", size: 20))
+                        .font(Font.custom("ProximaNova-Regular", size: 20))
                         .fontWeight(.semibold)
                         .foregroundColor(Color("purp").opacity(0.8))
                     
@@ -353,7 +354,7 @@ struct SignUpView: View {
                                 self.gender = "Male"
                             }) {
                                 Text("Male")
-                                    .font(Font.custom("Gilroy-Light", size: 16))
+                                    .font(Font.custom("ProximaNova-Regular", size: 16))
                                     .fontWeight(.semibold)
                             }.frame(width: 70)
                             
@@ -363,7 +364,7 @@ struct SignUpView: View {
                                 self.gender = "Female"
                             }) {
                                 Text("Female")
-                                    .font(Font.custom("Gilroy-Light", size: 16))
+                                    .font(Font.custom("ProximaNova-Regular", size: 16))
                                     .fontWeight(.semibold)
                             }.frame(width: 70)
                             
@@ -373,7 +374,7 @@ struct SignUpView: View {
                                 self.gender = ""
                             }) {
                                 Text("Other")
-                                    .font(Font.custom("Gilroy-Light", size: 16))
+                                    .font(Font.custom("ProximaNova-Regular", size: 16))
                                     .fontWeight(.semibold)
                             }.frame(width: 70)
                             
@@ -384,7 +385,7 @@ struct SignUpView: View {
                     
                     if self.genders == 3 {
                         Text("Specify Your Gender")
-                            .font(Font.custom("Gilroy-Light", size: 20))
+                            .font(Font.custom("ProximaNova-Regular", size: 20))
                             .fontWeight(.semibold)
                             .foregroundColor(Color("purp").opacity(0.8))
                         
@@ -407,174 +408,233 @@ struct SignUpView: View {
                 }.animation(.spring()).frame(width: screenwidth, height: screenheight)
                 
                 //MARK: What Matters? 6
-                ZStack {
-                    VStack {
-                        HStack {
-                            Image("appearance")
-                                .resizable()
-                                .frame(width: screenwidth/4, height: screenwidth/4)
-                            
-                            Spacer()
-                            
-                            Image("personality")
-                                .resizable()
-                                .frame(width: screenwidth/4, height: screenwidth/4)
-                        }.padding(.horizontal, 75)
-                        Text("Appearance vs Personality")
-                            .font(Font.custom("Gilroy-Light", size: 24))
-                            .fontWeight(.semibold)
-                            .frame(width: screenwidth)
-                            .foregroundColor(Color("purp").opacity(0.8))
-                            .padding(.bottom, 5)
-                            .multilineTextAlignment(.center)
-                        
-                        Text("(This is how your rating will be calculated)")
-                            .font(Font.custom("Gilroy-Light", size: 14))
-                            .fontWeight(.semibold)
-                            .frame(width: screenwidth - 10)
-                            .foregroundColor(Color("purp").opacity(0.8))
-                            .padding(.bottom, 45)
-                        
-                        PercentageSlider(percentage: self.$percentage)
-                            .frame(width: 90, height: screenheight/2.25)
-                            .accentColor(Color("personality"))
-                            .padding(.bottom, 25)
-                    
-                    }.frame(width: screenwidth, height: screenheight)
-                    if self.confirm {
-                        VStack {
-                            Spacer().frame(height: 50)
-                            ZStack {
-                                Rectangle()
-                                    .frame(width: screenwidth/1.75, height: 125)
-                                    .cornerRadius(15)
-                                    .foregroundColor(Color("lightgray"))
-                                
-                                VStack {
-                                    Text("Are You Sure?")
-                                        .font(Font.custom("Gilroy-Light", size: 18))
-                                        .fontWeight(.semibold)
-                                        .frame(width: screenwidth/2 - 20)
-                                        .foregroundColor(Color("purp").opacity(0.8))
-                                        .padding(.top, 25)
-                                    
-                                    Text("This cannot be changed later.")
-                                        .font(Font.custom("Gilroy-Light", size: 14))
-                                        .fontWeight(.semibold)
-                                        //.frame(width: screenwidth/2 )
-                                        .foregroundColor(Color("purp").opacity(0.8))
-                                    
-                                    Spacer()
-                                    
-                                    HStack {
-                                        Button(action: {
-                                            self.next -= self.screenwidth
-                                            self.count += 1
-                                            self.confirm.toggle()
-                                        }) {
-                                            Text("Yes")
-                                                .fontWeight(.medium)
-                                                .frame(width: 75, height: 30)
-                                                .foregroundColor(.white)
-                                                .background(Color("purp").opacity(0.8))
-                                                .cornerRadius(7.5)
-                                        }
-                                        Button(action: {
-                                            self.confirm.toggle()
-                                        }) {
-                                            Text("No")
-                                                .fontWeight(.medium)
-                                                .frame(width: 75, height: 30)
-                                                .foregroundColor(.white)
-                                                .background(Color("purp").opacity(0.8))
-                                                .cornerRadius(7.5)
-                                        }
-                                    }.padding(.bottom, 10)
-                                }.frame(width: screenwidth/1.75, height: 125)
-                            }
-                        }
-                    }
-                }
-                
-                //MARK: Rate Yourself 7
-                ZStack {
-                    VStack {
-                        Image("rating(temp)")
+                VStack {
+                    HStack {
+                        Image("appearance")
                             .resizable()
-                            .frame(width: screenwidth/3, height: screenwidth/3)
-                            
-                        Text("Rate Yourself")
-                            .font(Font.custom("Gilroy-Light", size: 24))
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color("purp").opacity(0.8))
+                            .frame(width: screenwidth/4, height: screenwidth/4)
                         
-                        HStack(spacing: 45) {
-                            VerticalSlider(percentage: self.$selfratingappearance, title: "Appearance")
-                                .frame(width: 90, height: screenheight/2.25)
-                                .accentColor(Color("appearance"))
+                        Spacer()
+                        
+                        Image("personality")
+                            .resizable()
+                            .frame(width: screenwidth/4, height: screenwidth/4)
+                    }.padding(.horizontal, 75)
+                    Text("Appearance vs Personality")
+                        .font(Font.custom("ProximaNova-Regular", size: 24))
+                        .fontWeight(.semibold)
+                        .frame(width: screenwidth)
+                        .foregroundColor(Color("purp").opacity(0.8))
+                        .padding(.bottom, 5)
+                        .multilineTextAlignment(.center)
+                    
+                    Text("(This is how your rating will be calculated)")
+                        .font(Font.custom("ProximaNova-Regular", size: 14))
+                        .fontWeight(.semibold)
+                        .frame(width: screenwidth - 10)
+                        .foregroundColor(Color("purp").opacity(0.8))
+                        .padding(.bottom, 45)
+                    
+                    PercentageSlider(percentage: self.$percentage)
+                        .frame(width: 90, height: screenheight/2.25)
+                        .accentColor(Color("personality"))
+                        .padding(.bottom, 25)
+                
+                }.frame(width: screenwidth, height: screenheight)
+                /*VStack {
+                    ZStack {
+                        VStack {
+                            HStack {
+                                Image("appearance")
+                                    .resizable()
+                                    .frame(width: screenwidth/4, height: screenwidth/4)
+                                
+                                Spacer()
+                                
+                                Image("personality")
+                                    .resizable()
+                                    .frame(width: screenwidth/4, height: screenwidth/4)
+                            }.padding(.horizontal, 75)
+                            Text("Appearance vs Personality")
+                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                .fontWeight(.semibold)
+                                .frame(width: screenwidth)
+                                .foregroundColor(Color("purp").opacity(0.8))
+                                .padding(.bottom, 5)
+                                .multilineTextAlignment(.center)
                             
-                            VerticalSlider(percentage: self.$selfratingpersonality, title: "Personality")
+                            Text("(This is how your rating will be calculated)")
+                                .font(Font.custom("ProximaNova-Regular", size: 14))
+                                .fontWeight(.semibold)
+                                .frame(width: screenwidth - 10)
+                                .foregroundColor(Color("purp").opacity(0.8))
+                                .padding(.bottom, 45)
+                            
+                            PercentageSlider(percentage: self.$percentage)
                                 .frame(width: 90, height: screenheight/2.25)
                                 .accentColor(Color("personality"))
-                            
-                        }.padding(.top, 25)
+                                .padding(.bottom, 25)
                         
-                    }.frame(width: screenwidth, height: screenheight)
-                    if self.confirm {
-                        VStack {
-                            Spacer().frame(height: 50)
-                            ZStack {
-                                Rectangle()
-                                    .frame(width: screenwidth/2, height: 125)
-                                    .cornerRadius(15)
-                                    .foregroundColor(Color("lightgray"))
-                                
-                                VStack {
-                                    Text("Are You Sure?")
-                                        .font(Font.custom("Gilroy-Light", size: 14))
-                                        .fontWeight(.semibold)
-                                        .frame(width: screenwidth - 10)
-                                        .foregroundColor(Color("purp").opacity(0.8))
-                                        .padding(.top, 35)
+                        }.frame(width: screenwidth, height: screenheight)
+                        if self.confirm {
+                            VStack {
+                                Spacer().frame(height: 50)
+                                ZStack {
+                                    Rectangle()
+                                        .frame(width: screenwidth/1.75, height: 125)
+                                        .cornerRadius(15)
+                                        .foregroundColor(Color("lightgray"))
                                     
-                                    Text("Your Rating: " + String(Double(Double(self.selfratingpersonality)*Double(self.percentage/10).truncate(places: 2) + Double(self.selfratingappearance)*Double(1-self.percentage/10).truncate(places: 2)).truncate(places: 1)))
-                                        .font(Font.custom("Gilroy-Light", size: 14))
-                                        .fontWeight(.semibold)
-                                        .frame(width: screenwidth - 10)
-                                        .foregroundColor(Color("purp").opacity(0.8))
-                                        .animation(nil)
-                                    
-                                    Spacer()
-                                    
-                                    HStack {
-                                        Button(action: {
-                                            self.next -= self.screenwidth
-                                            self.count += 1
-                                            self.confirm.toggle()
-                                        }) {
-                                            Text("Yes")
-                                                .fontWeight(.medium)
-                                                .frame(width: 75, height: 30)
-                                                .foregroundColor(.white)
-                                                .background(Color("purp").opacity(0.8))
-                                                .cornerRadius(7.5)
-                                        }
-                                        Button(action: {
-                                            self.confirm.toggle()
-                                        }) {
-                                            Text("No")
-                                                .fontWeight(.medium)
-                                                .frame(width: 75, height: 30)
-                                                .foregroundColor(.white)
-                                                .background(Color("purp").opacity(0.8))
-                                                .cornerRadius(7.5)
-                                        }
-                                    }.padding(.bottom, 10)
-                                }.frame(width: screenwidth/2, height: 125)
+                                    VStack {
+                                        Text("Are You Sure?")
+                                            .font(Font.custom("Gilroy-Light", size: 18))
+                                            .fontWeight(.semibold)
+                                            .frame(width: screenwidth/2 - 20)
+                                            .foregroundColor(Color("purp").opacity(0.8))
+                                            .padding(.top, 25)
+                                        
+                                        Text("This cannot be changed later.")
+                                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                                            .fontWeight(.semibold)
+                                            //.frame(width: screenwidth/2 )
+                                            .foregroundColor(Color("purp").opacity(0.8))
+                                        
+                                        Spacer()
+                                        
+                                        HStack {
+                                            Button(action: {
+                                                self.next -= self.screenwidth
+                                                self.count += 1
+                                                self.confirm.toggle()
+                                            }) {
+                                                Text("Yes")
+                                                    .fontWeight(.medium)
+                                                    .frame(width: 75, height: 30)
+                                                    .foregroundColor(.white)
+                                                    .background(Color("purp").opacity(0.8))
+                                                    .cornerRadius(7.5)
+                                            }
+                                            Button(action: {
+                                                self.confirm.toggle()
+                                            }) {
+                                                Text("No")
+                                                    .fontWeight(.medium)
+                                                    .frame(width: 75, height: 30)
+                                                    .foregroundColor(.white)
+                                                    .background(Color("purp").opacity(0.8))
+                                                    .cornerRadius(7.5)
+                                            }
+                                        }.padding(.bottom, 10)
+                                    }.frame(width: screenwidth/1.75, height: 125)
+                                }
                             }
                         }
                     }
-                }
+                }.frame(width: self.screenwidth, height: self.screenheight)*/
+                
+                //MARK: Rate Yourself 7
+                VStack {
+                    Image("rating(temp)")
+                        .resizable()
+                        .frame(width: screenwidth/3, height: screenwidth/3)
+                        
+                    Text("Rate Yourself")
+                        .font(Font.custom("ProximaNova-Regular", size: 24))
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color("purp").opacity(0.8))
+                    
+                    HStack(spacing: 45) {
+                        VerticalSlider(percentage: self.$selfratingappearance, title: "Appearance")
+                            .frame(width: 90, height: screenheight/2.25)
+                            .accentColor(Color("appearance"))
+                        
+                        VerticalSlider(percentage: self.$selfratingpersonality, title: "Personality")
+                            .frame(width: 90, height: screenheight/2.25)
+                            .accentColor(Color("personality"))
+                        
+                    }.padding(.top, 25)
+                    
+                }.frame(width: screenwidth, height: screenheight)
+                /*VStack {
+                    ZStack {
+                        VStack {
+                            Image("rating(temp)")
+                                .resizable()
+                                .frame(width: screenwidth/3, height: screenwidth/3)
+                                
+                            Text("Rate Yourself")
+                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color("purp").opacity(0.8))
+                            
+                            HStack(spacing: 45) {
+                                VerticalSlider(percentage: self.$selfratingappearance, title: "Appearance")
+                                    .frame(width: 90, height: screenheight/2.25)
+                                    .accentColor(Color("appearance"))
+                                
+                                VerticalSlider(percentage: self.$selfratingpersonality, title: "Personality")
+                                    .frame(width: 90, height: screenheight/2.25)
+                                    .accentColor(Color("personality"))
+                                
+                            }.padding(.top, 25)
+                            
+                        }.frame(width: screenwidth, height: screenheight)
+                        if self.confirm {
+                            VStack {
+                                Spacer().frame(height: 50)
+                                ZStack {
+                                    Rectangle()
+                                        .frame(width: screenwidth/2, height: 125)
+                                        .cornerRadius(15)
+                                        .foregroundColor(Color("lightgray"))
+                                    
+                                    VStack {
+                                        Text("Are You Sure?")
+                                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                                            .fontWeight(.semibold)
+                                            .frame(width: screenwidth - 10)
+                                            .foregroundColor(Color("purp").opacity(0.8))
+                                            .padding(.top, 35)
+                                        
+                                        Text("Your Rating: " + String(Double(Double(self.selfratingpersonality)*Double(self.percentage/10).truncate(places: 2) + Double(self.selfratingappearance)*Double(1-self.percentage/10).truncate(places: 2)).truncate(places: 1)))
+                                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                                            .fontWeight(.semibold)
+                                            .frame(width: screenwidth - 10)
+                                            .foregroundColor(Color("purp").opacity(0.8))
+                                            .animation(nil)
+                                        
+                                        Spacer()
+                                        
+                                        HStack {
+                                            Button(action: {
+                                                self.next -= self.screenwidth
+                                                self.count += 1
+                                                self.confirm.toggle()
+                                            }) {
+                                                Text("Yes")
+                                                    .fontWeight(.medium)
+                                                    .frame(width: 75, height: 30)
+                                                    .foregroundColor(.white)
+                                                    .background(Color("purp").opacity(0.8))
+                                                    .cornerRadius(7.5)
+                                            }
+                                            Button(action: {
+                                                self.confirm.toggle()
+                                            }) {
+                                                Text("No")
+                                                    .fontWeight(.medium)
+                                                    .frame(width: 75, height: 30)
+                                                    .foregroundColor(.white)
+                                                    .background(Color("purp").opacity(0.8))
+                                                    .cornerRadius(7.5)
+                                            }
+                                        }.padding(.bottom, 10)
+                                    }.frame(width: screenwidth/2, height: 125)
+                                }
+                            }
+                        }
+                    }
+                }.frame(width: self.screenwidth, height: self.screenheight)*/
                 
                 //MARK: Profile Pictures 8
                 VStack {
@@ -610,121 +670,11 @@ struct SignUpView: View {
                                     Image(uiImage: UIImage(data: self.profilepics[0])!)
                                         .resizable()
                                         .renderingMode(.original)
-                                        .frame(width: 100, height: 133)
                                         .aspectRatio(contentMode: .fill)
+                                        .frame(width: 100, height: 133)
                                         .cornerRadius(15)
                                 }
                             }.offset(x: self.current[0].width, y: self.current[0].height)
-                            .highPriorityGesture(DragGesture().onChanged({ (value) in
-                                self.current[0] = CGSize(width: value.location.x-50, height: value.location.y-67)
-                            }).onEnded({ (value) in
-                                let x = value.location.x - 50
-                                let y = value.location.y - 67
-                                if self.position[0] == 0 {
-                                    if x > 90 && x < 170 && y > 130 && y < 200 {
-                                        self.current[0] = CGSize(width: 135, height: 168)
-                                        self.current[self.position[3]] = self.locations[self.position[3]][0]
-                                        self.position[0] = self.position[3]
-                                        self.position[3] = 0
-                                        
-                                    }
-                                    else if x > 90 && x < 170 && y < 50 && y > -50 {
-                                        self.current[0] = CGSize(width: 135, height: 0)
-                                        self.current[self.position[1]] = self.locations[self.position[1]][0]
-                                        self.position[0] = self.position[1]
-                                        self.position[1] = 0
-                                        
-                                    }
-                                    else if y > 130 && y < 200 && x < 50 && x > -50 {
-                                        self.current[0] = CGSize(width: 0, height: 168)
-                                        self.current[self.position[2]] = self.locations[self.position[2]][0]
-                                        self.position[0] = self.position[2]
-                                        self.position[2] = 0
-                                        
-                                    }
-                                    else {
-                                        self.current[0] = .zero
-                                    }
-                                }
-                                else if self.position[1] == 0 {
-                                    if x > -50 && x < 50 && y > -50 && y < 50 {
-                                        self.current[0] = .zero
-                                        self.current[self.position[0]] = self.locations[self.position[0]][1]
-                                        self.position[1] = self.position[0]
-                                        self.position[0] = 0
-                                        
-                                    }
-                                    else if y > 130 && y < 200 && x < 50 && x > -50 {
-                                        self.current[0] = CGSize(width: 0, height: 168)
-                                        self.current[self.position[2]] = self.locations[self.position[2]][1]
-                                        self.position[1] = self.position[2]
-                                        self.position[2] = 0
-                                        
-                                    }
-                                    else if x > 90 && x < 170 && y > 130 && y < 200 {
-                                        self.current[0] = CGSize(width: 135, height: 168)
-                                        print("bruh")
-                                        self.current[self.position[3]] = self.locations[self.position[3]][1]
-                                        self.position[1] = self.position[3]
-                                        self.position[3] = 0
-                                    }
-                                    else {
-                                        self.current[0] = self.locations[0][1]
-                                    }
-                                }
-                                else if self.position[2] == 0 {
-                                    if x > -50 && x < 50 && y > -50 && y < 50 {
-                                        self.current[0] = .zero
-                                        self.current[self.position[0]] = self.locations[self.position[0]][2]
-                                        self.position[2] = self.position[0]
-                                        self.position[0] = 0
-                                        
-                                    }
-                                    else if x > 90 && x < 170 && y < 50 && y > -50 {
-                                        self.current[0] = CGSize(width: 135, height: 0)
-                                        self.current[self.position[1]] = self.locations[self.position[1]][2]
-                                        self.position[2] = self.position[1]
-                                        self.position[1] = 0
-                                        
-                                    }
-                                    else if x > 90 && x < 170 && y > 130 && y < 200 {
-                                        self.current[0] = CGSize(width: 135, height: 168)
-                                        self.current[self.position[3]] = self.locations[self.position[3]][2]
-                                        self.position[2] = self.position[3]
-                                        self.position[3] = 0
-                                        
-                                    }
-                                    else {
-                                        self.current[0] = self.locations[0][2]
-                                    }
-                                }
-                                else if self.position[3] == 0 {
-                                    if x > -50 && x < 50 && y > -50 && y < 50 {
-                                        self.current[0] = .zero
-                                        self.current[self.position[0]] = self.locations[self.position[0]][3]
-                                        self.position[3] = self.position[0]
-                                        self.position[0] = 0
-                                        
-                                    }
-                                    else if x > 90 && x < 170 && y < 50 && y > -50 {
-                                        self.current[0] = CGSize(width: 135, height: 0)
-                                        self.current[self.position[1]] = self.locations[self.position[1]][3]
-                                        self.position[3] = self.position[1]
-                                        self.position[1] = 0
-                                        
-                                    }
-                                    else if y > 130 && y < 300 && x < 50 && x > -50 {
-                                        self.current[0] = CGSize(width: 0, height: 168)
-                                        self.current[self.position[2]] = self.locations[self.position[2]][3]
-                                        self.position[3] = self.position[2]
-                                        self.position[2] = 0
-                                        
-                                    }
-                                    else {
-                                        self.current[0] = self.locations[0][3]
-                                    }
-                                }
-                            }))
                             
                             Button(action: {
                                 self.picker.toggle()
@@ -745,109 +695,12 @@ struct SignUpView: View {
                                     Image(uiImage: UIImage(data: self.profilepics[1])!)
                                         .resizable()
                                         .renderingMode(.original)
-                                        .frame(width: 100, height: 133)
                                         .aspectRatio(contentMode: .fill)
+                                        .frame(width: 100, height: 133)
                                         .cornerRadius(15)
                                 }
                             }.offset(x: self.current[1].width, y: self.current[1].height)
-                                .highPriorityGesture(DragGesture().onChanged({ (value) in
-                                    self.current[1] = CGSize(width: value.location.x-50, height: value.location.y-67)
-                                }).onEnded({ (value) in
-                                    let x = value.location.x-50
-                                    let y = value.location.y-67
-                                    if self.position[0] == 1 {
-                                        if x < 50 && x > -50 && y < 50 && y > -50 {
-                                            self.current[1] = self.locations[1][1]
-                                            self.current[self.position[1]] = self.locations[self.position[1]][0]
-                                            self.position[0] = self.position[1]
-                                            self.position[1] = 1
-                                        }
-                                        else if y > 130 && y < 200 && x < -90 && x > -170 {
-                                            self.current[1] = self.locations[1][2]
-                                            self.current[self.position[2]] = self.locations[self.position[2]][0]
-                                            self.position[0] = self.position[2]
-                                            self.position[2] = 1
-                                        }
-                                        else if x > -50 && x < 50 && y > 130 && y < 200 {
-                                            self.current[1] = self.locations[1][3]
-                                            self.current[self.position[3]] = self.locations[self.position[3]][0]
-                                            self.position[0] = self.position[3]
-                                            self.position[3] = 1
-                                        }
-                                        else {
-                                            self.current[1] = self.locations[1][0]
-                                        }
-                                    }
-                                    else if self.position[1] == 1 {
-                                        if x < -90 && x > -170 && y < 50 && y > -50 {
-                                            self.current[1] = self.locations[1][0]
-                                            self.current[self.position[0]] = self.locations[self.position[0]][1]
-                                            self.position[1] = self.position[0]
-                                            self.position[0] = 1
-                                        }
-                                        else if y > 130 && y < 200 && x < -90 && x > -170 {
-                                            self.current[1] = self.locations[1][2]
-                                            self.current[self.position[2]] = self.locations[self.position[2]][1]
-                                            self.position[1] = self.position[2]
-                                            self.position[2] = 1
-                                        }
-                                        else if x > -50 && x < 50 && y > 130 && y < 200 {
-                                            self.current[1] = self.locations[1][3]
-                                            self.current[self.position[3]] = self.locations[self.position[3]][1]
-                                            self.position[1] = self.position[3]
-                                            self.position[3] = 1
-                                        }
-                                        else {
-                                            self.current[1] = self.locations[1][1]
-                                        }
-                                    }
-                                    else if self.position[2] == 1 {
-                                        if x < -90 && x > -170 && y < 50 && y > -50 {
-                                            self.current[1] = self.locations[1][0]
-                                            self.current[self.position[0]] = self.locations[self.position[0]][2]
-                                            self.position[2] = self.position[0]
-                                            self.position[0] = 1
-                                        }
-                                        else if x < 50 && x > -50 && y < 50 && y > -50 {
-                                            self.current[1] = self.locations[1][1]
-                                            self.current[self.position[1]] = self.locations[self.position[1]][2]
-                                            self.position[2] = self.position[1]
-                                            self.position[1] = 1
-                                        }
-                                        else if x > -50 && x < 50 && y > 130 && y < 200 {
-                                            self.current[1] = self.locations[1][3]
-                                            self.current[self.position[3]] = self.locations[self.position[3]][2]
-                                            self.position[2] = self.position[3]
-                                            self.position[3] = 1
-                                        }
-                                        else {
-                                            self.current[1] = self.locations[1][2]
-                                        }
-                                    }
-                                    else if self.position[3] == 1 {
-                                        if x < -90 && x > -170 && y < 50 && y > -50 {
-                                            self.current[1] = self.locations[1][0]
-                                            self.current[self.position[0]] = self.locations[self.position[0]][3]
-                                            self.position[3] = self.position[0]
-                                            self.position[0] = 1
-                                        }
-                                        else if x < 50 && x > -50 && y < 50 && y > -50 {
-                                            self.current[1] = self.locations[1][1]
-                                            self.current[self.position[1]] = self.locations[self.position[1]][3]
-                                            self.position[3] = self.position[1]
-                                            self.position[1] = 1
-                                        }
-                                        else if y > 130 && y < 200 && x < -90 && x > -170 {
-                                            self.current[1] = self.locations[1][2]
-                                            self.current[self.position[2]] = self.locations[self.position[2]][3]
-                                            self.position[3] = self.position[2]
-                                            self.position[2] = 1
-                                        }
-                                        else {
-                                            self.current[1] = self.locations[1][3]
-                                        }
-                                    }
-                                }))
+                            
                         }
                         HStack(spacing: 35) {
                             Button(action: {
@@ -868,109 +721,11 @@ struct SignUpView: View {
                                     Image(uiImage: UIImage(data: self.profilepics[2])!)
                                         .resizable()
                                         .renderingMode(.original)
-                                        .frame(width: 100, height: 133)
                                         .aspectRatio(contentMode: .fill)
+                                        .frame(width: 100, height: 133)
                                         .cornerRadius(15)
                                 }
                             }.offset(x: self.current[2].width, y: self.current[2].height)
-                            .highPriorityGesture(DragGesture().onChanged({ (value) in
-                                self.current[2] = CGSize(width: value.location.x-50, height: value.location.y-67)
-                            }).onEnded({ (value) in
-                                let x = value.location.x-50
-                                let y = value.location.y-67
-                                if self.position[0] == 2 {
-                                    if x > 90 && x < 170 && y < -130 && y > -200 {
-                                        self.current[2] = self.locations[2][1]
-                                        self.current[self.position[1]] = self.locations[self.position[1]][0]
-                                        self.position[0] = self.position[1]
-                                        self.position[1] = 2
-                                    }
-                                    else if x > -50 && x < 50 && y > -50 && y < 50 {
-                                        self.current[2] = self.locations[2][2]
-                                        self.current[self.position[2]] = self.locations[self.position[2]][0]
-                                        self.position[0] = self.position[2]
-                                        self.position[2] = 2
-                                    }
-                                    else if x > 90 && x < 170 && y > -50 && y < 50 {
-                                        self.current[2] = self.locations[2][3]
-                                        self.current[self.position[3]] = self.locations[self.position[3]][0]
-                                        self.position[0] = self.position[3]
-                                        self.position[3] = 2
-                                    }
-                                    else {
-                                        self.current[2] = self.locations[2][0]
-                                    }
-                                }
-                                else if self.position[1] == 2 {
-                                    if x > -50 && x < 50 && y < -130 && y > -200 {
-                                        self.current[2] = self.locations[2][0]
-                                        self.current[self.position[0]] = self.locations[self.position[0]][1]
-                                        self.position[1] = self.position[0]
-                                        self.position[0] = 2
-                                    }
-                                    else if x > -50 && x < 50 && y > -50 && y < 50 {
-                                        self.current[2] = self.locations[2][2]
-                                        self.current[self.position[2]] = self.locations[self.position[2]][1]
-                                        self.position[1] = self.position[2]
-                                        self.position[2] = 2
-                                    }
-                                    else if x > 90 && x < 170 && y > -50 && y < 50 {
-                                        self.current[2] = self.locations[2][3]
-                                        self.current[self.position[3]] = self.locations[self.position[3]][1]
-                                        self.position[1] = self.position[3]
-                                        self.position[3] = 2
-                                    }
-                                    else {
-                                        self.current[2] = self.locations[2][1]
-                                    }
-                                }
-                                else if self.position[2] == 2 {
-                                    if x > -50 && x < 50 && y < -130 && y > -200 {
-                                        self.current[2] = self.locations[2][0]
-                                        self.current[self.position[0]] = self.locations[self.position[0]][2]
-                                        self.position[2] = self.position[0]
-                                        self.position[0] = 2
-                                    }
-                                    else if x > 90 && x < 170 && y < -130 && y > -200 {
-                                        self.current[2] = self.locations[2][1]
-                                        self.current[self.position[1]] = self.locations[self.position[1]][2]
-                                        self.position[2] = self.position[1]
-                                        self.position[1] = 2
-                                    }
-                                    else if x > 90 && x < 170 && y > -50 && y < 50 {
-                                        self.current[2] = self.locations[2][3]
-                                        self.current[self.position[3]] = self.locations[self.position[3]][2]
-                                        self.position[2] = self.position[3]
-                                        self.position[3] = 2
-                                    }
-                                    else {
-                                        self.current[2] = self.locations[2][2]
-                                    }
-                                }
-                                else if self.position[3] == 2 {
-                                    if x > -50 && x < 50 && y < -130 && y > -200 {
-                                        self.current[2] = self.locations[2][0]
-                                        self.current[self.position[0]] = self.locations[self.position[0]][3]
-                                        self.position[3] = self.position[0]
-                                        self.position[0] = 2
-                                    }
-                                    else if x > 90 && x < 170 && y < -130 && y > -200 {
-                                        self.current[2] = self.locations[2][1]
-                                        self.current[self.position[1]] = self.locations[self.position[1]][3]
-                                        self.position[3] = self.position[1]
-                                        self.position[1] = 2
-                                    }
-                                    else if x > -50 && x < 50 && y > -50 && y < 50 {
-                                        self.current[2] = self.locations[2][2]
-                                        self.current[self.position[2]] = self.locations[self.position[2]][3]
-                                        self.position[3] = self.position[2]
-                                        self.position[2] = 2
-                                    }
-                                    else {
-                                        self.current[2] = self.locations[2][3]
-                                    }
-                                }
-                            }))
                             
                             Button(action: {
                                 self.picker.toggle()
@@ -990,109 +745,12 @@ struct SignUpView: View {
                                     Image(uiImage: UIImage(data: self.profilepics[3])!)
                                         .resizable()
                                         .renderingMode(.original)
-                                        .frame(width: 100, height: 133)
                                         .aspectRatio(contentMode: .fill)
+                                        .frame(width: 100, height: 133)
                                         .cornerRadius(15)
                                 }
                             }.offset(x: self.current[3].width, y: self.current[3].height)
-                            .highPriorityGesture(DragGesture().onChanged({ (value) in
-                                self.current[3] = CGSize(width: value.location.x-50, height: value.location.y-67)
-                            }).onEnded({ (value) in
-                                let x = value.location.x-50
-                                let y = value.location.y-67
-                                if self.position[0] == 3 {
-                                    if x > -50 && x < 50 && y < -130 && y > -200 {
-                                        self.current[3] = self.locations[3][1]
-                                        self.current[self.position[1]] = self.locations[self.position[1]][0]
-                                        self.position[0] = self.position[1]
-                                        self.position[1] = 3
-                                    }
-                                    else if x > -170 && x < -90 && y > -50 && y < 50 {
-                                        self.current[3] = self.locations[3][2]
-                                        self.current[self.position[2]] = self.locations[self.position[2]][0]
-                                        self.position[0] = self.position[2]
-                                        self.position[2] = 3
-                                    }
-                                    else if x > -50 && x < 50 && y > -50 && y < 50 {
-                                        self.current[3] = self.locations[3][3]
-                                        self.current[self.position[3]] = self.locations[self.position[3]][0]
-                                        self.position[0] = self.position[3]
-                                        self.position[3] = 3
-                                    }
-                                    else {
-                                        self.current[3] = self.locations[3][0]
-                                    }
-                                }
-                                else if self.position[1] == 3 {
-                                    if x > -170 && x < -90 && y < -130 && y > -200 {
-                                        self.current[3] = self.locations[3][0]
-                                        self.current[self.position[0]] = self.locations[self.position[0]][1]
-                                        self.position[1] = self.position[0]
-                                        self.position[0] = 3
-                                    }
-                                    else if x > -170 && x < -90 && y > -50 && y < 50 {
-                                        self.current[3] = self.locations[3][2]
-                                        self.current[self.position[2]] = self.locations[self.position[2]][1]
-                                        self.position[1] = self.position[2]
-                                        self.position[2] = 3
-                                    }
-                                    else if x > -50 && x < 50 && y > -50 && y < 50 {
-                                        self.current[3] = self.locations[3][3]
-                                        self.current[self.position[3]] = self.locations[self.position[3]][1]
-                                        self.position[1] = self.position[3]
-                                        self.position[3] = 3
-                                    }
-                                    else {
-                                        self.current[3] = self.locations[3][1]
-                                    }
-                                }
-                                else if self.position[2] == 3 {
-                                    if x > -170 && x < -90 && y < -130 && y > -200 {
-                                        self.current[3] = self.locations[3][0]
-                                        self.current[self.position[0]] = self.locations[self.position[0]][2]
-                                        self.position[2] = self.position[0]
-                                        self.position[0] = 3
-                                    }
-                                    else if x > -50 && x < 50 && y < -130 && y > -200 {
-                                        self.current[3] = self.locations[3][1]
-                                        self.current[self.position[1]] = self.locations[self.position[1]][2]
-                                        self.position[2] = self.position[1]
-                                        self.position[1] = 3
-                                    }
-                                    else if x > -50 && x < 50 && y > -50 && y < 50 {
-                                        self.current[3] = self.locations[3][3]
-                                        self.current[self.position[3]] = self.locations[self.position[3]][2]
-                                        self.position[2] = self.position[3]
-                                        self.position[3] = 3
-                                    }
-                                    else {
-                                        self.current[3] = self.locations[3][2]
-                                    }
-                                }
-                                else if self.position[3] == 3 {
-                                    if x > -170 && x < -90 && y < -130 && y > -200 {
-                                        self.current[3] = self.locations[3][0]
-                                        self.current[self.position[0]] = self.locations[self.position[0]][3]
-                                        self.position[3] = self.position[0]
-                                        self.position[0] = 3
-                                    }
-                                    else if x > -50 && x < 50 && y < -130 && y > -200 {
-                                        self.current[3] = self.locations[3][1]
-                                        self.current[self.position[1]] = self.locations[self.position[1]][3]
-                                        self.position[3] = self.position[1]
-                                        self.position[1] = 3
-                                    }
-                                    else if x > -170 && x < -90 && y > -50 && y < 50 {
-                                        self.current[3] = self.locations[3][2]
-                                        self.current[self.position[2]] = self.locations[self.position[2]][3]
-                                        self.position[3] = self.position[2]
-                                        self.position[2] = 3
-                                    }
-                                    else {
-                                        self.current[3] = self.locations[3][3]
-                                    }
-                                }
-                            }))
+                            
                         }
                     }.frame(width: screenwidth/1.4, height: screenheight/2.25)
                         .background(Color(.gray).opacity(0.15))
@@ -1104,14 +762,13 @@ struct SignUpView: View {
                 VStack {
                     
                     Text("Select Topics To Build Your Bio")
-                        .font(Font.custom("Gilroy-Light", size: 20))
+                        .font(Font.custom("ProximaNova-Regular", size: 20))
                         .fontWeight(.semibold)
                         .padding(.horizontal, 20)
-                        .multilineTextAlignment(.center)
                         .foregroundColor(Color("purp").opacity(0.8))
                     
                     Text("(Press on the topics to bring up more info. Press the checkmark to select the topics you like and then press the pencil to edit them.)")
-                        .font(Font.custom("Gilroy-Light", size: 14))
+                        .font(Font.custom("ProximaNova-Regular", size: 14))
                         .fontWeight(.semibold)
                         .multilineTextAlignment(.center)
                         .foregroundColor(Color("purp").opacity(0.6))
@@ -1119,12 +776,11 @@ struct SignUpView: View {
                         .padding(.bottom, 25)
                     
                     ScrollView(.vertical, showsIndicators: false) {
-                        
                         ForEach(biocards, id: \.self) { title in
-                            BioCards(selected: self.$selectedprompts, showinfo: self.$selectedinfo, text: self.$text, index: (title.prefix(2) as NSString).integerValue, title: String(title.suffix(title.count-2))).animation(.spring())
+                            BioCards(selected: self.$selectedprompts, showinfo: self.$selectedinfo, text: self.$text, index: (title.prefix(2) as NSString).integerValue, title: String(title.suffix(title.count-2)))
                         }
-                        
                     }.padding(.vertical, 15)
+                        .frame(width: self.screenwidth)
                         .frame(width: screenwidth - 60, height: screenheight/1.75)
                         .background(Color(.gray).opacity(0.15))
                         .cornerRadius(20)
@@ -1133,31 +789,33 @@ struct SignUpView: View {
                 //MARK: Your Profile 10
                 VStack(spacing: 0) {
                     Spacer()
-                    ZStack {
-                        VStack {
-                            Text("Your Profile")
-                                .font(Font.custom("Gilroy-Light", size: 20))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color("purp").opacity(0.8))
-                            
-                            Profile(images: self.$profilepics, bio: self.$text, name: self.$name, age: self.$age).frame(width: self.screenwidth - 20, height: self.screenheight/1.15)
-                        }
-                        VStack {
-                            Spacer()
-                            Button(action: {
-                                AddImages()
-                                UserDefaults.standard.set(false, forKey: "signup")
-                                UserDefaults.standard.set(true, forKey: "status")
-                                NotificationCenter.default.post(name: NSNotification.Name("StatusChange"), object: nil)
-                            }) {
-                                Text("Next")
-                                    .font(Font.custom("Gilroy-Light", size: 16))
+                    if showprofile {
+                        ZStack {
+                            VStack {
+                                Text("Your Profile")
+                                    .font(Font.custom("ProximaNova-Regular", size: 20))
                                     .fontWeight(.semibold)
-                                    .foregroundColor(.white)
-                                    .frame(width: 100, height: 40)
-                                    .background(Color("purp"))
-                                    .cornerRadius(20)
-                            }.padding(.bottom, 25)
+                                    .foregroundColor(Color("purp").opacity(0.8))
+                                
+                                Profile(images: self.$profilepics, bio: self.$text, name: self.$name, age: self.$age).frame(width: self.screenwidth - 20, height: self.screenheight/1.15)
+                            }
+                            VStack {
+                                Spacer()
+                                Button(action: {
+                                    AddImages()
+                                    UserDefaults.standard.set(false, forKey: "signup")
+                                    UserDefaults.standard.set(true, forKey: "status")
+                                    NotificationCenter.default.post(name: NSNotification.Name("StatusChange"), object: nil)
+                                }) {
+                                    Text("Next")
+                                        .font(Font.custom("ProximaNova-Regular", size: 16))
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.white)
+                                        .frame(width: 100, height: 40)
+                                        .background(Color("purp"))
+                                        .cornerRadius(20)
+                                }.padding(.bottom, 25)
+                            }
                         }
                     }
                 }.frame(width: screenwidth, height: screenheight)
@@ -1266,9 +924,9 @@ struct SignUpView: View {
                         else {
                         }
                     }
-                    else if self.count == 6 || self.count == 7 {
+                    /*else if self.count == 6 || self.count == 7 {
                         self.confirm.toggle()
-                    }
+                    }*/
                     else if self.count == 8 {
                         var all = true
                         for check in self.showimage {
@@ -1303,6 +961,7 @@ struct SignUpView: View {
                         CreateUser(name: self.name.uppercased(), age: self.age, gender: self.gender, percentage: Double(self.percentage/10).truncate(places: 2), overallrating: selfratingg, appearancerating: Double(self.selfratingappearance).truncate(places: 1), personalityrating: Double(self.selfratingpersonality).truncate(places: 1), profilepics: self.profilepics, photopostion: self.position, bio: self.text) { (complete) in
                             
                             if complete {
+                                self.showprofile = true
                                 self.loading.toggle()
                                 self.next -= self.screenwidth
                                 self.count += 1
@@ -1314,6 +973,7 @@ struct SignUpView: View {
                         self.next -= self.screenwidth
                         self.count += 1
                     }
+                    print(self.next)
                 }) {
                     if self.count <= 2 {
                         if self.loading {
@@ -1553,48 +1213,21 @@ struct HomeView: View {
                                     .shadow(radius: 40)
                                     .scaleEffect(self.next ? 0 : 1)
                             }
-                            VStack {
-                                HStack {
-                                    Button(action: {
-                                        self.rating.toggle()
-                                    }) {
-                                        Image(systemName: "chevron.left.circle")
-                                            .resizable()
-                                            .frame(width: 40, height: 40)
-                                            .foregroundColor(Color("personality"))
-                                    }
-                                    Spacer()
-                                }.padding(.leading, 15)
-                                    .padding(.top, 35)
-                                Spacer()
+                            ZStack {
                                 Button(action: {
-                                    self.showcomment.toggle()
+                                    self.showcomment = false
                                 }) {
-                                    Text("Next")
-                                        .font(Font.custom("Gilroy-Light", size: 16))
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.white)
-                                        .frame(width: 100, height: 40)
-                                        .background(Color("personality"))
-                                        .cornerRadius(20)
-                                }.padding(.bottom, 20)
-                            }
-                            if self.showcomment {
+                                    Color(.white)
+                                        .opacity(0.5)
+                                        .frame(width: self.screenwidth, height: self.screenheight)
+                                }
                                 ZStack {
-                                    Button(action: {
-                                        self.showcomment = false
-                                    }) {
-                                        Color(.white)
-                                            .opacity(0.2)
-                                            .frame(width: self.screenwidth, height: self.screenheight)
-                                    }
-                                    
                                     RoundedRectangle(cornerRadius: 20)
-                                        .frame(width: self.screenwidth/1.5 + 30, height: self.screenheight/4.25 + 30)
+                                        .frame(width: self.screenwidth/1.5 + 15, height: self.screenheight/3.5 + 15)
                                         .foregroundColor(Color("personality"))
                                     
                                     RoundedRectangle(cornerRadius: 10)
-                                        .frame(width: self.screenwidth/1.5, height: self.screenheight/4.25)
+                                        .frame(width: self.screenwidth/1.5, height: self.screenheight/3.5)
                                         .foregroundColor(Color("lightgray"))
                                     
                                     VStack(spacing: 5) {
@@ -1612,14 +1245,27 @@ struct HomeView: View {
                                         ResizingTextFieldRed(text: self.$comment)
                                             .frame(width: self.screenwidth/1.5 - 20)
                                             .cornerRadius(5)
+                                        HStack(spacing: 0) {
+                                            Spacer()
+                                            Text(String(self.comment.count))
+                                                .font(Font.custom("ProximaNova-Regular", size: 14))
+                                                .fontWeight(.semibold)
+                                                .foregroundColor((self.comment.count <= 100) ? Color(.white) : Color("personality"))
+                                                .animation(nil)
+                                            Text("/100 Characters")
+                                                .font(Font.custom("ProximaNova-Regular", size: 14))
+                                                .fontWeight(.semibold)
+                                                .foregroundColor((self.comment.count <= 100) ? Color(.white) : Color("personality"))
+                                        }.padding(.trailing, 10)
                                         HStack(spacing: 5) {
                                             Button(action: {
-                                                self.next = false
                                                 self.showcomment = false
+                                                self.next.toggle()
                                                 self.observer.keys += 1
-                                                UpdateRating(user: self.observer.users[self.usercount], appearance: Double(self.appearance), personality: Double(self.personality), keys: self.observer.keys)
+                                                self.comment = "N/A"
+                                                UpdateRating(user: self.observer.users[self.usercount], appearance: Double(self.appearance), personality: Double(self.personality), keys: self.observer.keys, comment: self.comment)
                                                 self.showrating = false
-                                                let seconds = 0.5
+                                                let seconds = 0.7
                                                 DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
                                                     self.appearance = 5
                                                     self.personality = 5
@@ -1631,6 +1277,7 @@ struct HomeView: View {
                                                         self.norating = true
                                                     }
                                                 }
+                                                self.comment = "TEMP"
                                             }) {
                                                 Text("No Comment")
                                                     .font(Font.custom("ProximaNova-Regular", size: 14))
@@ -1639,7 +1286,24 @@ struct HomeView: View {
                                             }.frame(width: self.screenwidth/3.25 - 5, height: 40).background(Color("personality").cornerRadius(5))
                                             
                                             Button(action: {
-                                                
+                                                self.showcomment = false
+                                                self.next.toggle()
+                                                self.observer.keys += 1
+                                                UpdateRating(user: self.observer.users[self.usercount], appearance: Double(self.appearance), personality: Double(self.personality), keys: self.observer.keys, comment: self.comment)
+                                                self.showrating = false
+                                                let seconds = 0.7
+                                                DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+                                                    self.appearance = 5
+                                                    self.personality = 5
+                                                    if self.observer.users.count != self.usercount+1 {
+                                                        self.usercount += 1
+                                                        self.next.toggle()
+                                                    }
+                                                    else {
+                                                        self.norating = true
+                                                    }
+                                                }
+                                                self.comment = "TEMP"
                                             }) {
                                                 Text("Send")
                                                     .font(Font.custom("ProximaNova-Regular", size: 14))
@@ -1647,9 +1311,36 @@ struct HomeView: View {
                                                     .foregroundColor(Color(.white))
                                             }.frame(width: self.screenwidth/3.25 - 5, height: 40).background(Color("personality").cornerRadius(5))
                                         }.padding(.bottom, 5)
-                                    }.frame(width: self.screenwidth/1.5, height: self.screenheight/4.25)
+                                    }.frame(width: self.screenwidth/1.5, height: self.screenheight/3.5)
                                 }
+                            }.opacity(self.showcomment ? 1 : 0).animation(.easeInOut(duration: 0.2))
+                            VStack {
+                                HStack {
+                                    Button(action: {
+                                        self.rating.toggle()
+                                    }) {
+                                        Image(systemName: "chevron.left.circle")
+                                            .resizable()
+                                            .frame(width: 40, height: 40)
+                                            .foregroundColor(Color("personality"))
+                                    }
+                                    Spacer()
+                                }.padding(.leading, 15)
+                                    .padding(.top, self.screenheight*0.043)
+                                Spacer()
+                                Button(action: {
+                                    self.showcomment.toggle()
+                                }) {
+                                    Text("Next")
+                                        .font(Font.custom("Gilroy-Light", size: 16))
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.white)
+                                        .frame(width: 100, height: 40)
+                                        .background(Color("personality"))
+                                        .cornerRadius(20)
+                                }.padding(.bottom, self.screenheight*0.025)
                             }
+                            
                         }
                     }
                 }
@@ -1748,27 +1439,9 @@ struct HomeView: View {
                                             .frame(width: screenwidth/1.25, height: screenheight*0.234)
                                             .cornerRadius(15)
                                             .shadow(radius: 30)
-                                        /*Text("No Ratings Yet")
-                                            .font(Font.custom("Gilroy-Light", size: 24))
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(Color("purp"))*/
                                         Loader()
-                                        
-                                        VStack(alignment: .trailing) {
-                                            HStack {
-                                                Spacer()
-                                                Button(action: {
-                                                    self.observer.refreshRates()
-                                                }) {
-                                                    Image(systemName: "arrow.clockwise")
-                                                    .resizable()
-                                                    .frame(width: 25, height: 30)
-                                                    .foregroundColor(Color("purp"))
-                                                }.padding(.trailing, 10).padding(.top, 10)
-                                            }
-                                            Spacer()
-                                        }.frame(width: screenwidth/1.25, height: screenheight*0.234)
                                     }
+                                    
                                 }
                                 else {
                                     ZStack {
@@ -1984,6 +1657,8 @@ struct ShowProfile: View {
     @EnvironmentObject var observer: observer
     @Binding var index: Int
     @State var count: Int = 0
+    @State var y: CGFloat = 0
+    @State var social: Bool = false
     let screenwidth = UIScreen.main.bounds.width
     let screenheight = UIScreen.main.bounds.height
     var body: some View {
@@ -2019,23 +1694,42 @@ struct ShowProfile: View {
                 
                 VStack() {
                     Spacer()
-                    HStack {
+                    ZStack {
                         HStack {
-                            Text(self.observer.ratesinfo[self.index].Name.uppercased())
-                                .font(Font.custom("ProximaNova-Regular", size: 18))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color("personality"))
-                                .padding(.leading, 5)
-                            Text(self.observer.ratesinfo[self.index].Age)
-                                .font(Font.custom("ProximaNova-Regular", size: 18))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color("personality").opacity(0.5))
-                                .padding(.trailing, 5)
-                        }.frame(height: 35).background(Color(.white).opacity(0.75).cornerRadius(10)).padding(.leading, 10)
-                        Spacer()
-                        ImageIndicator(count: self.$count)
-                            .scaleEffect(0.9)
-                            .padding([.bottom, .trailing], 20)
+                            Button(action: {
+                                
+                            }) {
+                                Color(.white)
+                                    .frame(width: 100, height: 30)
+                                    .opacity(self.social ? 1 : 0)
+                                    .cornerRadius(10)
+                                    .padding(.leading, 15)
+                            }.offset(y: self.y)
+                            Spacer()
+                        }
+                        HStack {
+                            Button(action: {
+                                self.y -= 40
+                                self.social = true
+                            }) {
+                                HStack {
+                                    Text(self.observer.ratesinfo[self.index].Name.uppercased())
+                                        .font(Font.custom("ProximaNova-Regular", size: 18))
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(Color("personality"))
+                                        .padding(.leading, 5)
+                                    Text(self.observer.ratesinfo[self.index].Age)
+                                        .font(Font.custom("ProximaNova-Regular", size: 18))
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(Color("personality").opacity(0.5))
+                                        .padding(.trailing, 5)
+                                }.frame(height: 35).background(Color(.white).opacity(0.75).cornerRadius(10)).padding(.leading, 10)
+                            }
+                            Spacer()
+                            ImageIndicator(count: self.$count)
+                                .scaleEffect(0.9)
+                                .padding([.bottom, .trailing], 20)
+                        }
                     }
                 }.frame(width: self.screenheight/3, height: self.screenheight/3 * 1.33)
             }
@@ -2044,7 +1738,7 @@ struct ShowProfile: View {
                     .frame(width: self.screenheight/3)
                     .foregroundColor(Color(.white).opacity(0.5))
                     .cornerRadius(15)
-                ScrollView(.vertical, showsIndicators: false) {
+                ScrollView(.vertical, showsIndicators: true) {
                     ForEach(self.observer.ratesinfo[index].Bio, id: \.self) { str in
                         VStack {
                             BioCardsFP(index: (String(str.prefix(2)) as NSString).integerValue, text: String(str)[2..<str.count], size1: 16, size2: 12).animation(nil)
@@ -2052,34 +1746,6 @@ struct ShowProfile: View {
                     }
                 }.cornerRadius(15).padding([.horizontal, .vertical], 5)
             }.padding(.bottom, 10).padding(.horizontal, 20)
-        }
-    }
-}
-
-
-//MARK: ShowProfileBio
-struct ShowProfileBio: View {
-    @EnvironmentObject var observer: observer
-    @Binding var index: Int
-    @Binding var count: Int
-    @State var text = ""
-    @State var categories = ["General", "Education", "Occupation", "Music", "Sports", "Movies", "TV-Shows", "Hobbies", "Motto", "Future"]
-    let screenwidth = UIScreen.main.bounds.width
-    let screenheight = UIScreen.main.bounds.height
-    var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 20)
-                .foregroundColor(Color("personality"))
-                .frame(width: self.screenheight/3)
-            HStack {
-                Image(self.categories[self.index])
-                    .resizable()
-                    .frame(width: 20, height: 20)
-                Text(self.categories[self.index])
-                    .font(Font.custom("ProximaNova-Regular", size: 16))
-                    .fontWeight(.semibold)
-                    .foregroundColor(Color(.white))
-            }
         }
     }
 }
@@ -2095,6 +1761,7 @@ struct RatingMeter: View {
                 .resizable()
                 .frame(width: 29, height: 60)
                 .rotationEffect(Angle(degrees: Double(observer.rating.overall*18)-90), anchor: UnitPoint(x: 0.5, y: 0.78))
+                .animation(.spring())
         }.frame(width: 140, height: 82)
     }
 }
@@ -2468,8 +2135,9 @@ struct RatingProfile: View {
     @Binding var personality: Float
     @Binding var showrating: Bool
     @State var count: Int = 0
-    @State var screenwidth = UIScreen.main.bounds.width
-    @State var screenheight = UIScreen.main.bounds.height
+    @State var y: CGFloat = 45
+    let screenwidth = UIScreen.main.bounds.width
+    let screenheight = UIScreen.main.bounds.height
     
     var body: some View {
         ZStack {
@@ -2516,20 +2184,67 @@ struct RatingProfile: View {
                     VStack {
                         Spacer()
                         HStack {
-                            HStack {
-                                Text(self.observer.users[self.index].Name.uppercased())
-                                    .font(Font.custom("ProximaNova-Regular", size: 24))
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(Color("personality"))
-                                    .padding(.leading, 10)
-                                    .animation(nil)
-                                Text(self.observer.users[self.index].Age)
-                                    .font(Font.custom("ProximaNova-Regular", size: 24))
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(Color("personality").opacity(0.5))
-                                    .padding(.trailing, 10)
-                                    .animation(nil)
-                            }.background(Color(.white).opacity(0.75).frame(height: 40).cornerRadius(7.5).shadow(radius: 20)).padding([.leading, .bottom], 10)
+                            HStack(spacing: 5) {
+                                if self.observer.users[self.index].Socials[0] != "N/A" {
+                                    Button(action: {
+                                        let link = "https://instagram.com/" + self.observer.users[self.index].Socials[0]
+                                        UIApplication.shared.open(URL(string: link)!)
+                                    }) {
+                                        Image("instagram")
+                                            .resizable()
+                                            .frame(width: 30, height: 30)
+                                    }.buttonStyle(PlainButtonStyle()).padding(.leading, 10).padding(.vertical, 5)
+                                }
+                                if self.observer.users[self.index].Socials[1] != "N/A" {
+                                    Button(action: {
+                                        let link = "https://snapchat.com/add/" + self.observer.users[self.index].Socials[1]
+                                        UIApplication.shared.open(URL(string: link)!)
+                                    }) {
+                                        Image("snapchat")
+                                            .resizable()
+                                            .frame(width: 30, height: 30)
+                                    }.buttonStyle(PlainButtonStyle())
+                                }
+                                if self.observer.users[self.index].Socials[2] != "N/A" {
+                                    Button(action: {
+                                        let link = "https://twitter.com/" + self.observer.users[self.index].Socials[2]
+                                        UIApplication.shared.open(URL(string: link)!)
+                                    }) {
+                                        Image("twitter")
+                                            .resizable()
+                                            .frame(width: 30, height: 30)
+                                    }.buttonStyle(PlainButtonStyle()).padding(.trailing, 10)
+                                }
+                            }.background(Color(.white).opacity(0.75).cornerRadius(7.5))
+                            .offset(y: self.y)
+                            .scaleEffect((self.y == 45) ? 0 : 1)
+                            .padding(.leading, 10)
+                            Spacer()
+                        }
+                        HStack {
+                            Button(action: {
+                                if self.y == 45 {
+                                    self.y = 0
+                                }
+                                else {
+                                    self.y = 45
+                                }
+                            }) {
+                                HStack {
+                                    Text(self.observer.users[self.index].Name.uppercased())
+                                        .font(Font.custom("ProximaNova-Regular", size: 24))
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(Color("personality"))
+                                        .padding(.leading, 10)
+                                        .animation(nil)
+                                    Text(self.observer.users[self.index].Age)
+                                        .font(Font.custom("ProximaNova-Regular", size: 24))
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(Color("personality").opacity(0.5))
+                                        .padding(.trailing, 10)
+                                        .animation(nil)
+                                }.background(Color(.white).opacity(0.75).frame(height: 40).cornerRadius(7.5).shadow(radius: 20)).padding([.leading, .bottom], 10)
+                            }
                             Spacer()
                         }
                     }
@@ -2542,17 +2257,38 @@ struct RatingProfile: View {
                                     self.showrating.toggle()
                                 }) {
                                     if self.showrating {
-                                        
+                                        VStack {
+                                            Spacer()
+                                            HStack {
+                                                Spacer()
+                                                ZStack {
+                                                    VStack {
+                                                        Spacer()
+                                                        RoundedRectangle(cornerRadius: 25)
+                                                            .foregroundColor(Color("lightgray"))
+                                                            .frame(width: 45, height: 65)
+                                                    }
+                                                    VStack {
+                                                        Spacer()
+                                                        Image(systemName: "chevron.down")
+                                                            .resizable()
+                                                            .frame(width: 20, height: 10)
+                                                            .foregroundColor(Color("personality"))
+                                                            .padding(.bottom, 10)
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
                                     else {
                                         ZStack {
                                             Circle()
-                                                .foregroundColor(Color(.white).opacity(0.7))
-                                                .frame(width: 40, height: 40)
+                                                .foregroundColor(Color(.white).opacity(0.9))
+                                                .frame(width: 45, height: 45)
                                             
                                             Image("rating(temp)")
                                                 .resizable()
-                                                .frame(width: 20, height: 20)
+                                                .frame(width: 30, height: 30)
                                         }
                                     }
                                 }.buttonStyle(PlainButtonStyle())
@@ -2560,42 +2296,30 @@ struct RatingProfile: View {
                                     ZStack {
                                         VStack {
                                             Spacer()
-                                            Rectangle()
-                                            .foregroundColor(Color("lightgray"))
-                                            .frame(width: 40, height: 60)
-                                            .cornerRadius(20)
-                                        }.frame(width: 80, height: 180)
-                                        VStack {
-                                            Rectangle()
-                                                .foregroundColor(Color("lightgray"))
-                                                .frame(width: 120, height: 180)
-                                                .cornerRadius(15)
-                                            Spacer()
-                                        }.frame(width: 80, height: 180)
-                                        VStack {
-                                            Spacer()
-                                            Button(action: {
-                                                self.showrating.toggle()
-                                            }) {
-                                                Image(systemName: "chevron.down")
-                                                    .resizable()
-                                                    .frame(width: 20, height: 10)
-                                                    .foregroundColor(Color("personality"))
-                                            }
-                                        }.frame(width: 80, height: 180)
-                                        VStack(spacing: 5) {
                                             HStack {
-                                                ProfileRatingSlider(percentage: self.$appearance, title: "appearance").accentColor(Color("appearance")).padding(.leading, 15)
                                                 Spacer()
-                                                ProfileRatingSlider(percentage: self.$personality, title: "personality").accentColor(Color("personality")).padding(.trailing, 15)
+                                                Rectangle()
+                                                    .foregroundColor(Color("lightgray"))
+                                                    .frame(width: 120, height: 180)
+                                                    .cornerRadius(15)
                                             }
+                                        }
+                                        VStack(spacing: 5) {
                                             Spacer()
-                                        }.frame(width: 120, height: 160)
-                                    }
+                                            HStack {
+                                                Spacer()
+                                                HStack {
+                                                    ProfileRatingSlider(percentage: self.$appearance, title: "appearance").accentColor(Color("appearance")).padding(.leading, 15)
+                                                    Spacer()
+                                                    ProfileRatingSlider(percentage: self.$personality, title: "personality").accentColor(Color("personality")).padding(.trailing, 15)
+                                                }.frame(width: 120, height: 150)
+                                            }
+                                        }.offset(y: -12.5)
+                                    }.offset(y: -25)
                                 }
-                            }//.frame(width: 80, height: 80)
-                        }.padding([.bottom, .trailing], 10)
-                    }
+                            }
+                        }.padding(.trailing, 10)
+                    }.animation(.easeInOut(duration: 0.2))
                 }
                 ZStack {
                     ZStack {
@@ -2603,7 +2327,7 @@ struct RatingProfile: View {
                             .opacity(0.95)
                             .frame(width: screenwidth - 20, height: screenheight/3.25)
                             .cornerRadius(20)
-                        ScrollView(.vertical, showsIndicators: false) {
+                        ScrollView(.vertical, showsIndicators: true) {
                             
                             ForEach(self.observer.users[index].Bio, id: \.self) { str in
                                 VStack {
@@ -2836,9 +2560,10 @@ struct BioCards: View {
                                 .resizable()
                                 .frame(width: 20, height: 20)
                             Text(title + ": ")
-                                .font(Font.custom("Gilroy-Light", size: 16))
+                                .font(Font.custom("ProximaNova-Regular", size: 16))
                                 .fontWeight(.semibold)
                                 .foregroundColor(Color("purp").opacity(0.8))
+                                .fixedSize(horizontal: false, vertical: true)
                             Spacer()
                             Button(action: {
                                 self.showinfo[self.index] = false;
@@ -2850,11 +2575,12 @@ struct BioCards: View {
                             }
                         }.padding(.horizontal, 10).padding(.top, 10)
                         Text(moreinfo[index])
-                            .font(Font.custom("Gilroy-Light", size: 14))
+                            .font(Font.custom("PromximaNova-Regular", size: 14))
                             .fontWeight(.semibold)
                             .foregroundColor(Color("purp").opacity(0.8))
                             .padding(.horizontal, 10)
                             .padding(.bottom, 10)
+                            .fixedSize(horizontal: false, vertical: true)
                             .animation(nil)
                     }
                 }.frame(width: self.screenwidth - 85)
@@ -2873,7 +2599,7 @@ struct BioCards: View {
                                 .resizable()
                                 .frame(width: 20, height: 20)
                             Text(title + ": ")
-                                .font(Font.custom("Gilroy-Light", size: 16))
+                                .font(Font.custom("ProximaNova-Regular", size: 16))
                                 .fontWeight(.semibold)
                                 .foregroundColor(Color("purp").opacity(0.8))
                             Spacer()
@@ -2896,14 +2622,14 @@ struct BioCards: View {
                         HStack(spacing: 0) {
                             Spacer()
                             Text("Characters: ")
-                                .font(Font.custom("Gilroy-Light", size: 14))
+                                .font(Font.custom("ProximaNova-Regular", size: 14))
                                 .fontWeight(.semibold)
                                 .foregroundColor(Color("purp").opacity(0.8))
                                 .padding(.bottom, 10)
                                 .animation(nil)
                             if self.text[index].count > 200 {
                                 Text(String(self.text[index].count))
-                                    .font(Font.custom("Gilroy-Light", size: 14))
+                                    .font(Font.custom("ProximaNova-Regular", size: 14))
                                     .fontWeight(.semibold)
                                     .frame(width: 25, alignment: .trailing)
                                     .foregroundColor(Color("personality").opacity(0.8))
@@ -2912,7 +2638,7 @@ struct BioCards: View {
                             }
                             else {
                                 Text(String(self.text[index].count))
-                                    .font(Font.custom("Gilroy-Light", size: 14))
+                                    .font(Font.custom("ProximaNova-Regular", size: 14))
                                     .fontWeight(.semibold)
                                     .frame(width: 25, alignment: .trailing)
                                     .foregroundColor(Color("purp").opacity(0.8))
@@ -2920,7 +2646,7 @@ struct BioCards: View {
                                     .animation(nil)
                             }
                             Text("/200")
-                                .font(Font.custom("Gilroy-Light", size: 14))
+                                .font(Font.custom("ProximaNova-Regular", size: 14))
                                 .fontWeight(.semibold)
                                 .foregroundColor(Color("purp").opacity(0.8))
                                 .padding(.trailing, 10)
@@ -2946,7 +2672,7 @@ struct BioCards: View {
                     }) {
                         HStack {
                             Text(title + ":")
-                                .font(Font.custom("Gilroy-Light", size: 24))
+                                .font(Font.custom("ProximaNova-Regular", size: 24))
                                 .fontWeight(.semibold)
                                 .foregroundColor(Color("purp").opacity(0.8))
                         }
@@ -2965,7 +2691,7 @@ struct BioCards: View {
                     .background(Color(.white))
                     .cornerRadius(10)
             }
-        }
+        }.frame(width: self.screenwidth)
     }
 }
 
@@ -3182,6 +2908,9 @@ class observer: ObservableObject {
     init() {
         self.users = [UserData]()
         let db = Firestore.firestore()
+        if (UserDefaults.standard.value(forKey: "ID") as? String ?? "NA") == "NA" {
+            return
+        }
         db.collection("users").getDocuments() { (querySnapshot, err) in
             if err != nil {
                 print((err?.localizedDescription)!)
@@ -3189,15 +2918,17 @@ class observer: ObservableObject {
             }
             else {
                 for document in querySnapshot!.documents {
-                    if (UserDefaults.standard.value(forKey: "ID") as! String) == (document.get("ID") as! String) {
+                    if (UserDefaults.standard.value(forKey: "ID") as? String ?? "NA") == (document.get("ID") as! String) {
                         self.lock = document.get("Lock") as! [Bool]
                         self.userrates = document.get("Rates") as! [String]
                         self.keys = document.get("Keys") as! Int
                         self.comments = document.get("Comments") as! [String]
                         self.rating = ratingtype(overall: CGFloat(document.get("OverallRating") as! Double), appearance: CGFloat(document.get("AppearanceRating") as! Double), personality: CGFloat(document.get("PersonalityRating") as! Double))
                         self.numrates = self.userrates.count-1
-                        for _ in 0...self.numrates {
-                            self.showratings.append(false)
+                        if self.numrates > -1 {
+                            for _ in 0...self.numrates {
+                                self.showratings.append(false)
+                            }
                         }
                     }
                     else if self.users.count < 50 {
@@ -3220,7 +2951,8 @@ class observer: ObservableObject {
                             let appearancerating = document.get("AppearanceRating") as! Double
                             let personalityrating = document.get("PersonalityRating") as! Double
                             let selfrating = document.get("SelfRating") as! Double
-                            self.users.append(UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating))
+                            let socials = document.get("Socials") as! [String]
+                            self.users.append(UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials))
                         }
                     }
                 }
@@ -3240,7 +2972,8 @@ class observer: ObservableObject {
                             let appearancerating = document.get("AppearanceRating") as! Double
                             let personalityrating = document.get("PersonalityRating") as! Double
                             let selfrating = document.get("SelfRating") as! Double
-                            self.ratesinfo.append(UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating))
+                            let socials = document.get("Socials") as! [String]
+                            self.ratesinfo.append(UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials))
                         }
                     }
                 }
@@ -3250,6 +2983,7 @@ class observer: ObservableObject {
     func relogin() {
         self.users = [UserData]()
         let db = Firestore.firestore()
+        let uid = Auth.auth().currentUser?.uid
         db.collection("users").getDocuments() { (querySnapshot, err) in
             if err != nil {
                 print((err?.localizedDescription)!)
@@ -3257,13 +2991,17 @@ class observer: ObservableObject {
             }
             else {
                 for document in querySnapshot!.documents {
-                    if UserDefaults.standard.value(forKey: "ID") as! String == document.get("ID") as! String {
+                    if uid! == document.get("ID") as! String {
                         self.lock = document.get("Lock") as! [Bool]
                         self.userrates = document.get("Rates") as! [String]
+                        self.keys = document.get("Keys") as! Int
+                        self.comments = document.get("Comments") as! [String]
                         self.rating = ratingtype(overall: CGFloat(document.get("OverallRating") as! Double), appearance: CGFloat(document.get("AppearanceRating") as! Double), personality: CGFloat(document.get("PersonalityRating") as! Double))
                         self.numrates = self.userrates.count-1
-                        for _ in 0...self.numrates {
-                            self.showratings.append(false)
+                        if self.numrates > -1 {
+                            for _ in 0...self.numrates {
+                                self.showratings.append(false)
+                            }
                         }
                     }
                     else if self.users.count < 50 {
@@ -3286,11 +3024,32 @@ class observer: ObservableObject {
                             let appearancerating = document.get("AppearanceRating") as! Double
                             let personalityrating = document.get("PersonalityRating") as! Double
                             let selfrating = document.get("SelfRating") as! Double
-                            self.users.append(UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating))
+                            let socials = document.get("Socials") as! [String]
+                            self.users.append(UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials))
                         }
                     }
                 }
                 self.users.shuffle()
+                for users in self.userrates {
+                    for document in querySnapshot!.documents {
+                        if document.get("ID") as! String == users.substring(fromIndex: 9) {
+                            let age = document.get("Age") as! String
+                            let bio = document.get("Bio") as! [String]
+                            let gender = document.get("Gender") as! String
+                            let id = document.get("ID") as! String
+                            let name = document.get("Name") as! String
+                            let percentage = document.get("Percentage") as! Double
+                            let profilepics = document.get("ProfilePics") as! [String]
+                            let rates = document.get("Rates") as! [String]
+                            let overallrating = document.get("OverallRating") as! Double
+                            let appearancerating = document.get("AppearanceRating") as! Double
+                            let personalityrating = document.get("PersonalityRating") as! Double
+                            let selfrating = document.get("SelfRating") as! Double
+                            let socials = document.get("Socials") as! [String]
+                            self.ratesinfo.append(UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials))
+                        }
+                    }
+                }
             }
         }
     }
@@ -3344,7 +3103,8 @@ class observer: ObservableObject {
                             let appearancerating = document.get("AppearanceRating") as! Double
                             let personalityrating = document.get("PersonalityRating") as! Double
                             let selfrating = document.get("SelfRating") as! Double
-                            self.users.append(UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating))
+                            let socials = document.get("Socials") as! [String]
+                            self.users.append(UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials))
                         }
                     }
                 }
@@ -3361,7 +3121,7 @@ func CreateUser(name: String, age: String, gender: String, percentage: Double, o
     let uid = Auth.auth().currentUser?.uid
     var images = [String]()
     
-    db.collection("users").document(uid!).setData(["Name": name, "Age": age, "Gender": gender, "Percentage": percentage, "SelfRating": overallrating, "ProfilePics": [String](), "Bio": [String](), "Rates": [String](), "OverallRating": overallrating, "AppearanceRating": appearancerating, "PersonalityRating": personalityrating, "ID": uid!, "Lock": [Bool](), "Keys": 0]) { (err) in
+    db.collection("users").document(uid!).setData(["Name": name, "Age": age, "Gender": gender, "Percentage": percentage, "SelfRating": overallrating, "ProfilePics": [String](), "Bio": [String](), "Rates": [String](), "OverallRating": overallrating, "AppearanceRating": appearancerating, "PersonalityRating": personalityrating, "ID": uid!, "Lock": [Bool](), "Keys": 0, "Comments": [String]()]) { (err) in
         if err != nil{
             print((err?.localizedDescription)!)
             complete(false)
@@ -3455,15 +3215,15 @@ func CheckUser(complete: @escaping (Bool)->Void) {
 
 
 //MARK: UpdateRating
-func UpdateRating(user: UserData, appearance: Double, personality: Double, keys: Int) {
+func UpdateRating(user: UserData, appearance: Double, personality: Double, keys: Int, comment: String) {
     let overall = Double(Double(personality)*Double(user.Percentage).truncate(places: 2) + Double(appearance)*Double(1-user.Percentage).truncate(places: 2)).truncate(places: 1)
     let newoverall = Double(user.OverallRating*Double(user.Rates.count+1) + overall)/Double(user.Rates.count+2).truncate(places: 1)
     let newappearance = Double(user.AppearanceRating*Double(user.Rates.count+1) + appearance)/Double(user.Rates.count+2).truncate(places: 1)
     let newpersonality = Double(user.PersonalityRating*Double(user.Rates.count+1) + personality)/Double(user.Rates.count+2).truncate(places: 1)
     let db = Firestore.firestore()
     let uid = Auth.auth().currentUser?.uid
-    db.collection("users").document(user.id).updateData(["OverallRating": newoverall.truncate(places: 1), "AppearanceRating": newappearance.truncate(places: 1), "PersonalityRating": newpersonality.truncate(places: 1), "Rates": FieldValue.arrayUnion([String(appearance.truncate(places: 1)) + String(personality.truncate(places: 1)) + String(overall) + uid!])])
-    db.collection("users").document(uid!).updateData(["Keys": keys])
+    db.collection("users").document(user.id).updateData(["OverallRating": newoverall.truncate(places: 1), "AppearanceRating": newappearance.truncate(places: 1), "PersonalityRating": newpersonality.truncate(places: 1), "Rates": FieldValue.arrayUnion([String(appearance.truncate(places: 1)) + String(personality.truncate(places: 1)) + String(overall) + uid!]), "Comments": FieldValue.arrayUnion([comment])])
+    db.collection("users").document(uid!).updateData(["Key": keys])
     print(user.Percentage, newappearance, newpersonality, newoverall)
 }
 
@@ -3807,4 +3567,5 @@ struct UserData: Identifiable {
     var AppearanceRating: Double
     var PersonalityRating: Double
     var SelfRating: Double
+    var Socials: [String]
 }
