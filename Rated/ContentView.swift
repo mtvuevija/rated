@@ -1083,7 +1083,6 @@ struct HomeView: View {
     @State var show: Bool = false
     @State var index: Int = 0
     @State var rating: Bool = false
-    @State var usercount: Int = 0
     @State var next: Bool = false
     @State var showrating: Bool = false
     @State var norating: Bool = false
@@ -1094,6 +1093,10 @@ struct HomeView: View {
     @State var homecomment: Bool = false
     @State var showprofile: Bool = false
     @State var showkeys: Bool = false
+    @State var ratingnum: Int = 0
+    
+    @State var ad: Bool = false
+    @State var showad: Bool = false
     var rewardAd: Rewarded
     let screenwidth = UIScreen.main.bounds.width
     let screenheight = UIScreen.main.bounds.height
@@ -1304,10 +1307,11 @@ struct HomeView: View {
                                 }
                             }
                             Spacer()
-                            NavigationLink(destination: RatingView(rating: self.$rating), isActive: $rating) {
+                            //MARK: Rate Button
+                            NavigationLink(destination: RatingView(rating: self.$rating, ad: self.$ad, showad: self.$showad, norating: self.$norating), isActive: $rating) {
                                 Button(action: {
                                     self.rating.toggle()
-                                    print(self.observer.users.count)
+                                    print(self.observer.users.count, self.observer.rated)
                                 }) {
                                     Text("Rate")
                                         .font(Font.custom("Gilroy-Light", size: 24))
@@ -1577,76 +1581,53 @@ struct HomeView: View {
 struct RatingView: View {
     @EnvironmentObject var observer: observer
     @Binding var rating: Bool
-    @State var usercount: Int = 0
+    @Binding var ad: Bool
+    @Binding var showad: Bool
+    @Binding var norating: Bool
     @State var next: Bool = false
     @State var showrating: Bool = false
-    @State var norating: Bool = false
     @State var appearance: Float = 5
     @State var personality: Float = 5
     @State var showcomment: Bool = false
     @State var comment = ""
     @State var unlocksocials: Bool = false
     @State var unlock: Bool = false
-    @State var ad: Bool = true
-    @State var showad: Bool = true
+    @State var newkey: CGFloat = UIScreen.main.bounds.height
+    @State var newkeyx: CGFloat = 0
+    @State var showkey: Bool = false
+    @State var showsocials: Bool = false
     let screenwidth = UIScreen.main.bounds.width
     let screenheight = UIScreen.main.bounds.height
     var body: some View {
         ZStack {
-            if self.observer.users.count == 0 || self.observer.users.count == self.usercount || self.norating {
+            if self.observer.users.count == 0 || self.norating {
                 VStack {
-                    HStack {
-                        Button(action: {
-                            self.rating = false
-                        }) {
-                            Image(systemName: "chevron.left.circle")
-                                .resizable()
-                                .frame(width: 40, height: 40)
-                                .foregroundColor(Color("personality"))
-                        }
-                        Spacer()
-                        HStack {
-                            Text(String(self.observer.keys/3))
-                                .font(Font.custom("ProximaNova-Regular", size: 24))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color("personality"))
-                                .animation(nil)
-                            Image("key")
-                                .resizable()
-                                .frame(width: 35, height: 35)
-                                .foregroundColor(Color("personality"))
-                        }
-                    }.padding(.horizontal, 15)
-                        .padding(.top, self.screenheight*0.043)
-                    
-                    VStack {
-                        WhiteLoader()
-                    }.frame(width: screenwidth - 20, height: screenheight/1.25)
-                    Spacer()
-                }
+                    WhiteLoader()
+                }.frame(width: self.screenwidth, height: self.screenheight).edgesIgnoringSafeArea(.all)
             }
             //MARK: RatingAd
             else if self.ad {
-                ZStack {
+                VStack {
+                    Spacer().frame(height: self.screenheight/8)
                     ZStack {
-                        RoundedRectangle(cornerRadius: 15)
+                        RoundedRectangle(cornerRadius: 25)
                             .frame(width: screenwidth - 20, height: screenheight/1.25)
                             .foregroundColor(Color("personality"))
                         RatingAd()
                             .frame(width: screenwidth - 35, height: screenheight/1.25 - 15)
                             .background(Color("lightgray"))
-                            .cornerRadius(10)
-                    }.scaleEffect(self.showad ? 1 : 0).animation(.easeInOut(duration: 0.2))
-                }.edgesIgnoringSafeArea(.all)
+                            .cornerRadius(20)
+                    }.scaleEffect(self.showad ? 1 : 0).animation(.easeInOut(duration: 0.5))
+                }.frame(width: self.screenwidth, height: self.screenheight)
+                    .edgesIgnoringSafeArea(.all)
             }
             else {
                 ZStack {
                     VStack {
                         //MARK: RatingUI
-                        RatingProfile(index: self.$usercount, show: self.$next, appearance: self.$appearance, personality: self.$personality, showrating: self.$showrating, unlock: self.$unlocksocials)
+                        RatingProfile(show: self.$showsocials, appearance: self.$appearance, personality: self.$personality, showrating: self.$showrating, unlock: self.$unlocksocials)
                             .padding(.all, 7.5)
-                            .background(Color("personality").cornerRadius(20))
-                            .shadow(radius: 40)
+                            .background(Color("personality").cornerRadius(25))
                             .scaleEffect(self.next ? 0 : 0.97)
                             .animation(.spring())
                     }.edgesIgnoringSafeArea(.all)
@@ -1699,24 +1680,37 @@ struct RatingView: View {
                                     Button(action: {
                                         self.showcomment = false
                                         self.next.toggle()
-                                        self.observer.keys += 1
                                         self.comment = "N/A"
-                                        UpdateRating(user: self.observer.users[self.usercount], appearance: Double(self.appearance), personality: Double(self.personality), keys: self.observer.keys, comment: self.comment)
+                                        //UpdateRating(user: self.observer.users[self.observer.rated], appearance: Double(self.appearance), personality: Double(self.personality), keys: self.observer.keys, comment: self.comment)
                                         self.showrating = false
-                                        let seconds = 0.7
+                                        self.showsocials = false
+                                        let seconds = 0.5
                                         DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
                                             self.appearance = 5
                                             self.personality = 5
-                                            if self.observer.users.count != self.usercount+1 {
-                                                self.usercount += 1
-                                                
-                                                self.next.toggle()
+                                            if self.observer.users.count != self.observer.rated+1 {
+                                                self.observer.rated += 1
+                                                if self.observer.ratings == 1 {
+                                                    self.ad = true
+                                                    DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+                                                        self.showad.toggle()
+                                                        self.observer.ratings = 0
+                                                    }
+                                                }
+                                                else {
+                                                    DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+                                                        self.next.toggle()
+                                                        self.observer.ratings += 1
+                                                    }
+                                                }
                                             }
                                             else {
                                                 self.norating = true
                                             }
                                         }
                                         self.comment = "TEMP"
+                                        self.observer.socialunlock = false
+                                        self.unlocksocials = false
                                     }) {
                                         Text("No Comment")
                                             .font(Font.custom("ProximaNova-Regular", size: 14))
@@ -1728,21 +1722,36 @@ struct RatingView: View {
                                         self.showcomment = false
                                         self.next.toggle()
                                         self.observer.keys += 1
-                                        UpdateRating(user: self.observer.users[self.usercount], appearance: Double(self.appearance), personality: Double(self.personality), keys: self.observer.keys, comment: self.comment)
+                                        //UpdateRating(user: self.observer.users[self.observer.rated], appearance: Double(self.appearance), personality: Double(self.personality), keys: self.observer.keys, comment: self.comment)
                                         self.showrating = false
-                                        let seconds = 0.7
+                                        self.showsocials = false
+                                        let seconds = 0.5
                                         DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
                                             self.appearance = 5
                                             self.personality = 5
-                                            if self.observer.users.count != self.usercount+1 {
-                                                self.usercount += 1
-                                                self.next.toggle()
+                                            if self.observer.users.count != self.observer.rated+1 {
+                                                self.observer.rated += 1
+                                                if self.observer.ratings == 2 {
+                                                    self.ad = true
+                                                    DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+                                                        self.showad.toggle()
+                                                        self.observer.ratings = 0
+                                                    }
+                                                }
+                                                else {
+                                                    DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+                                                        self.next.toggle()
+                                                        self.observer.ratings += 1
+                                                    }
+                                                }
                                             }
                                             else {
                                                 self.norating = true
                                             }
                                         }
                                         self.comment = "TEMP"
+                                        self.observer.socialunlock = false
+                                        self.unlocksocials = false
                                     }) {
                                         Text("Send")
                                             .font(Font.custom("ProximaNova-Regular", size: 14))
@@ -1772,20 +1781,19 @@ struct RatingView: View {
                                 .font(Font.custom("ProximaNova-Regular", size: 20))
                                 .fontWeight(.semibold)
                                 .foregroundColor(Color("personality"))
-                            
                             ZStack {
                                 HStack(spacing: 10) {
-                                    if self.observer.users[self.usercount].Socials[0] != "N/A" {
+                                    if self.observer.users[self.observer.rated].Socials[0] != "N/A" {
                                         Image("instagram")
                                             .resizable()
                                             .frame(width: 50, height: 50)
                                     }
-                                    if self.observer.users[self.usercount].Socials[1] != "N/A" {
+                                    if self.observer.users[self.observer.rated].Socials[1] != "N/A" {
                                         Image("snapchat")
                                             .resizable()
                                             .frame(width: 50, height: 50)
                                     }
-                                    if self.observer.users[self.usercount].Socials[2] != "N/A" {
+                                    if self.observer.users[self.observer.rated].Socials[2] != "N/A" {
                                         Image("twitter")
                                             .resizable()
                                             .frame(width: 50, height: 50)
@@ -1860,10 +1868,24 @@ struct RatingView: View {
                                 .foregroundColor(Color("personality"))
                         }
                     }.padding(.trailing, 10)
-                }.padding(.top, self.ad ? self.screenheight*0.05 : self.screenheight*0.044)
+                }.padding(.top, self.screenheight*0.044)
                 Spacer()
                 Button(action: {
                     if self.ad {
+                        self.newkey = 0
+                        self.showkey = true
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                            self.newkey = -self.screenheight/2 + 57.5
+                            self.newkeyx = self.screenwidth/2 - 45
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                self.showkey = false
+                                self.observer.keys += 3
+                                KeyChange(keys: self.observer.keys)
+                                self.newkey = self.screenheight
+                                self.newkeyx = 0
+                            }
+                        }
+                        
                         self.showad = false
                         self.next = true
                         let seconds = 0.5
@@ -1873,20 +1895,40 @@ struct RatingView: View {
                                 self.next = false
                             }
                         }
+                        self.observer.socialunlock = false
+                        self.unlocksocials = false
                     }
                     else {
                         self.showcomment.toggle()
                     }
                 }) {
                     Text("Next")
-                        .font(Font.custom("Gilroy-Light", size: 16))
+                        .font(Font.custom("ProximaNova-Regular", size: 16))
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
                         .frame(width: 100, height: 40)
                         .background(Color("personality"))
                         .cornerRadius(20)
-                }.padding(.bottom, self.ad ? self.screenheight*0.025 : self.screenheight*0.0325)
-            }.edgesIgnoringSafeArea(self.ad ? .all : .horizontal)
+                }.padding(.bottom, self.screenheight*0.0325)
+            }//.edgesIgnoringSafeArea(self.ad ? .all : .horizontal)
+            //MARK: Key
+            ZStack {
+                Circle()
+                    .frame(width: 50, height: 50)
+                    .foregroundColor(.white)
+                    .blur(radius: 30)
+                HStack(spacing: 5) {
+                    Text("+1")
+                        .font(Font.custom("ProximaNova-Regular", size: 30))
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color("personality"))
+                    Image("key")
+                        .resizable()
+                        .renderingMode(.template)
+                        .foregroundColor(Color("personality"))
+                        .frame(width: 35, height: 35)
+                }
+            }.animation(.spring()).offset(x: self.newkeyx, y: self.newkey).scaleEffect((self.newkey < 0) ? 1 : 1.9).opacity((self.showkey) ? 1 : 0)
         }.background(Color("lightgray").edgesIgnoringSafeArea(.all))
         .navigationBarTitle("")
         .navigationBarHidden(true)
@@ -2373,7 +2415,6 @@ struct Profile: View {
 //MARK: RatingProfile
 struct RatingProfile: View {
     @EnvironmentObject var observer: observer
-    @Binding var index: Int
     @Binding var show: Bool
     @Binding var appearance: Float
     @Binding var personality: Float
@@ -2386,11 +2427,11 @@ struct RatingProfile: View {
     
     var body: some View {
         ZStack {
-            if self.observer.users[self.index].ProfilePics[count].count != 0 {
+            if self.observer.users[self.observer.rated].ProfilePics[count].count != 0 {
                 VStack {
                     //MARK: Image
                     ZStack {
-                        WebImage(url: URL(string: self.observer.users[self.index].ProfilePics[self.count]))
+                        WebImage(url: URL(string: self.observer.users[self.observer.rated].ProfilePics[self.count]))
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .frame(width: screenwidth - 20, height: (screenwidth - 20)*1.3)
@@ -2432,7 +2473,7 @@ struct RatingProfile: View {
                         HStack {
                             //MARK: Socials
                             ZStack {
-                                if self.observer.users[self.index].Socials[0] == "N/A" && self.observer.users[self.index].Socials[1] == "N/A" && self.observer.users[self.index].Socials[2] == "N/A" {
+                                if self.observer.users[self.observer.rated].Socials[0] == "N/A" && self.observer.users[self.observer.rated].Socials[1] == "N/A" && self.observer.users[self.observer.rated].Socials[2] == "N/A" {
                                     HStack(spacing: 5) {
                                         ZStack {
                                             Image("instagram")
@@ -2452,10 +2493,10 @@ struct RatingProfile: View {
                                 else {
                                     if !self.observer.socialunlock {
                                         HStack(spacing: 5) {
-                                            if self.observer.users[self.index].Socials[0] != "N/A" {
+                                            if self.observer.users[self.observer.rated].Socials[0] != "N/A" {
                                                 Button(action: {
                                                     if self.observer.socialunlock {
-                                                        let link = "https://instagram.com/" + self.observer.users[self.index].Socials[0]
+                                                        let link = "https://instagram.com/" + self.observer.users[self.observer.rated].Socials[0]
                                                         UIApplication.shared.open(URL(string: link)!)
                                                     }
                                                 }) {
@@ -2464,10 +2505,10 @@ struct RatingProfile: View {
                                                         .frame(width: 30, height: 30)
                                                 }.buttonStyle(PlainButtonStyle())
                                             }
-                                            if self.observer.users[self.index].Socials[1] != "N/A" {
+                                            if self.observer.users[self.observer.rated].Socials[1] != "N/A" {
                                                 Button(action: {
                                                     if self.observer.socialunlock {
-                                                        let link = "https://snapchat.com/add/" + self.observer.users[self.index].Socials[1]
+                                                        let link = "https://snapchat.com/add/" + self.observer.users[self.observer.rated].Socials[1]
                                                         UIApplication.shared.open(URL(string: link)!)
                                                     }
                                                 }) {
@@ -2476,10 +2517,10 @@ struct RatingProfile: View {
                                                         .frame(width: 30, height: 30)
                                                 }.buttonStyle(PlainButtonStyle())
                                             }
-                                            if self.observer.users[self.index].Socials[2] != "N/A" {
+                                            if self.observer.users[self.observer.rated].Socials[2] != "N/A" {
                                                 Button(action: {
                                                     if self.observer.socialunlock {
-                                                        let link = "https://twitter.com/" + self.observer.users[self.index].Socials[2]
+                                                        let link = "https://twitter.com/" + self.observer.users[self.observer.rated].Socials[2]
                                                         UIApplication.shared.open(URL(string: link)!)
                                                     }
                                                 }) {
@@ -2492,10 +2533,10 @@ struct RatingProfile: View {
                                     }
                                     else {
                                         HStack(spacing: 5) {
-                                            if self.observer.users[self.index].Socials[0] != "N/A" {
+                                            if self.observer.users[self.observer.rated].Socials[0] != "N/A" {
                                                 Button(action: {
                                                     if self.observer.socialunlock {
-                                                        let link = "https://instagram.com/" + self.observer.users[self.index].Socials[0]
+                                                        let link = "https://instagram.com/" + self.observer.users[self.observer.rated].Socials[0]
                                                         UIApplication.shared.open(URL(string: link)!)
                                                     }
                                                 }) {
@@ -2504,10 +2545,10 @@ struct RatingProfile: View {
                                                         .frame(width: 30, height: 30)
                                                 }.buttonStyle(PlainButtonStyle())
                                             }
-                                            if self.observer.users[self.index].Socials[1] != "N/A" {
+                                            if self.observer.users[self.observer.rated].Socials[1] != "N/A" {
                                                 Button(action: {
                                                     if self.observer.socialunlock {
-                                                        let link = "https://snapchat.com/add/" + self.observer.users[self.index].Socials[1]
+                                                        let link = "https://snapchat.com/add/" + self.observer.users[self.observer.rated].Socials[1]
                                                         UIApplication.shared.open(URL(string: link)!)
                                                     }
                                                 }) {
@@ -2516,10 +2557,10 @@ struct RatingProfile: View {
                                                         .frame(width: 30, height: 30)
                                                 }.buttonStyle(PlainButtonStyle())
                                             }
-                                            if self.observer.users[self.index].Socials[2] != "N/A" {
+                                            if self.observer.users[self.observer.rated].Socials[2] != "N/A" {
                                                 Button(action: {
                                                     if self.observer.socialunlock {
-                                                        let link = "https://twitter.com/" + self.observer.users[self.index].Socials[2]
+                                                        let link = "https://twitter.com/" + self.observer.users[self.observer.rated].Socials[2]
                                                         UIApplication.shared.open(URL(string: link)!)
                                                     }
                                                 }) {
@@ -2543,28 +2584,23 @@ struct RatingProfile: View {
                                 }
                             }.padding(.horizontal, 7.5).padding(.vertical, 5).background(Color(.white).opacity(!self.observer.socialunlock ? 1 : 0.75).cornerRadius(7.5))
                             .padding(.leading, 10)
-                            .offset(y: self.y)
-                            .scaleEffect((self.y == 45) ? 0 : 1)
+                            .offset(y: self.show ? 0 : 45)
+                            .scaleEffect(self.show ? 1 : 0)
                             Spacer()
                         }
                         //MARK: Name and Age
                         HStack {
                             Button(action: {
-                                if self.y == 45 {
-                                    self.y = 0
-                                }
-                                else {
-                                    self.y = 45
-                                }
+                                self.show.toggle()
                             }) {
                                 HStack {
-                                    Text(self.observer.users[self.index].Name.uppercased())
+                                    Text(self.observer.users[self.observer.rated].Name.uppercased())
                                         .font(Font.custom("ProximaNova-Regular", size: 24))
                                         .fontWeight(.semibold)
                                         .foregroundColor(Color("personality"))
                                         .padding(.leading, 10)
                                         .animation(nil)
-                                    Text(self.observer.users[self.index].Age)
+                                    Text(self.observer.users[self.observer.rated].Age)
                                         .font(Font.custom("ProximaNova-Regular", size: 24))
                                         .fontWeight(.semibold)
                                         .foregroundColor(Color("personality").opacity(0.5))
@@ -2658,7 +2694,7 @@ struct RatingProfile: View {
                             .cornerRadius(20)
                         ScrollView(.vertical, showsIndicators: true) {
                             
-                            ForEach(self.observer.users[index].Bio, id: \.self) { str in
+                            ForEach(self.observer.users[self.observer.rated].Bio, id: \.self) { str in
                                 VStack {
                                     BioCardsFP(index: (String(str.prefix(2)) as NSString).integerValue, text: String(str)[2..<str.count]).animation(nil)
                                 }.frame(width: self.screenwidth - 40)
@@ -3228,7 +3264,8 @@ class observer: ObservableObject {
     @Published var keys: Int = 0
     @Published var comments = [String]()
     @Published var socialunlock = false
-    @Published var ratings: Int = 1
+    @Published var ratings: Int = 0
+    @Published var rated: Int = 0
     var id = Auth.auth().currentUser?.uid
     init() {
         self.users = [UserData]()
@@ -3645,7 +3682,7 @@ struct ResizingTextFieldRed: UIViewRepresentable {
             view.text = "Leave a comment on what you liked the most about this person. Be Nice."
         }
         else {
-            view.textColor = UIColor(named: "purp")
+            view.textColor = UIColor(named: "personality")
             view.text = text
         }
         view.backgroundColor = .white
@@ -3826,7 +3863,7 @@ struct Bar: View {
 
 //MARK: Rewarded
 final class Rewarded: NSObject, GADRewardedAdDelegate{
-    var rewardedAd:GADRewardedAd = GADRewardedAd(adUnitID: "ca-app-pub-4206140009989967/9044631871")
+    var rewardedAd:GADRewardedAd = GADRewardedAd(adUnitID: "ca-app-pub-3940256099942544/1712485313") //"ca-app-pub-4206140009989967/9044631871")
     var rewardFunction: (() -> Void)? = nil
     override init() {
         super.init()
@@ -3852,7 +3889,7 @@ final class Rewarded: NSObject, GADRewardedAdDelegate{
         }
     }
     func rewardedAdDidDismiss(_ rewardedAd: GADRewardedAd) {
-        self.rewardedAd = GADRewardedAd(adUnitID: "ca-app-pub-4206140009989967/9044631871")
+        self.rewardedAd = GADRewardedAd(adUnitID: "ca-app-pub-3940256099942544/1712485313") //"ca-app-pub-4206140009989967/9044631871")
         LoadRewarded()
     }
 }
@@ -3863,7 +3900,7 @@ struct RatingAd : UIViewRepresentable {
     func makeUIView(context: UIViewRepresentableContext<RatingAd>) -> GADBannerView {
         let ad = GADBannerView(adSize: kGADAdSizeBanner)
         //TODO: Redo
-        ad.adUnitID = "ca-app-pub-4206140009989967/1095302745"
+        ad.adUnitID = "ca-app-pub-3940256099942544/2934735716"//"ca-app-pub-4206140009989967/1095302745"
         ad.rootViewController = UIApplication.shared.windows.first?.rootViewController
         ad.load(GADRequest())
         return ad
