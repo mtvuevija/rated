@@ -17,7 +17,6 @@
 		C036562C24C2810100B98A75 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C036562A24C2810100B98A75 /* LaunchScreen.storyboard */; };
 		C036563724C2810100B98A75 /* RatedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C036563624C2810100B98A75 /* RatedTests.swift */; };
 		C036564224C2810100B98A75 /* RatedUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C036564124C2810100B98A75 /* RatedUITests.swift */; };
-		C036565024C2841500B98A75 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C036564F24C2841500B98A75 /* GoogleService-Info.plist */; };
 		C03DAF1924D9081900CF9497 /* SwiftUICharts in Frameworks */ = {isa = PBXBuildFile; productRef = C03DAF1824D9081900CF9497 /* SwiftUICharts */; };
 		C040B2F324CAB1EA00F7A31A /* Proxima Nova Alt Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = C040B2EC24CAB11700F7A31A /* Proxima Nova Alt Bold.otf */; };
 		C040B2F424CAB1EE00F7A31A /* Proxima Nova Alt Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = C040B2F124CAB11C00F7A31A /* Proxima Nova Alt Light.otf */; };
@@ -29,6 +28,7 @@
 		C040B2FA24CAB1FE00F7A31A /* ProximaNova-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = C040B2F224CAB11C00F7A31A /* ProximaNova-Regular.otf */; };
 		C040B2FD24CABD4D00F7A31A /* Gilroy-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = C040B2FC24CABD4400F7A31A /* Gilroy-Light.otf */; };
 		C040B2FE24CABD5000F7A31A /* Gilroy-ExtraBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = C040B2FB24CABD4200F7A31A /* Gilroy-ExtraBold.otf */; };
+		C06D58FB24F8C19F00013E71 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C06D58FA24F8C19F00013E71 /* GoogleService-Info.plist */; };
 		DF33118BFCF92EE7221C290D /* Pods_Rated.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A621CF1661BE32D20272F12 /* Pods_Rated.framework */; };
 /* End PBXBuildFile section */
 
@@ -71,7 +71,6 @@
 		C036563D24C2810100B98A75 /* RatedUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RatedUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C036564124C2810100B98A75 /* RatedUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatedUITests.swift; sourceTree = "<group>"; };
 		C036564324C2810100B98A75 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		C036564F24C2841500B98A75 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C040B2EB24CAB11600F7A31A /* Proxima Nova Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Proxima Nova Bold.otf"; sourceTree = "<group>"; };
 		C040B2EC24CAB11700F7A31A /* Proxima Nova Alt Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Proxima Nova Alt Bold.otf"; sourceTree = "<group>"; };
 		C040B2ED24CAB11800F7A31A /* Proxima Nova Alt Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Proxima Nova Alt Thin.otf"; sourceTree = "<group>"; };
@@ -82,6 +81,7 @@
 		C040B2F224CAB11C00F7A31A /* ProximaNova-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "ProximaNova-Regular.otf"; sourceTree = "<group>"; };
 		C040B2FB24CABD4200F7A31A /* Gilroy-ExtraBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gilroy-ExtraBold.otf"; sourceTree = "<group>"; };
 		C040B2FC24CABD4400F7A31A /* Gilroy-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gilroy-Light.otf"; sourceTree = "<group>"; };
+		C06D58FA24F8C19F00013E71 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		DF088259FBA3D2B49ED5702E /* Pods-RatedTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RatedTests.debug.xcconfig"; path = "Target Support Files/Pods-RatedTests/Pods-RatedTests.debug.xcconfig"; sourceTree = "<group>"; };
 		F53429266DC795AAA7132DD8 /* Pods-Rated-RatedUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rated-RatedUITests.release.xcconfig"; path = "Target Support Files/Pods-Rated-RatedUITests/Pods-Rated-RatedUITests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -153,7 +153,7 @@
 		C036561E24C280FF00B98A75 /* Rated */ = {
 			isa = PBXGroup;
 			children = (
-				C036564F24C2841500B98A75 /* GoogleService-Info.plist */,
+				C06D58FA24F8C19F00013E71 /* GoogleService-Info.plist */,
 				C036561F24C280FF00B98A75 /* AppDelegate.swift */,
 				C036562124C280FF00B98A75 /* SceneDelegate.swift */,
 				C036562324C280FF00B98A75 /* ContentView.swift */,
@@ -337,7 +337,6 @@
 				C040B2F724CAB1F600F7A31A /* Proxima Nova Bold.otf in Resources */,
 				C040B2FE24CABD5000F7A31A /* Gilroy-ExtraBold.otf in Resources */,
 				C036562C24C2810100B98A75 /* LaunchScreen.storyboard in Resources */,
-				C036565024C2841500B98A75 /* GoogleService-Info.plist in Resources */,
 				C040B2F424CAB1EE00F7A31A /* Proxima Nova Alt Light.otf in Resources */,
 				C040B2F924CAB1FB00F7A31A /* Proxima Nova Thin.otf in Resources */,
 				C040B2FA24CAB1FE00F7A31A /* ProximaNova-Regular.otf in Resources */,
@@ -348,6 +347,7 @@
 				C040B2FD24CABD4D00F7A31A /* Gilroy-Light.otf in Resources */,
 				C040B2F624CAB1F300F7A31A /* Proxima Nova Black.otf in Resources */,
 				C040B2F324CAB1EA00F7A31A /* Proxima Nova Alt Bold.otf in Resources */,
+				C06D58FB24F8C19F00013E71 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
