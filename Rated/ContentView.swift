@@ -158,7 +158,7 @@ struct SignUpView: View {
     @State var genderoffest: CGFloat = 0
     @State var biocards: [String] = ["00General", "01Education", "02Occupation", "03Music", "04Sports", "05Movies", "06TV-Shows", "07Hobbies", "08Motto", "09Future"]
     @State var text: [String] = ["", "", "", "", "", "", "", "", "", ""]
-    @State var selectedprompts = [false, false, false, false, false, false, false, false, false, false]
+    @State var selectedprompts = [true, false, false, false, false, false, false, false, false, false]
     @State var selectedinfo = [false, false, false, false, false, false, false, false, false, false]
     @State var showprofile: Bool = false
     
@@ -195,161 +195,285 @@ struct SignUpView: View {
         ZStack {
             HStack(spacing: 0) {
                 //MARK: Phone Number 1
-                VStack() {
-                    
-                    Spacer()
-                    
+                VStack(spacing: 20) {
                     Image("phone")
                         .resizable()
                         .scaledToFit()
+                        .padding(10)
                         .frame(width: screenwidth/2, height: screenwidth/2)
-                        .padding(.bottom, 25)
+                        .shadow(color: .white, radius: 60, x: 0, y: 0)
                     
                     Text("Enter Your Phone Number")
-                        .font(Font.custom("ProximaNova-Regular", size: 20))
+                        .font(Font.custom("ProximaNova-Regular", size: 24))
                         .fontWeight(.medium)
-                        .foregroundColor(Color("purp").opacity(0.8))
+                        .foregroundColor(Color(.white))
                     
-                    HStack {
+                    HStack(spacing: 15) {
                         ZStack {
-                            Color(.gray)
-                                .opacity(0.2)
+                            RoundedRectangle(cornerRadius: 7.5)
+                                .stroke(lineWidth: 5)
+                                .foregroundColor(.white)
                                 .frame(width: 60, height: 50)
-                                .cornerRadius(7.5)
                             
-                            TextField("+1", text: $ccode)
+                            if self.ccode.isEmpty {
+                                HStack {
+                                    Text("+ 1")
+                                        .foregroundColor(Color(.white).opacity(0.75))
+                                        .font(Font.custom("ProximaNova-Regular", size: 18))
+                                    Spacer()
+                                }.frame(width: 30, height: 50).animation(.easeInOut(duration: 0.1))
+                            }
+                            TextField("", text: $ccode)
+                                .foregroundColor(.white)
+                                .font(Font.custom("ProximaNova-Regular", size: 18))
                                 .frame(width: 30, height: 50)
                         }
                         
                         ZStack {
-                            Color(.gray)
-                                .opacity(0.2)
+                            RoundedRectangle(cornerRadius: 7.5)
+                                .stroke(lineWidth: 5)
+                                .foregroundColor(.white)
                                 .frame(width: screenwidth - 100, height: 50)
-                                .cornerRadius(7.5)
                             
-                            TextField("Phone Number", text: $phonenumber)
-                                .font(Font.custom("ProximaNova-Regular", size: 16))
+                            if self.phonenumber.isEmpty {
+                                HStack {
+                                    Text("Phone Number")
+                                        .foregroundColor(Color(.white).opacity(0.75))
+                                        .font(.body)
+                                        //.font(Font.custom("ProximaNova-Regular", size: 18))
+                                    Spacer()
+                                }.frame(width: screenwidth - 140, height: 50).animation(.easeInOut(duration: 0.1))
+                            }
+                            TextField("", text: $phonenumber)
+                                .foregroundColor(Color(.white))
+                                .font(Font.custom("ProximaNova-Regular", size: 18))
                                 .frame(width: screenwidth - 140, height: 50)
                                 .keyboardType(.numberPad)
                         }
-                    }
+                    }.padding(.bottom, 30)
                         
-                    Spacer().frame(height: screenheight/2.25)
-                    
-                }.frame(width: screenwidth, height: screenheight)
+                    if loading {
+                        Loader()
+                    }
+                    else {
+                        Button(action: {
+                            /*self.loading.toggle()
+                            PhoneAuthProvider.provider().verifyPhoneNumber(self.ccode + self.phonenumber, uiDelegate: nil) { (verificationID, error) in
+                                if error != nil {
+                                    self.msg = (error?.localizedDescription)!
+                                    self.loading.toggle()
+                                    self.alert.toggle()
+                                    return
+                                }
+                                self.loading.toggle()
+                                self.verificationcode = verificationID!
+                                self.next -= self.screenwidth
+                                self.count += 1
+                            }*/
+                            self.next -= self.screenwidth
+                            self.count += 1
+                        }) {
+                            Text("Next")
+                                .font(Font.custom("ProximaNova-Regular", size: 20))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color("personality"))
+                                .padding(.vertical, 10)
+                                .padding(.horizontal, 30)
+                        }.background(self.phonenumber.count == 10 ? Color(.white).cornerRadius(20) : Color(.white).opacity(0.3).cornerRadius(20))
+                        .shadow(color: .white, radius: 40, x: 0, y: 0)
+                    }
+                    Spacer()
+                }.frame(width: screenwidth, height: screenheight/1.3)
                 
                 //MARK: Verification Code 2
-                VStack {
-                    
-                    Spacer()
-                    
+                VStack(spacing: 20) {
                     Image("phone")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: screenwidth/2, height: screenwidth/2)
-                        .padding(.bottom, 25)
+                    .resizable()
+                    .scaledToFit()
+                    .padding(10)
+                    .frame(width: screenwidth/2, height: screenwidth/2)
+                    .shadow(color: .white, radius: 60, x: 0, y: 0)
                     
                     Text("Enter The Verification Code")
-                        .font(Font.custom("ProximaNova-Regular", size: 20))
+                        .font(Font.custom("ProximaNova-Regular", size: 24))
                         .fontWeight(.semibold)
-                        .foregroundColor(Color("purp").opacity(0.8))
+                        .foregroundColor(Color(.white))
                     
                     ZStack {
-                        Color(.gray)
-                            .opacity(0.1)
-                            .frame(width: screenwidth - 60, height: 50)
-                            .cornerRadius(7.5)
+                        RoundedRectangle(cornerRadius: 7.5)
+                            .stroke(lineWidth: 5)
+                            .foregroundColor(.white)
+                            .frame(width: screenwidth/2, height: 50)
                         
+                        if self.enteredcode.isEmpty {
+                            HStack {
+                                Text("Verification Code")
+                                    .foregroundColor(Color(.white).opacity(0.75))
+                                    .font(Font.custom("ProximaNova-Regular", size: 18))
+                                Spacer()
+                            }.frame(width: screenwidth/2 - 20, height: 50)
+                        }
                         TextField("Verification Code", text: $enteredcode)
-                            .font(Font.custom("ProximaNova-Regular", size: 16))
-                            .frame(width: screenwidth - 80, height: 50)
+                            .font(Font.custom("ProximaNova-Regular", size: 18))
+                            .frame(width: screenwidth/2 - 20, height: 50)
                             .keyboardType(.numberPad)
+                    }.padding(.bottom, 30)
+                    
+                    if loading {
+                        Loader()
                     }
-                    
-                    Spacer().frame(height: screenheight/2.25)
-                    
-                }.frame(width: screenwidth, height: screenheight)
+                    else {
+                        Button(action: {
+                            /*self.loading.toggle()
+                            let credential = PhoneAuthProvider.provider().credential(withVerificationID: self.verificationcode, verificationCode: self.enteredcode)
+                            
+                            Auth.auth().signIn(with: credential) { (authResult, error) in
+                                if error != nil {
+                                    self.msg = (error?.localizedDescription)!
+                                    self.loading.toggle()
+                                    self.alert.toggle()
+                                    return
+                                }
+                                CheckUser() { complete in
+                                    if complete {
+                                        self.observer.relogin()
+                                        UserDefaults.standard.set(false, forKey: "signup")
+                                        UserDefaults.standard.set(true, forKey: "status")
+                                        NotificationCenter.default.post(name: NSNotification.Name("StatusChange"), object: nil)
+                                    }
+                                    else {
+                                        self.loading.toggle()
+                                        self.next -= self.screenwidth
+                                        self.count += 1
+                                    }
+                                }
+                            }*/
+                            self.next -= self.screenwidth
+                            self.count += 1
+                        }) {
+                            Text("Next")
+                                .font(Font.custom("ProximaNova-Regular", size: 20))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color("personality"))
+                                .padding(.vertical, 10)
+                                .padding(.horizontal, 30)
+                        }.background(self.enteredcode.count == 6 ? Color(.white).cornerRadius(20) : Color(.white).opacity(0.3).cornerRadius(20))
+                        .shadow(color: .white, radius: 40, x: 0, y: 0)
+                    }
+                    Spacer()
+                }.frame(width: screenwidth, height: screenheight/1.3)
                 
                 //MARK: Name 3
                 VStack {
-                    
-                    Spacer()
-                    
                     Image("name")
                         .resizable()
                         .scaledToFit()
+                        .padding(10)
                         .frame(width: screenwidth/2, height: screenwidth/2)
-                        .padding(.bottom, 25)
+                        .shadow(color: .white, radius: 60, x: 0, y: 0)
                     
                     Text("Enter Your First Name")
-                        .font(Font.custom("ProximaNova-Regular", size: 20))
+                        .font(Font.custom("ProximaNova-Regular", size: 24))
                         .fontWeight(.semibold)
-                        .foregroundColor(Color("purp").opacity(0.8))
+                        .foregroundColor(Color(.white))
                     
                     ZStack {
-                        Color(.gray)
-                            .opacity(0.1)
+                        RoundedRectangle(cornerRadius: 7.5)
+                            .stroke(lineWidth: 5)
+                            .foregroundColor(.white)
                             .frame(width: screenwidth - 60, height: 50)
-                            .cornerRadius(7.5)
-                        
-                        TextField("First Name", text: $name)
+                        if self.name.isEmpty {
+                            HStack {
+                                Text("First Name")
+                                    .foregroundColor(Color(.white).opacity(0.75))
+                                    .font(Font.custom("ProximaNova-Regular", size: 18))
+                                Spacer()
+                            }.frame(width: screenwidth - 80, height: 50)
+                        }
+                        TextField("", text: $name)
                             .frame(width: screenwidth - 80, height: 50)
-                    }
+                    }.padding(.bottom, 30)
                     
-                    Spacer().frame(height: screenheight/2.25)
+                    Button(action: {
+                        self.next -= self.screenwidth
+                        self.count += 1
+                    }) {
+                        Text("Next")
+                            .font(Font.custom("ProximaNova-Regular", size: 20))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color("personality"))
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 30)
+                    }.background(self.name.count > 0 ? Color(.white).cornerRadius(20) : Color(.white).opacity(0.3).cornerRadius(20))
                     
-                }.frame(width: screenwidth, height: screenheight)
+                    Spacer()
+                }.frame(width: screenwidth, height: screenheight/1.3)
                 
                 //MARK: Age 4
                 VStack {
-                    
-                    Spacer()
-                    
                     Image("age")
                         .resizable()
                         .scaledToFit()
+                        .padding(10)
                         .frame(width: screenwidth/2, height: screenwidth/2)
-                        .padding(.bottom, 25)
+                        .shadow(color: .white, radius: 60, x: 0, y: 0)
                     
                     Text("Enter Your Age")
-                        .font(Font.custom("ProximaNova-Regular", size: 20))
+                        .font(Font.custom("ProximaNova-Regular", size: 24))
                         .fontWeight(.semibold)
-                        .foregroundColor(Color("purp").opacity(0.8))
+                        .foregroundColor(Color(.white))
                     
                     ZStack {
-                        Color(.gray)
-                            .opacity(0.1)
+                        RoundedRectangle(cornerRadius: 7.5)
+                            .stroke(lineWidth: 5)
+                            .foregroundColor(.white)
                             .frame(width: screenwidth - 60, height: 50)
-                            .cornerRadius(7.5)
-                        
+                        if self.age.count < 2 {
+                            HStack {
+                                Text("Age")
+                                    .foregroundColor(Color(.white).opacity(0.75))
+                                    .font(Font.custom("ProximaNova-Regular", size: 18))
+                                Spacer()
+                            }.frame(width: screenwidth - 80, height: 50)
+                        }
                         TextField("Age", text: $age)
                             .frame(width: screenwidth - 80, height: 50)
                             .keyboardType(.numberPad)
-                    }
+                    }.padding(.bottom, 30)
                     
-                    Spacer().frame(height: screenheight/2.25)
-                    
-                }.frame(width: screenwidth, height: screenheight)
-                
-                //MARK: Gender 5
-                VStack {
+                    Button(action: {
+                        self.next -= self.screenwidth
+                        self.count += 1
+                    }) {
+                        Text("Next")
+                            .font(Font.custom("ProximaNova-Regular", size: 20))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color("personality"))
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 30)
+                    }.background(self.age.count > 1 ? Color(.white).cornerRadius(20) : Color(.white).opacity(0.3).cornerRadius(20))
                     
                     Spacer()
                     
+                }.frame(width: screenwidth, height: screenheight/1.3)
+                
+                //MARK: Gender 5
+                VStack(spacing: 20) {
                     Image("gender")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: screenwidth/2.25, height: screenwidth/2.25)
-                        .padding(.bottom, 25)
+                        .padding(10)
+                        .frame(width: screenwidth/2, height: screenwidth/2)
+                        .shadow(color: .white, radius: 60, x: 0, y: 0)
                     
                     Text("Select Your Gender")
-                        .font(Font.custom("ProximaNova-Regular", size: 20))
+                        .font(Font.custom("ProximaNova-Regular", size: 24))
                         .fontWeight(.semibold)
-                        .foregroundColor(Color("purp").opacity(0.8))
+                        .foregroundColor(Color(.white))
                     
                     ZStack {
-                        Color(.gray)
-                            .opacity(0.2)
+                        Color(.white)
+                            .opacity(0.3)
                             .frame(width: 210, height: 50)
                             .foregroundColor(.white)
                             .background(Color(.gray).opacity(0.2))
@@ -361,7 +485,7 @@ struct SignUpView: View {
                         else {
                             HStack(spacing: 0) {
                                 RoundedRectangle(cornerRadius: 15).frame(width: 65, height: 45)
-                            }.foregroundColor(Color("purp").opacity(0.8)).offset(x: self.genderoffest)
+                            }.foregroundColor(Color(.white)).offset(x: self.genderoffest)
                         }
                         
                         HStack(spacing: 0) {
@@ -374,6 +498,7 @@ struct SignUpView: View {
                                 Text("Male")
                                     .font(Font.custom("ProximaNova-Regular", size: 16))
                                     .fontWeight(.semibold)
+                                    .foregroundColor(Color("personality"))
                             }.frame(width: 70)
                             
                             Button(action: {
@@ -384,6 +509,7 @@ struct SignUpView: View {
                                 Text("Female")
                                     .font(Font.custom("ProximaNova-Regular", size: 16))
                                     .fontWeight(.semibold)
+                                    .foregroundColor(Color("personality"))
                             }.frame(width: 70)
                             
                             Button(action: {
@@ -394,69 +520,102 @@ struct SignUpView: View {
                                 Text("Other")
                                     .font(Font.custom("ProximaNova-Regular", size: 16))
                                     .fontWeight(.semibold)
+                                .foregroundColor(Color("personality"))
                             }.frame(width: 70)
                             
                         }.foregroundColor(.white)
                         
                         
-                    }.animation(.spring())
+                    }.animation(.spring()).padding(.bottom, self.genders == 3 ? 30 : 0)
                     
                     if self.genders == 3 {
                         Text("Specify Your Gender")
                             .font(Font.custom("ProximaNova-Regular", size: 20))
                             .fontWeight(.semibold)
-                            .foregroundColor(Color("purp").opacity(0.8))
+                            .foregroundColor(Color(.white))
                         
                         ZStack {
-                            Color(.gray)
-                                .opacity(0.1)
+                            RoundedRectangle(cornerRadius: 7.5)
+                                .stroke(lineWidth: 5)
+                                .foregroundColor(.white)
                                 .frame(width: screenwidth - 60, height: 50)
-                                .cornerRadius(7.5)
-                            
+                            if self.gender.count < 1 {
+                                HStack {
+                                    Text("Gender")
+                                        .foregroundColor(Color(.white).opacity(0.75))
+                                        .font(Font.custom("ProximaNova-Regular", size: 18))
+                                    Spacer()
+                                }.frame(width: screenwidth - 80, height: 50)
+                            }
                             TextField("Gender", text: $gender)
                                 .frame(width: screenwidth - 80, height: 50)
                                 .keyboardType(.numberPad)
-                        }
-                        Spacer().frame(height: screenheight/2.75)
-                    }
-                    else {
-                        Spacer().frame(height: screenheight/2.25)
+                        }.padding(.bottom, 30)
                     }
                     
-                }.animation(.spring()).frame(width: screenwidth, height: screenheight)
+                    Button(action: {
+                        self.next -= self.screenwidth
+                        self.count += 1
+                    }) {
+                        Text("Next")
+                            .font(Font.custom("ProximaNova-Regular", size: 20))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color("personality"))
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 30)
+                    }.background(self.gender.count > 1 ? Color(.white).cornerRadius(20) : Color(.white).opacity(0.3).cornerRadius(20))
+                    
+                    Spacer()
+                    
+                }.animation(.spring()).frame(width: screenwidth, height: screenheight/1.3)
                 
                 //MARK: What Matters? 6
-                VStack {
+                VStack(spacing: 20) {
                     HStack {
                         Image("appearance")
                             .resizable()
                             .frame(width: screenwidth/4, height: screenwidth/4)
+                            .shadow(color: .white, radius: 10, x: 0, y: 0)
                         
                         Spacer()
                         
                         Image("personality")
                             .resizable()
                             .frame(width: screenwidth/4, height: screenwidth/4)
+                            .shadow(color: .white, radius: 10, x: 0, y: 0)
                     }.padding(.horizontal, 75)
+                    
                     Text("Appearance vs Personality")
                         .font(Font.custom("ProximaNova-Regular", size: 24))
                         .fontWeight(.semibold)
-                        .frame(width: screenwidth)
-                        .foregroundColor(Color("purp").opacity(0.8))
-                        .padding(.bottom, 5)
+                        .foregroundColor(Color(.white))
                         .multilineTextAlignment(.center)
                     
                     Text("(This is how your rating will be calculated)")
                         .font(Font.custom("ProximaNova-Regular", size: 14))
                         .fontWeight(.semibold)
-                        .frame(width: screenwidth - 10)
-                        .foregroundColor(Color("purp").opacity(0.8))
-                        .padding(.bottom, 45)
+                        .foregroundColor(Color(.white))
                     
-                    PercentageSlider(percentage: self.$percentage)
-                        .frame(width: 90, height: screenheight/2.25)
-                        .accentColor(Color("personality"))
-                        .padding(.bottom, 25)
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 12.5)
+                            .foregroundColor(.white)
+                            .frame(width: 100, height: screenheight/2.25 + 10)
+                        PercentageSlider(percentage: self.$percentage)
+                            .frame(width: 90, height: screenheight/2.25)
+                            .accentColor(Color("personality"))
+                    }.padding(.bottom, 25)
+                    
+                    Button(action: {
+                        self.next -= self.screenwidth
+                        self.count += 1
+                    }) {
+                        Text("Next")
+                            .font(Font.custom("ProximaNova-Regular", size: 20))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color("personality"))
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 30)
+                    }.background(Color(.white).cornerRadius(20))
                 
                 }.frame(width: screenwidth, height: screenheight)
                 
@@ -466,38 +625,61 @@ struct SignUpView: View {
                         Image("rating(temp)")
                             .resizable()
                             .frame(width: screenwidth/3, height: screenwidth/3)
+                            .shadow(color: .white, radius: 20, x: 0, y: 0)
                             
                         Text("Rate Yourself")
                             .font(Font.custom("ProximaNova-Regular", size: 24))
                             .fontWeight(.semibold)
-                            .foregroundColor(Color("purp").opacity(0.8))
+                            .foregroundColor(Color(.white))
                         
                         HStack(spacing: 45) {
-                            VerticalSlider(percentage: self.$selfratingappearance, title: "Appearance")
-                                .frame(width: 90, height: screenheight/2.25)
-                                .accentColor(Color("appearance"))
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 12.5)
+                                    .foregroundColor(.white)
+                                    .frame(width: 100, height: screenheight/2.25 + 10)
+                                VerticalSlider(percentage: self.$selfratingappearance, title: "Appearance")
+                                    .frame(width: 90, height: screenheight/2.25)
+                                    .accentColor(Color("appearance"))
+                            }
                             
-                            VerticalSlider(percentage: self.$selfratingpersonality, title: "Personality")
-                                .frame(width: 90, height: screenheight/2.25)
-                                .accentColor(Color("personality"))
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 12.5)
+                                    .foregroundColor(.white)
+                                    .frame(width: 100, height: screenheight/2.25 + 10)
+                                VerticalSlider(percentage: self.$selfratingpersonality, title: "Personality")
+                                    .frame(width: 90, height: screenheight/2.25)
+                                    .accentColor(Color("personality"))
+                            }
                             
-                        }.padding(.top, 25)
+                        }.padding(.vertical, 25)
+                        
+                        Button(action: {
+                            self.next -= self.screenwidth
+                            self.count += 1
+                        }) {
+                            Text("Next")
+                                .font(Font.custom("ProximaNova-Regular", size: 20))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color("personality"))
+                                .padding(.vertical, 10)
+                                .padding(.horizontal, 30)
+                        }.background(Color(.white).cornerRadius(20))
                         
                     }.frame(width: screenwidth, height: screenheight)
                     
                     //MARK: Profile Pictures 8
-                    VStack {
+                    VStack(spacing: 20) {
                         
                         Image("profilepic")
                             .resizable()
                             .scaledToFit()
                             .frame(width: screenwidth/3, height: screenwidth/3)
-                            .padding(.bottom, 25)
+                            .shadow(color: .white, radius: 30, x: 0, y: 0)
                         
                         Text("Select Four Pictures")
-                            .font(Font.custom("Gilroy-Light", size: 20))
+                            .font(Font.custom("ProximaNova-Regular", size: 24))
                             .fontWeight(.semibold)
-                            .foregroundColor(Color("purp").opacity(0.8))
+                            .foregroundColor(.white)
                         
                         VStack(spacing: 35) {
                             HStack(spacing: 35) {
@@ -505,23 +687,28 @@ struct SignUpView: View {
                                     self.picker.toggle()
                                     self.numimage = 0
                                 }) {
-                                    if !self.showimage[0] {
-                                        ZStack {
-                                            Color(.white)
-                                                .frame(width: 100, height: 133)
-                                                .cornerRadius(15)
-                                            Text("1")
-                                                .font(Font.custom("Gilroy-Light", size: 16))
-                                                .foregroundColor(Color("purp"))
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 12.5)
+                                            .foregroundColor(.white)
+                                            .frame(width: self.screenwidth*0.267, height: self.screenheight*0.164)
+                                        if !self.showimage[0] {
+                                            ZStack {
+                                                Color(.white)
+                                                    .frame(width: self.screenwidth*0.267 - 10, height: self.screenheight*0.164 - 10)
+                                                    .cornerRadius(10)
+                                                Text("1")
+                                                    .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                    .foregroundColor(Color("personality"))
+                                            }
                                         }
-                                    }
-                                    else {
-                                        Image(uiImage: UIImage(data: self.profilepics[0])!)
-                                            .resizable()
-                                            .renderingMode(.original)
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 100, height: 133)
-                                            .cornerRadius(15)
+                                        else {
+                                            Image(uiImage: UIImage(data: self.profilepics[0])!)
+                                                .resizable()
+                                                .renderingMode(.original)
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: self.screenwidth*0.267 - 10, height: self.screenheight*0.164 - 10)
+                                                .cornerRadius(10)
+                                        }
                                     }
                                 }.offset(x: self.current[0].width, y: self.current[0].height)
                                 
@@ -529,24 +716,28 @@ struct SignUpView: View {
                                     self.picker.toggle()
                                     self.numimage = 1
                                 }) {
-                                    if !self.showimage[1] {
-                                        ZStack {
-                                            Color(.white)
-                                                .frame(width: 100, height: 133)
-                                                .cornerRadius(15)
-                                            
-                                            Text("2")
-                                                .font(Font.custom("Gilroy-Light", size: 16))
-                                                .foregroundColor(Color("purp"))
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 12.5)
+                                            .foregroundColor(.white)
+                                            .frame(width: self.screenwidth*0.267, height: self.screenheight*0.164)
+                                        if !self.showimage[1] {
+                                            ZStack {
+                                                Color(.white)
+                                                    .frame(width: self.screenwidth*0.267 - 10, height: self.screenheight*0.164 - 10)
+                                                    .cornerRadius(10)
+                                                Text("2")
+                                                    .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                    .foregroundColor(Color("personality"))
+                                            }
                                         }
-                                    }
-                                    else {
-                                        Image(uiImage: UIImage(data: self.profilepics[1])!)
-                                            .resizable()
-                                            .renderingMode(.original)
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 100, height: 133)
-                                            .cornerRadius(15)
+                                        else {
+                                            Image(uiImage: UIImage(data: self.profilepics[1])!)
+                                                .resizable()
+                                                .renderingMode(.original)
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: self.screenwidth*0.267 - 10, height: self.screenheight*0.164 - 10)
+                                                .cornerRadius(10)
+                                        }
                                     }
                                 }.offset(x: self.current[1].width, y: self.current[1].height)
                                 
@@ -556,23 +747,28 @@ struct SignUpView: View {
                                     self.picker.toggle()
                                     self.numimage = 2
                                 }) {
-                                    if !self.showimage[2] {
-                                        ZStack {
-                                            Color(.white)
-                                                .frame(width: 100, height: 133)
-                                                .cornerRadius(15)
-                                            Text("3")
-                                                .font(Font.custom("Gilroy-Light", size: 16))
-                                                .foregroundColor(Color("purp"))
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 12.5)
+                                            .foregroundColor(.white)
+                                            .frame(width: self.screenwidth*0.267, height: self.screenheight*0.164)
+                                        if !self.showimage[2] {
+                                            ZStack {
+                                                Color(.white)
+                                                    .frame(width: self.screenwidth*0.267 - 10, height: self.screenheight*0.164 - 10)
+                                                    .cornerRadius(10)
+                                                Text("3")
+                                                    .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                    .foregroundColor(Color("personality"))
+                                            }
                                         }
-                                    }
-                                    else {
-                                        Image(uiImage: UIImage(data: self.profilepics[2])!)
-                                            .resizable()
-                                            .renderingMode(.original)
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 100, height: 133)
-                                            .cornerRadius(15)
+                                        else {
+                                            Image(uiImage: UIImage(data: self.profilepics[2])!)
+                                                .resizable()
+                                                .renderingMode(.original)
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: self.screenwidth*0.267 - 10, height: self.screenheight*0.164 - 10)
+                                                .cornerRadius(10)
+                                        }
                                     }
                                 }.offset(x: self.current[2].width, y: self.current[2].height)
                                 
@@ -580,60 +776,88 @@ struct SignUpView: View {
                                     self.picker.toggle()
                                     self.numimage = 3
                                 }) {
-                                    if !self.showimage[3] {
-                                        ZStack {
-                                            Color(.white)
-                                                .frame(width: 100, height: 133)
-                                                .cornerRadius(15)
-                                            Text("4")
-                                                .font(Font.custom("Gilroy-Light", size: 16))
-                                                .foregroundColor(Color("purp"))
+                                    ZStack {
+                                        RoundedRectangle(cornerRadius: 12.5)
+                                            .foregroundColor(.white)
+                                            .frame(width: self.screenwidth*0.267, height: self.screenheight*0.164)
+                                        if !self.showimage[3] {
+                                            ZStack {
+                                                Color(.white)
+                                                    .frame(width: self.screenwidth*0.267 - 10, height: self.screenheight*0.164 - 10)
+                                                    .cornerRadius(10)
+                                                Text("4")
+                                                    .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                    .foregroundColor(Color("personality"))
+                                            }
                                         }
-                                    }
-                                    else {
-                                        Image(uiImage: UIImage(data: self.profilepics[3])!)
-                                            .resizable()
-                                            .renderingMode(.original)
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: 100, height: 133)
-                                            .cornerRadius(15)
+                                        else {
+                                            Image(uiImage: UIImage(data: self.profilepics[3])!)
+                                                .resizable()
+                                                .renderingMode(.original)
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: self.screenwidth*0.267 - 10, height: self.screenheight*0.164 - 10)
+                                                .cornerRadius(10)
+                                        }
                                     }
                                 }.offset(x: self.current[3].width, y: self.current[3].height)
                                 
                             }
                         }.frame(width: screenwidth/1.4, height: screenheight/2.25)
-                            .background(Color(.gray).opacity(0.15))
-                        .cornerRadius(20)
+                            .background(Color(.white).opacity(0.15))
+                            .cornerRadius(15)
+                        
+                        Button(action: {
+                            self.next -= self.screenwidth
+                            self.count += 1
+                        }) {
+                            Text("Next")
+                                .font(Font.custom("ProximaNova-Regular", size: 20))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color("personality"))
+                                .padding(.vertical, 10)
+                                .padding(.horizontal, 30)
+                        }.background(Color(.white).cornerRadius(20))
                         
                     }.frame(width: screenwidth, height: screenheight)
                 }
                 
                 //MARK: Prompts Select 9
-                VStack {
+                VStack(spacing: 10) {
                     
                     Text("Select Topics To Build Your Bio")
-                        .font(Font.custom("ProximaNova-Regular", size: 20))
+                        .font(Font.custom("ProximaNova-Regular", size: 24))
                         .fontWeight(.semibold)
                         .padding(.horizontal, 20)
-                        .foregroundColor(Color("purp").opacity(0.8))
+                        .foregroundColor(.white)
                     
                     Text("(Press on the topics to bring up more info. Press the checkmark to select the topics you like and then press the pencil to edit them.)")
                         .font(Font.custom("ProximaNova-Regular", size: 14))
                         .fontWeight(.semibold)
                         .multilineTextAlignment(.center)
-                        .foregroundColor(Color("purp").opacity(0.6))
+                        .foregroundColor(.white)
                         .padding(.horizontal, 25)
-                        .padding(.bottom, 25)
                     
                     ScrollView(.vertical, showsIndicators: false) {
                         ForEach(biocards, id: \.self) { title in
                             BioCards(selected: self.$selectedprompts, showinfo: self.$selectedinfo, text: self.$text, index: (title.prefix(2) as NSString).integerValue, title: String(title.suffix(title.count-2)))
                         }
                     }.padding(.vertical, 15)
-                        .frame(width: self.screenwidth)
                         .frame(width: screenwidth - 60, height: screenheight/1.75)
-                        .background(Color(.gray).opacity(0.15))
+                        .background(Color(.white).opacity(0.3))
                         .cornerRadius(20)
+                    
+                    Button(action: {
+                        self.next -= self.screenwidth
+                        self.count += 1
+                    }) {
+                        Text("Next")
+                            .font(Font.custom("ProximaNova-Regular", size: 20))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color("personality"))
+                            .padding(.vertical, 10)
+                            .padding(.horizontal, 30)
+                    }.background(Color(.white).cornerRadius(20))
+                    
                 }.frame(width: screenwidth, height: screenheight)
                 
                 //MARK: Socials 10
@@ -643,7 +867,7 @@ struct SignUpView: View {
                         .fontWeight(.semibold)
                         .foregroundColor(Color("purp").opacity(0.8))
                     Text("(These socials media handles will be public. If you don't want them to be seen, press skip.)")
-                        .font(Font.custom("ProximaNova-Regular", size: 20))
+                        .font(Font.custom("ProximaNova-Regular", size: 16))
                         .fontWeight(.semibold)
                         .multilineTextAlignment(.center)
                         .foregroundColor(Color("purp").opacity(0.6))
@@ -770,8 +994,8 @@ struct SignUpView: View {
                         else {
                             Image(systemName: "chevron.left.circle")
                             .resizable()
-                            .frame(width: 35, height: 35)
-                            .foregroundColor(Color("purp"))
+                            .frame(width: 45, height: 45)
+                                .foregroundColor(Color(.white))
                         }
                     }.padding(.leading, 15)
                     
@@ -782,8 +1006,8 @@ struct SignUpView: View {
                 Spacer()
                 
                 //MARK: Send/Next Button
-                Button(action: {
-                    /*if self.count == 1 {
+                /*Button(action: {
+                    if self.count == 1 {
                         self.loading.toggle()
                         PhoneAuthProvider.provider().verifyPhoneNumber(self.ccode + self.phonenumber, uiDelegate: nil) { (verificationID, error) in
                             if error != nil {
@@ -895,10 +1119,10 @@ struct SignUpView: View {
                             }
                         }
                     }
-                    else {*/
+                    else {
                         self.next -= self.screenwidth
                         self.count += 1
-                    //}
+                    }
                 }) {
                     if self.count <= 2 {
                         if self.loading {
@@ -975,12 +1199,12 @@ struct SignUpView: View {
                             .background(Color(.gray).opacity(0.15))
                             .cornerRadius(20)
                     }
-                }.padding(.bottom, screenheight*0.074)
+                }.padding(.bottom, screenheight*0.074)*/
             }.animation(.easeInOut)
         }.navigationBarBackButtonHidden(true)
         .navigationBarTitle("")
         .navigationBarHidden(true)
-            .background(Color("lightgray").edgesIgnoringSafeArea(.all))
+            .background(LinearGradient(gradient: Gradient(colors: [Color("personality"), Color("personality")]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all))
             .alert(isPresented: $alert) {
             Alert(title: Text("Error"), message: Text(self.msg), dismissButton: .default(Text("OK")))
         }
@@ -2895,13 +3119,15 @@ struct BioCards: View {
                     
                     VStack {
                         HStack {
-                            Image(title)
-                                .resizable()
-                                .frame(width: 20, height: 20)
+                            if self.title != "General" {
+                                Image(title)
+                                    .resizable()
+                                    .frame(width: 20, height: 20)
+                            }
                             Text(title + ": ")
                                 .font(Font.custom("ProximaNova-Regular", size: 16))
                                 .fontWeight(.semibold)
-                                .foregroundColor(Color("purp").opacity(0.8))
+                                .foregroundColor(Color("personality"))
                                 .fixedSize(horizontal: false, vertical: true)
                             Spacer()
                             Button(action: {
@@ -2916,7 +3142,7 @@ struct BioCards: View {
                         Text(moreinfo[index])
                             .font(Font.custom("PromximaNova-Regular", size: 14))
                             .fontWeight(.semibold)
-                            .foregroundColor(Color("purp").opacity(0.8))
+                            .foregroundColor(Color("personality"))
                             .padding(.horizontal, 10)
                             .padding(.bottom, 10)
                             .fixedSize(horizontal: false, vertical: true)
@@ -2934,13 +3160,15 @@ struct BioCards: View {
                     
                     VStack(spacing: 0) {
                         HStack {
-                            Image(title)
-                                .resizable()
-                                .frame(width: 20, height: 20)
+                            if self.title != "General" {
+                                Image(title)
+                                    .resizable()
+                                    .frame(width: 20, height: 20)
+                            }
                             Text(title + ": ")
                                 .font(Font.custom("ProximaNova-Regular", size: 16))
                                 .fontWeight(.semibold)
-                                .foregroundColor(Color("purp").opacity(0.8))
+                                .foregroundColor(Color("personality"))
                             Spacer()
                             Button(action: {
                                 self.edit.toggle()
@@ -2952,44 +3180,26 @@ struct BioCards: View {
                             }
                         }.padding(.horizontal, 15).padding(.top, 10)
                         
-                        ResizingTextField(text: self.$text[index])
-                            .frame(width: self.screenwidth - 105, height: 100)
-                            .cornerRadius(10)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 5)
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(lineWidth: 5)
+                                .frame(width: self.screenwidth - 105, height: 100)
+                                .foregroundColor(Color("personality"))
+                            
+                            ResizingTextField(text: self.$text[index])
+                                .frame(width: self.screenwidth - 115, height: 100)
+                                .cornerRadius(10)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 5)
+                        }.padding(.top, 10)
                         
                         HStack(spacing: 0) {
                             Spacer()
-                            Text("Characters: ")
+                            Text("Characters: " + String(self.text[index].count) + "/200")
                                 .font(Font.custom("ProximaNova-Regular", size: 14))
                                 .fontWeight(.semibold)
-                                .foregroundColor(Color("purp").opacity(0.8))
-                                .padding(.bottom, 10)
-                                .animation(nil)
-                            if self.text[index].count > 200 {
-                                Text(String(self.text[index].count))
-                                    .font(Font.custom("ProximaNova-Regular", size: 14))
-                                    .fontWeight(.semibold)
-                                    .frame(width: 25, alignment: .trailing)
-                                    .foregroundColor(Color("personality").opacity(0.8))
-                                    .padding(.bottom, 10)
-                                    .animation(nil)
-                            }
-                            else {
-                                Text(String(self.text[index].count))
-                                    .font(Font.custom("ProximaNova-Regular", size: 14))
-                                    .fontWeight(.semibold)
-                                    .frame(width: 25, alignment: .trailing)
-                                    .foregroundColor(Color("purp").opacity(0.8))
-                                    .padding(.bottom, 10)
-                                    .animation(nil)
-                            }
-                            Text("/200")
-                                .font(Font.custom("ProximaNova-Regular", size: 14))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color("purp").opacity(0.8))
-                                .padding(.trailing, 10)
-                                .padding(.bottom, 10)
+                                .foregroundColor(self.text[index].count > 200 ? Color("personality") : Color(.gray).opacity(0.4))
+                                .padding([.bottom, .trailing], 10)
                                 .animation(nil)
                         }
                     }
@@ -2999,10 +3209,12 @@ struct BioCards: View {
             //MARK: Default
             else {
                 HStack {
-                    Image(title)
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                        .padding(.leading, 10)
+                    if self.title != "General" {
+                        Image(title)
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                            .padding(.leading, 10)
+                    }
                     Button(action: {
                         for num in 0...8 {
                             self.showinfo[num] = false
@@ -3013,19 +3225,30 @@ struct BioCards: View {
                             Text(title + ":")
                                 .font(Font.custom("ProximaNova-Regular", size: 24))
                                 .fontWeight(.semibold)
-                                .foregroundColor(Color("purp").opacity(0.8))
+                                .foregroundColor(Color("personality"))
                         }
-                    }
+                    }.padding(.leading, self.title == "General" ? 10 : 0)
                     Spacer()
-                    Button(action: {
-                        self.edit.toggle()
-                        self.selected[self.index] = true
-                    }) {
-                        Image(systemName: "checkmark.circle")
-                            .resizable()
-                            .frame(width: 30, height: 30)
-                            .foregroundColor(Color("purp").opacity(0.8))
-                    }.padding(.trailing, 10)
+                    if self.selected[self.index] {
+                        Button(action: {
+                            self.edit.toggle()
+                        }) {
+                            Image(systemName: "pencil.circle")
+                                .resizable()
+                                .frame(width: 40, height: 40)
+                                .foregroundColor(Color("personality"))
+                        }.padding(.trailing, self.title != "General" ? 0 : 10)
+                    }
+                    if self.title != "General" {
+                        Button(action: {
+                            self.selected[self.index].toggle()
+                        }) {
+                            Image(systemName: self.selected[self.index] ? "checkmark.circle.fill" : "checkmark.circle")
+                                .resizable()
+                                .frame(width: 40, height: 40)
+                                .foregroundColor(Color("personality"))
+                        }.padding(.trailing, 10)
+                    }
                 }.frame(width: screenwidth - 85, height: 65)
                     .background(Color(.white))
                     .cornerRadius(10)
@@ -3071,6 +3294,7 @@ struct PercentageSlider: View {
                     .foregroundColor(Color("appearance"))
                 Rectangle()
                     .foregroundColor(.accentColor)
+                    .opacity(0.75)
                     .frame(height: geometry.size.height * CGFloat(self.percentage / 10))
                     .cornerRadius(0)
                 VStack(spacing: 0) {
@@ -3102,7 +3326,7 @@ struct PercentageSlider: View {
                         .animation(nil)
                         .padding(.bottom, 10)
                 }
-            }.cornerRadius(18)
+            }.cornerRadius(10)
                 .gesture(DragGesture(minimumDistance: 0).onChanged({ value in
                     self.percentage = 10 - min(max(0, Float(value.location.y / geometry.size.height * 100)), 100)/10
                 }))
@@ -3143,7 +3367,7 @@ struct VerticalSlider: View {
                         .animation(nil)
                     Spacer()
                 }
-            }.cornerRadius(18)
+            }.cornerRadius(10)
                 .gesture(DragGesture(minimumDistance: 0).onChanged({ value in
                     self.percentage = 10 - min(max(0, Float(value.location.y / geometry.size.height * 100)), 100)/10
                 }))
@@ -3615,16 +3839,16 @@ struct ResizingTextField: UIViewRepresentable {
     }
     func makeUIView(context: UIViewRepresentableContext<ResizingTextField>) -> UITextView {
         let view = UITextView()
-        view.font = UIFont(name: "Gilroy-ExtraBold", size: 15)
+        view.font = UIFont(name: "ProximaNova-Regular", size: 15)
         if text.count == 0 {
-            view.textColor = UIColor(named: "purp")!.withAlphaComponent(0.5)
+            view.textColor = UIColor(named: "personality")!.withAlphaComponent(0.7)
             view.text = "Write Something"
         }
         else {
-            view.textColor = UIColor(named: "purp")
+            view.textColor = UIColor(named: "personality")
             view.text = text
         }
-        view.backgroundColor = UIColor(named: "lightgray")!.withAlphaComponent(0.3)
+        view.backgroundColor = .clear//UIColor(named: "lightgray")!.withAlphaComponent(0.3)
         view.delegate = context.coordinator
         view.isEditable = true
         view.isUserInteractionEnabled = true
@@ -3639,8 +3863,10 @@ struct ResizingTextField: UIViewRepresentable {
             parent = parent1
         }
         func textViewDidBeginEditing(_ textView: UITextView) {
-            textView.text = ""
-            textView.textColor = UIColor(named: "purp")
+            if self.parent.text.count == 0 {
+                textView.text = ""
+                textView.textColor = UIColor(named: "personality")
+            }
         }
         func textViewDidChange(_ textView: UITextView) {
             self.parent.text = textView.text!

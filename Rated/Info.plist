@@ -44,9 +44,8 @@
 	</array>
 	<key>UIAppFonts</key>
 	<array>
-		<string>ProximaNova-Regular.otf</string>
 		<string>Proxima Nova Bold.otf</string>
-		<string>Proxima Nova Alt Bold.otf</string>
+		<string>ProximaNova-Regular.otf</string>
 		<string>Gilroy-ExtraBold.otf</string>
 		<string>Gilroy-Light.otf</string>
 	</array>
