@@ -886,7 +886,13 @@ struct SignUpView: View {
                             }
                         }
                         if check && length {
-                            self.showprofile.toggle()
+                            for num in self.biocards {
+                                let index = (num.prefix(2) as NSString).integerValue
+                                if self.selectedprompts[index] {
+                                    self.text[index] = "1" + String(num.prefix(2)) + self.text[index]
+                                }
+                            }
+                            print(self.text)
                             self.next -= self.screenwidth
                             self.count += 1
                         }
@@ -1029,8 +1035,15 @@ struct SignUpView: View {
                             
                         }
                         else {
-                            self.next -= self.screenwidth
-                            self.count += 1
+                            if !self.instagram {
+                                self.instagramhandle = "N/A"
+                            }
+                            if !self.twitter {
+                                self.twitterhandle = "N/A"
+                            }
+                            if !self.snapchat {
+                                self.snapchathandle = "N/A"
+                            }
                             let socials = [self.instagramhandle, self.twitterhandle, self.snapchathandle]
                             
                             let per = Double(self.percentage/10).truncate(places: 1)
@@ -1039,7 +1052,9 @@ struct SignUpView: View {
                             
                             CreateUser(name: self.name, age: self.age, gender: self.gender, percentage: per, overallrating: overall, appearancerating: Double(self.selfratingappearance).truncate(places: 1), personalityrating: Double(self.selfratingpersonality).truncate(places: 1), profilepics: self.profilepics, photopostion: self.position, bio: self.text, socials: socials) { (val) in
                                 if val {
-                                    print("bruh")
+                                    self.showprofile.toggle()
+                                    self.next -= self.screenwidth
+                                    self.count += 1
                                 }
                             }
                         }
@@ -1073,6 +1088,7 @@ struct SignUpView: View {
                                 Spacer()
                                 Button(action: {
                                     AddImages()
+                                    self.observer.relogin()
                                     UserDefaults.standard.set(false, forKey: "signup")
                                     UserDefaults.standard.set(true, forKey: "status")
                                     NotificationCenter.default.post(name: NSNotification.Name("StatusChange"), object: nil)
@@ -1160,6 +1176,7 @@ struct HomeView: View {
     @State var ad: Bool = false
     @State var showad: Bool = false
     @State var adappear: Bool = false
+    @State var recentratings: Bool = false
     var rewardAd: Rewarded
     let screenwidth = UIScreen.main.bounds.width
     let screenheight = UIScreen.main.bounds.height
@@ -1184,86 +1201,7 @@ struct HomeView: View {
                     Spacer()
                 }.padding(.top, self.screenheight*0.11)
                 Spacer()
-            }.frame(height: self.screenheight)//.background(Color(.white).edgesIgnoringSafeArea(.all))
-                
-            //MARK: Menu
-            HStack {
-                VStack(alignment: .leading, spacing: self.screenheight*0.0185) {
-                    Text("Menu")
-                        .font(Font.custom("ProximaNova-Regular", size: self.screenheight*0.0345))
-                        .fontWeight(.semibold)
-                        .foregroundColor(Color(.black).opacity(0.3))
-                    Button(action: {
-                        self.index = 0
-                        self.show.toggle()
-                    }) {
-                        HStack {
-                            Image("home")
-                                .resizable()
-                                .frame(width: self.screenheight*0.03, height: self.screenheight*0.03)
-                            Text("Home")
-                                .font(Font.custom("ProximaNova-Regular", size: self.screenheight*0.025))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color(.black).opacity(0.3))
-                            Spacer()
-                        }.frame(width: 120).padding(.leading, 10)
-                    }.buttonStyle(PlainButtonStyle())
-                    Button(action: {
-                        self.index = 1
-                        self.show.toggle()
-                    }) {
-                        HStack {
-                            Image("profile")
-                                .resizable()
-                                .frame(width: self.screenheight*0.03, height: self.screenheight*0.03)
-                            Text("Profile")
-                                .font(Font.custom("ProximaNova-Regular", size: self.screenheight*0.025))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color(.black).opacity(0.3))
-                            Spacer()
-                        }.frame(width: 120).padding(.leading, 10)
-                    }.buttonStyle(PlainButtonStyle())
-                    Button(action: {
-                        self.index = 2
-                        self.show.toggle()
-                    }) {
-                        HStack {
-                            Image("settings")
-                                .resizable()
-                                .frame(width: self.screenheight*0.03, height: self.screenheight*0.03)
-                            Text("Settings")
-                                .font(Font.custom("ProximaNova-Regular", size: self.screenheight*0.025))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color(.black).opacity(0.3))
-                            Spacer()
-                        }.frame(width: 120).padding(.leading, 10)
-                    }.buttonStyle(PlainButtonStyle())
-                    Rectangle().frame(width: 120, height: 2).foregroundColor(Color("personality")).padding(.vertical, 15)
-                    Button(action: {
-                        let firebaseAuth = Auth.auth()
-                        do {
-                          try firebaseAuth.signOut()
-                        } catch let signOutError as NSError {
-                          print ("Error signing out: %@", signOutError)
-                        }
-                        UserDefaults.standard.set(false, forKey: "status")
-                        NotificationCenter.default.post(name: NSNotification.Name("StatusChange"), object: nil)
-                    }) {
-                        HStack {
-                            Image("signout")
-                                .resizable()
-                                .frame(width: self.screenheight*0.03, height: self.screenheight*0.03)
-                            Text("LogOut")
-                                .font(Font.custom("ProximaNova-Regular", size: self.screenheight*0.025))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color("personality"))
-                            Spacer()
-                        }.frame(width: 120).padding(.leading, 10)
-                    }.buttonStyle(PlainButtonStyle())
-                    Spacer()
-                }.frame(height: self.screenheight).padding(.top, self.screenheight*0.117).padding(.leading, 10)
-                Spacer()
-            }.frame(height: self.screenheight)
+            }.frame(height: self.screenheight).offset(x: self.show ? 0 : -150).animation(.easeInOut(duration: 0.5))
             
             //MARK: RatingView
             VStack {
@@ -1354,7 +1292,23 @@ struct HomeView: View {
                                     .padding(.leading, 40)
                                 Spacer()
                             }
-                            if self.observer.userrates.count == 0 {
+                            if self.observer.userrates.count == 0 && self.recentratings {
+                                ZStack {
+                                    Color(.white)
+                                        .frame(width: screenwidth/1.25, height: screenheight*0.3)
+                                        .cornerRadius(10)
+                                        .shadow(color: Color("personality"), radius: 15, x: 0, y: 0)
+                                    RoundedRectangle(cornerRadius: 10)
+                                        .stroke(lineWidth: 5)
+                                        .frame(width: screenwidth/1.25, height: screenheight*0.3)
+                                        .foregroundColor(Color("personality"))
+                                    Text("No Ratings Yet")
+                                        .font(Font.custom("ProximaNova-Regular", size: 24))
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(Color("purp"))
+                                }
+                            }
+                            else if self.observer.userrates.count == 0 {
                                 ZStack {
                                     Color(.white)
                                         .frame(width: screenwidth/1.25, height: screenheight*0.3)
@@ -1374,7 +1328,7 @@ struct HomeView: View {
                                 }
                             }
                             //MARK: Rate Button
-                            NavigationLink(destination: RatingView(rating: self.$rating, ad: self.$ad, showad: self.$showad, norating: self.$norating), isActive: $rating) {
+                            NavigationLink(destination: RatingView(rating: self.$rating, ad: self.$ad, showad: self.$showad, norating: self.$norating, rewardAd: self.rewardAd), isActive: $rating) {
                                 Button(action: {
                                     self.rating.toggle()
                                     print(self.observer.users.count, self.observer.rated)
@@ -1390,16 +1344,16 @@ struct HomeView: View {
                             }.animation(.spring())
                             Spacer()
                             //MARK: Ad
-                            ZStack {
-                                Color(.white)
-                                    .frame(width: screenwidth - 40, height: 70)
-                                    .cornerRadius(10)
-                                    .shadow(color: Color("personality"), radius: 10, x: 0, y: 0)
-                                if self.adappear {
+                            if self.adappear {
+                                ZStack {
+                                    Color(.white)
+                                        .frame(width: screenwidth - 40, height: 70)
+                                        .cornerRadius(10)
+                                        .shadow(color: Color("personality"), radius: 10, x: 0, y: 0)
                                     RatingAd()
-                                        .frame(width: screenwidth - 50, height: 70 - 10)
-                                }
-                            }.padding(.bottom, 10)
+                                        .frame(width: screenwidth - 50, height: 60)
+                                }.padding(.bottom, 10)
+                            }
                         }
                         //MARK: Unlock
                         if self.observer.comments.count != 0 {
@@ -1411,12 +1365,16 @@ struct HomeView: View {
                                         .opacity(0.4)
                                         .frame(width: self.screenwidth, height: self.screenheight)
                                 }
-                                RoundedRectangle(cornerRadius: 20)
-                                    .foregroundColor(Color("personality"))
-                                    .frame(width: self.screenwidth/1.5, height: self.screenheight/2.5)
                                 RoundedRectangle(cornerRadius: 10)
                                     .foregroundColor(Color("lightgray"))
-                                    .frame(width: self.screenwidth/1.5 - 15, height: self.screenheight/2.5 - 15)
+                                    .frame(width: self.screenwidth/1.5, height: self.screenheight/2.5)
+                                
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(lineWidth: 5)
+                                    .foregroundColor(Color("personality"))
+                                    .frame(width: self.screenwidth/1.5, height: self.screenheight/2.5)
+                                    .shadow(color: Color("personality"), radius: 20, x: 0, y: 0)
+                                
                                 VStack {
                                     Text("Unlock Profile")
                                         .font(Font.custom("ProximaNova-Regular", size: 20))
@@ -1509,12 +1467,16 @@ struct HomeView: View {
                                         .opacity(0.4)
                                         .frame(width: self.screenwidth, height: self.screenheight)
                                 }
-                                RoundedRectangle(cornerRadius: 20)
-                                    .foregroundColor(Color("personality"))
-                                    .frame(width: self.screenwidth/1.5, height: self.screenheight/3.5)
+                                
                                 RoundedRectangle(cornerRadius: 10)
                                     .foregroundColor(Color("lightgray"))
-                                    .frame(width: self.screenwidth/1.5 - 15, height: self.screenheight/3.5 - 15)
+                                    .frame(width: self.screenwidth/1.5, height: self.screenheight/3.5)
+                                
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(lineWidth: 5)
+                                    .foregroundColor(Color("personality"))
+                                    .frame(width: self.screenwidth/1.5, height: self.screenheight/3.5)
+                                    .shadow(color: Color("personality"), radius: 20, x: 0, y: 0)
                                 VStack {
                                     HStack {
                                         Image("comment")
@@ -1554,12 +1516,16 @@ struct HomeView: View {
                                         .opacity(0.75)
                                         .frame(width: self.screenwidth, height: self.screenheight)
                                 }
-                                RoundedRectangle(cornerRadius: 20)
-                                    .foregroundColor(Color("personality"))
-                                    .frame(width: self.screenheight/2.5, height: self.screenheight/1.35)
+                                
                                 RoundedRectangle(cornerRadius: 10)
                                     .foregroundColor(Color("lightgray"))
-                                    .frame(width: self.screenheight/2.5 - 15, height: self.screenheight/1.35 - 15)
+                                    .frame(width: self.screenheight/2.5, height: self.screenheight/1.35)
+                                
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(lineWidth: 5)
+                                    .foregroundColor(Color("personality"))
+                                    .frame(width: self.screenheight/2.5, height: self.screenheight/1.35)
+                                    .shadow(color: Color("personality"), radius: 20, x: 0, y: 0)
                                 VStack {
                                     HStack {
                                         Spacer()
@@ -1699,7 +1665,89 @@ struct HomeView: View {
             .cornerRadius(self.show ? 30 : 0)
             .scaleEffect(self.show ? 0.95 : 1)
             .offset(x: self.show ? screenwidth/2.75 : 0, y: self.show ? 2 : 0)
+            
+            //MARK: Menu
+            HStack {
+                VStack(alignment: .leading, spacing: self.screenheight*0.0185) {
+                    Text("Menu")
+                        .font(Font.custom("ProximaNova-Regular", size: self.screenheight*0.0345))
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color(.black).opacity(0.3))
+                    Button(action: {
+                        self.index = 0
+                        self.show.toggle()
+                    }) {
+                        HStack {
+                            Image("home")
+                                .resizable()
+                                .frame(width: self.screenheight*0.03, height: self.screenheight*0.03)
+                            Text("Home")
+                                .font(Font.custom("ProximaNova-Regular", size: self.screenheight*0.025))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.black).opacity(0.3))
+                            Spacer()
+                        }.frame(width: 120).padding(.leading, 10)
+                    }.buttonStyle(PlainButtonStyle())
+                    Button(action: {
+                        self.index = 1
+                        self.show.toggle()
+                    }) {
+                        HStack {
+                            Image("profile")
+                                .resizable()
+                                .frame(width: self.screenheight*0.03, height: self.screenheight*0.03)
+                            Text("Profile")
+                                .font(Font.custom("ProximaNova-Regular", size: self.screenheight*0.025))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.black).opacity(0.3))
+                            Spacer()
+                        }.frame(width: 120).padding(.leading, 10)
+                    }.buttonStyle(PlainButtonStyle())
+                    Button(action: {
+                        self.index = 2
+                        self.show.toggle()
+                    }) {
+                        HStack {
+                            Image("settings")
+                                .resizable()
+                                .frame(width: self.screenheight*0.03, height: self.screenheight*0.03)
+                            Text("Settings")
+                                .font(Font.custom("ProximaNova-Regular", size: self.screenheight*0.025))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.black).opacity(0.3))
+                            Spacer()
+                        }.frame(width: 120).padding(.leading, 10)
+                    }.buttonStyle(PlainButtonStyle())
+                    Rectangle().frame(width: 120, height: 2).foregroundColor(Color("personality")).padding(.vertical, 15)
+                    Button(action: {
+                        let firebaseAuth = Auth.auth()
+                        do {
+                          try firebaseAuth.signOut()
+                        } catch let signOutError as NSError {
+                          print ("Error signing out: %@", signOutError)
+                        }
+                        UserDefaults.standard.set(false, forKey: "status")
+                        NotificationCenter.default.post(name: NSNotification.Name("StatusChange"), object: nil)
+                    }) {
+                        HStack {
+                            Image("signout")
+                                .resizable()
+                                .frame(width: self.screenheight*0.03, height: self.screenheight*0.03)
+                            Text("LogOut")
+                                .font(Font.custom("ProximaNova-Regular", size: self.screenheight*0.025))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color("personality"))
+                            Spacer()
+                        }.frame(width: 120).padding(.leading, 10)
+                    }.buttonStyle(PlainButtonStyle())
+                    Spacer()
+                }.frame(height: self.screenheight).padding(.top, self.screenheight*0.117).padding(.leading, 10)
+                Spacer()
+            }.frame(height: self.screenheight).offset(x: self.show ? 0 : -150).animation(.easeInOut(duration: 0.5))
         }.edgesIgnoringSafeArea(.all).onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                self.recentratings = true
+            }
             DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
                 self.adappear = true
             }
@@ -1727,7 +1775,12 @@ struct RatingView: View {
     @State var newkey: CGFloat = UIScreen.main.bounds.height
     @State var newkeyx: CGFloat = 0
     @State var showkey: Bool = false
+    @State var showkeys = false
     @State var showsocials: Bool = false
+    @State var nonext = false
+    @State var msg = ""
+    @State var alert = false
+    var rewardAd: Rewarded
     let screenwidth = UIScreen.main.bounds.width
     let screenheight = UIScreen.main.bounds.height
     var body: some View {
@@ -1748,7 +1801,7 @@ struct RatingView: View {
                         RatingAd()
                             .frame(width: screenwidth - 35, height: screenheight/1.25 - 15)
                             .background(Color("lightgray"))
-                            .cornerRadius(20)
+                            .cornerRadius(15)
                     }.scaleEffect(self.showad ? 1 : 0).animation(.easeInOut(duration: 0.5))
                 }.frame(width: self.screenwidth, height: self.screenheight)
                     .edgesIgnoringSafeArea(.all)
@@ -1758,9 +1811,9 @@ struct RatingView: View {
                     VStack {
                         //MARK: RatingUI
                         RatingProfile(show: self.$showsocials, appearance: self.$appearance, personality: self.$personality, showrating: self.$showrating, unlock: self.$unlocksocials, count: self.$count)
-                            .padding(.all, 7.5)
-                            .background(Color("personality").cornerRadius(25))
-                            .scaleEffect(self.next ? 0 : 0.97)
+                            .padding(.all, 2.5)
+                            .background(Color("personality").cornerRadius(20).shadow(color: Color("personality"), radius: 15, x: 0, y: 0))
+                            .scaleEffect(self.next ? 0 : 0.95)
                             .animation(.spring())
                     }.edgesIgnoringSafeArea(.all)
                     //MARK: Comment
@@ -1773,13 +1826,16 @@ struct RatingView: View {
                                 .frame(width: self.screenwidth, height: self.screenheight)
                         }
                         ZStack {
-                            RoundedRectangle(cornerRadius: 20)
-                                .frame(width: self.screenwidth/1.5 + 15, height: self.screenheight/3.5 + 15)
-                                .foregroundColor(Color("personality"))
                             
                             RoundedRectangle(cornerRadius: 10)
                                 .frame(width: self.screenwidth/1.5, height: self.screenheight/3.5)
                                 .foregroundColor(Color("lightgray"))
+                            
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(lineWidth: 5)
+                                .frame(width: self.screenwidth/1.5, height: self.screenheight/3.5)
+                                .foregroundColor(Color("personality"))
+                                .shadow(color: Color("personality"), radius: 20, x: 0, y: 0)
                             
                             VStack(spacing: 5) {
                                 HStack {
@@ -1793,9 +1849,11 @@ struct RatingView: View {
                                         .foregroundColor(Color("personality"))
                                     Spacer()
                                 }.padding(.top, 10)
-                                ResizingTextFieldRed(text: self.$comment)
-                                    .frame(width: self.screenwidth/1.5 - 20)
-                                    .cornerRadius(5)
+                                if self.showcomment {
+                                    ResizingTextFieldRed(text: self.$comment)
+                                        .frame(width: self.screenwidth/1.5 - 20)
+                                        .cornerRadius(5)
+                                }
                                 HStack(spacing: 0) {
                                     Spacer()
                                     Text(String(self.comment.count))
@@ -1825,6 +1883,10 @@ struct RatingView: View {
                                                 self.observer.rated += 1
                                                 if self.observer.ratings == 1 {
                                                     self.ad = true
+                                                    self.nonext.toggle()
+                                                    DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                                                        self.nonext.toggle()
+                                                    }
                                                     DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
                                                         self.showad.toggle()
                                                         self.observer.ratings = 0
@@ -1841,7 +1903,7 @@ struct RatingView: View {
                                                 self.norating = true
                                             }
                                         }
-                                        self.comment = "TEMP"
+                                        self.comment = ""
                                         self.observer.socialunlock = false
                                         self.unlocksocials = false
                                     }) {
@@ -1852,9 +1914,13 @@ struct RatingView: View {
                                     }.frame(width: self.screenwidth/3.25 - 5, height: 40).background(Color("personality").cornerRadius(5))
                                     
                                     Button(action: {
+                                        if self.comment.count > 100 {
+                                            self.msg = "Your comment is too long. (Max is 100 characters)"
+                                            self.alert.toggle()
+                                            return
+                                        }
                                         self.showcomment = false
                                         self.next.toggle()
-                                        self.observer.keys += 1
                                         //UpdateRating(user: self.observer.users[self.observer.rated], appearance: Double(self.appearance), personality: Double(self.personality), keys: self.observer.keys, comment: self.comment)
                                         self.showrating = false
                                         self.showsocials = false
@@ -1865,7 +1931,7 @@ struct RatingView: View {
                                             self.personality = 5
                                             if self.observer.users.count != self.observer.rated+1 {
                                                 self.observer.rated += 1
-                                                if self.observer.ratings == 2 {
+                                                if self.observer.ratings == 4 {
                                                     self.ad = true
                                                     DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
                                                         self.showad.toggle()
@@ -1883,7 +1949,7 @@ struct RatingView: View {
                                                 self.norating = true
                                             }
                                         }
-                                        self.comment = "TEMP"
+                                        self.comment = ""
                                         self.observer.socialunlock = false
                                         self.unlocksocials = false
                                     }) {
@@ -1904,12 +1970,16 @@ struct RatingView: View {
                             Color(.white)
                                 .opacity(0.5)
                         }
-                        RoundedRectangle(cornerRadius: 15)
+                    
+                        RoundedRectangle(cornerRadius: 7.5)
+                            .frame(width: self.screenwidth/1.5, height: self.screenheight/4.5)
+                            .foregroundColor(Color("lightgray"))
+                        RoundedRectangle(cornerRadius: 7.5)
+                            .stroke(lineWidth: 5)
                             .frame(width: self.screenwidth/1.5, height: self.screenheight/4.5)
                             .foregroundColor(Color("personality"))
-                        RoundedRectangle(cornerRadius: 7.5)
-                            .frame(width: self.screenwidth/1.5 - 15, height: self.screenheight/4.5 - 15)
-                            .foregroundColor(Color("lightgray"))
+                            .shadow(color: Color("personality"), radius: 20, x: 0, y: 0)
+                        
                         VStack {
                             Text("Unlock Socials")
                                 .font(Font.custom("ProximaNova-Regular", size: 20))
@@ -1938,10 +2008,15 @@ struct RatingView: View {
                                     .frame(width: 50, height: 50)
                             }
                             Button(action: {
-                                self.observer.socialunlock = true
-                                self.observer.keys -= 1
-                                KeyChange(keys: self.observer.keys)
-                                self.unlocksocials = false
+                                if self.observer.keys == 0 {
+                                    self.showkeys = true
+                                }
+                                else {
+                                    self.observer.socialunlock = true
+                                    self.observer.keys -= 1
+                                    KeyChange(keys: self.observer.keys)
+                                    self.unlocksocials = false
+                                }
                             }) {
                                 ZStack {
                                     RoundedRectangle(cornerRadius: 10)
@@ -1988,7 +2063,7 @@ struct RatingView: View {
                     }.padding(.leading, 15)
                     Spacer()
                     Button(action: {
-                        
+                        self.showkeys.toggle()
                     }) {
                         HStack {
                             Text(String(self.observer.keys))
@@ -2005,7 +2080,10 @@ struct RatingView: View {
                 }.padding(.top, self.screenheight*0.044)
                 Spacer()
                 Button(action: {
-                    if self.ad {
+                    if self.nonext {
+                        
+                    }
+                    else if self.ad {
                         self.newkey = 0
                         self.showkey = true
                         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
@@ -2041,10 +2119,125 @@ struct RatingView: View {
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
                         .frame(width: 100, height: 40)
-                        .background(Color("personality"))
+                        .background(self.nonext ? Color(.gray).opacity(0.3) : Color("personality"))
                         .cornerRadius(20)
                 }.padding(.bottom, self.screenheight*0.0325)
             }//.edgesIgnoringSafeArea(self.ad ? .all : .horizontal)
+            //MARK: ShowKeys
+            ZStack {
+                Button(action: {
+                    self.showkeys = false
+                }) {
+                    Color(.white)
+                        .opacity(0.75)
+                        .frame(width: self.screenwidth, height: self.screenheight)
+                }
+                RoundedRectangle(cornerRadius: 20)
+                    .foregroundColor(Color("personality"))
+                    .frame(width: self.screenheight/3, height: self.screenheight/2)
+                    .shadow(color: Color("personality"), radius: 20, x: 0, y: 0)
+                RoundedRectangle(cornerRadius: 10)
+                    .foregroundColor(Color("lightgray"))
+                    .frame(width: self.screenheight/3 - 15, height: self.screenheight/2 - 15)
+                VStack {
+                    HStack {
+                        Text("Keys")
+                            .font(Font.custom("ProximaNova-Regular", size: 30))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color("personality"))
+                        Image("key")
+                            .renderingMode(.template)
+                            .resizable()
+                            .frame(width: 40, height: 40)
+                            .foregroundColor(Color("personality"))
+                    }.padding(.top, 10)
+                    Spacer()
+                    Button(action: {
+                        
+                    }) {
+                        HStack {
+                            HStack(spacing: 5) {
+                                Text("Remove Ads")
+                                    .font(Font.custom("ProximaNova-Regular", size: 16))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color(.white))
+                            }.frame(width: 70).padding(.leading, 10)
+                            Spacer()
+                            HStack(spacing: 0) {
+                                Text("$2.99")
+                                    .font(Font.custom("ProximaNova-Regular", size: 24))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color("personality"))
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 5)
+                            }.background(Color(.white).cornerRadius(10)).padding(.trailing, 10)
+                        }.frame(width: self.screenheight/3 - 55, height: 60).background(Color("personality").cornerRadius(10))
+                    }
+                    Button(action: {
+                        
+                    }) {
+                        HStack {
+                            HStack(spacing: 5) {
+                                Text("∞")
+                                    .font(Font.custom("ProximaNova-Regular", size: 30))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color(.white))
+                                Image("key")
+                                    .renderingMode(.template)
+                                    .resizable()
+                                    .frame(width: 25, height: 25)
+                                    .foregroundColor(Color(.white))
+                            }.padding(.leading, 10)
+                            Spacer()
+                            HStack(spacing: 0) {
+                                Text("$4.99")
+                                    .font(Font.custom("ProximaNova-Regular", size: 24))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color("personality"))
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 5)
+                            }.background(Color(.white).cornerRadius(10)).padding(.trailing, 10)
+                        }.frame(width: self.screenheight/3 - 55, height: 60).background(Color("personality").cornerRadius(10))
+                    }
+                    Button(action: {
+                        self.rewardAd.showAd(rewardFunction: {
+                            self.observer.keys += 3
+                            KeyChange(keys: self.observer.keys)
+                        })
+                    }) {
+                        HStack {
+                            HStack(spacing: 5) {
+                                Text("+3")
+                                    .font(Font.custom("ProximaNova-Regular", size: 24))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color(.white))
+                                Image("key")
+                                    .renderingMode(.template)
+                                    .resizable()
+                                    .frame(width: 25, height: 25)
+                                    .foregroundColor(Color(.white))
+                            }.frame(width: 70).padding(.leading, 10)
+                            Spacer()
+                            HStack(spacing: 0) {
+                                VStack(spacing: 0) {
+                                    Text("Watch")
+                                        .font(Font.custom("ProximaNova-Regular", size: 14))
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(Color("personality"))
+                                    Text("Ad")
+                                        .font(Font.custom("ProximaNova-Regular", size: 16))
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(Color("personality"))
+                                }.frame(width: 45).padding(.vertical, 5).padding(.leading, 2.5)
+                                Image("ad")
+                                    .resizable()
+                                    .frame(width: 30, height: 30)
+                                    .padding(.trailing, 5)
+                            }.background(Color(.white).cornerRadius(10)).padding(.trailing, 10)
+                        }.frame(width: self.screenheight/3 - 55, height: 60).background(Color("personality").cornerRadius(10))
+                    }.buttonStyle(PlainButtonStyle()).padding(.bottom, 20)
+                }.frame(width: self.screenheight/3 - 15, height: self.screenheight/2 - 15)
+            }.offset(y: self.showkeys ? 0 : self.screenheight).opacity(self.showkeys ? 1 : 0).animation(.easeInOut(duration: 0.2))
             //MARK: Key
             ZStack {
                 Circle()
@@ -2063,10 +2256,15 @@ struct RatingView: View {
                         .frame(width: 35, height: 35)
                 }
             }.animation(.spring()).offset(x: self.newkeyx, y: self.newkey).scaleEffect((self.newkey < 0) ? 1 : 1.9).opacity((self.showkey) ? 1 : 0)
+            
+            
         }.background(Color("lightgray").edgesIgnoringSafeArea(.all))
         .navigationBarTitle("")
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
+        .alert(isPresented: $alert) {
+            Alert(title: Text("Error"), message: Text(self.msg), dismissButton: .default(Text("OK")))
+        }
     }
 }
 
@@ -2400,8 +2598,13 @@ struct RecentRatings: View {
             ZStack {
                 Color(.white)
                     .frame(width: screenwidth/1.25, height: screenheight*0.3)
-                    .cornerRadius(15)
-                    .shadow(radius: 30)
+                    .cornerRadius(10)
+                
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(lineWidth: 5)
+                    .frame(width: screenwidth/1.25, height: screenheight*0.3)
+                    .foregroundColor(Color("personality"))
+                    .shadow(color: Color("personality"), radius: 15, x: 0, y: 0)
                 
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(spacing: 13) {
@@ -2492,10 +2695,10 @@ struct Profile: View {
                             .cornerRadius(20)
                         ScrollView(.vertical, showsIndicators: false) {
                             
-                            ForEach(0..<9, id: \.self) {index in
-                                VStack(spacing: 10) {
-                                    if self.selected[index] {
-                                        BioCardsFP(index: index, text: self.bio[index])
+                            ForEach(self.bio, id: \.self) { str in
+                                VStack(spacing: 0) {
+                                    if (String(str.prefix(1)) as NSString).integerValue == 1 {
+                                        BioCardsFP(index: (String(str.prefix(3).suffix(2)) as NSString).integerValue, text: String(str)[3..<str.count]).animation(nil)
                                     }
                                 }.frame(width: self.screenwidth - 40)
                             }
@@ -2585,7 +2788,7 @@ struct RatingProfile: View {
                                                 .frame(width: 35, height: 35)
                                         }
                                         Text("No Socials")
-                                            .font(Font.custom("ProximaNova-Regular", size: 20))
+                                            .font(Font.custom("ProximaNova-Regular", size: 14))
                                             .fontWeight(.semibold)
                                             .foregroundColor(Color("personality"))
                                     }.background(Color(.white).cornerRadius(7.5))
@@ -3377,10 +3580,10 @@ class observer: ObservableObject {
     init() {
         self.users = [UserData]()
         print(self.users)
-        let db = Firestore.firestore()
         if (UserDefaults.standard.value(forKey: "ID") as? String ?? "NA") == "NA" {
             return
         }
+        let db = Firestore.firestore()
         db.collection("users").getDocuments() { (querySnapshot, err) in
             if err != nil {
                 print((err?.localizedDescription)!)
@@ -3591,6 +3794,7 @@ func CreateUser(name: String, age: String, gender: String, percentage: Double, o
     let storage = Storage.storage().reference()
     let uid = Auth.auth().currentUser?.uid
     var images = [String]()
+    var newbio = [String]()
     
     db.collection("users").document(uid!).setData(["Name": name, "Age": age, "Gender": gender, "Percentage": percentage, "SelfRating": overallrating, "ProfilePics": [String](), "Bio": [String](), "Rates": [String](), "OverallRating": overallrating, "AppearanceRating": appearancerating, "PersonalityRating": personalityrating, "ID": uid!, "Lock": [Bool](), "Keys": 0, "Comments": [String](), "Socials": socials]) { (err) in
         if err != nil{
@@ -3608,6 +3812,7 @@ func CreateUser(name: String, age: String, gender: String, percentage: Double, o
                     complete(false)
                     return
                 }
+                newbio.append(String(bio[num])[1..<bio[num].count])
             }
         }
     }
@@ -3638,7 +3843,7 @@ func CreateUser(name: String, age: String, gender: String, percentage: Double, o
                         UserDefaults.standard.set(gender, forKey: "Gender")
                         UserDefaults.standard.set(percentage, forKey: "Percentage")
                         UserDefaults.standard.set(overallrating, forKey: "SelfRating")
-                        UserDefaults.standard.set(bio, forKey: "Bio")
+                        UserDefaults.standard.set(newbio, forKey: "Bio")
                         UserDefaults.standard.set(uid!, forKey: "ID")
                         UserDefaults.standard.set(appearancerating, forKey: "AppearanceRating")
                         UserDefaults.standard.set(personalityrating, forKey: "PersonalityRating")
@@ -3695,6 +3900,7 @@ func UpdateRating(user: UserData, appearance: Double, personality: Double, keys:
     let uid = Auth.auth().currentUser?.uid
     db.collection("users").document(user.id).updateData(["OverallRating": newoverall.truncate(places: 1), "AppearanceRating": newappearance.truncate(places: 1), "PersonalityRating": newpersonality.truncate(places: 1), "Rates": FieldValue.arrayUnion([String(appearance.truncate(places: 1)) + String(personality.truncate(places: 1)) + String(overall) + uid!]), "Comments": FieldValue.arrayUnion([comment])])
     db.collection("users").document(uid!).updateData(["Key": keys])
+    db.collection("users").document(user.id).updateData(["Lock": FieldValue.arrayUnion([false])])
     print(user.Percentage, newappearance, newpersonality, newoverall)
 }
 
@@ -3999,7 +4205,8 @@ final class Rewarded: NSObject, GADRewardedAdDelegate{
         }
     }
     func rewardedAdDidDismiss(_ rewardedAd: GADRewardedAd) {
-        self.rewardedAd = GADRewardedAd(adUnitID: "ca-app-pub-8107068593888585/2703558577") //"ca-app-pub-4206140009989967/9044631871")
+        self.rewardedAd = GADRewardedAd(adUnitID: "ca-app-pub-3940256099942544/5224354917")
+        //"ca-app-pub-8107068593888585/2703558577") //"ca-app-pub-4206140009989967/9044631871")
         LoadRewarded()
     }
 }
@@ -4010,7 +4217,8 @@ struct RatingAd : UIViewRepresentable {
     func makeUIView(context: UIViewRepresentableContext<RatingAd>) -> GADBannerView {
         let ad = GADBannerView(adSize: kGADAdSizeBanner)
         //TODO: Redo
-        ad.adUnitID = "ca-app-pub-8107068593888585/9123279654"//"ca-app-pub-4206140009989967/1095302745"
+        ad.adUnitID = "ca-app-pub-8107068593888585/9123279654"
+        //"ca-app-pub-4206140009989967/1095302745"
         ad.rootViewController = UIApplication.shared.windows.first?.rootViewController
         ad.load(GADRequest())
         return ad
