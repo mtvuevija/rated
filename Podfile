@@ -12,6 +12,7 @@ pod 'Firebase/Storage'
 pod 'Firebase/Firestore'
 pod 'SDWebImageSwiftUI'
 pod 'Google-Mobile-Ads-SDK'
+pod 'NavigationStack', '~> 0.1.0'
 
   target 'RatedTests' do
     inherit! :search_paths

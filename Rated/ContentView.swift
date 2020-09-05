@@ -12,9 +12,12 @@ import FirebaseAuth
 import FirebaseStorage
 import SDWebImageSwiftUI
 import GoogleMobileAds
+import NavigationStack
 
 //MARK: MainView
 struct MainView: View {
+    let screenwidth = UIScreen.main.bounds.width
+    let screenheight = UIScreen.main.bounds.height
     @State var status = UserDefaults.standard.value(forKey: "status") as? Bool ?? false
     @State var settings = UserDefaults.standard.value(forKey: "settings") as? Bool ?? false
     @State var rating = UserDefaults.standard.value(forKey: "rating") as? Bool ?? false
@@ -26,27 +29,12 @@ struct MainView: View {
     var body: some View {
         VStack {
             if status {
-                if settings {
-                    SettingView()
-                        .transition(.flipFromLeft(duration: 1))
+                NavigationView {
+                    HomeView(rewardAd: self.rewardAd)
                         .navigationBarBackButtonHidden(true)
                         .navigationBarTitle("")
                         .navigationBarHidden(true)
-                }
-                else if rating {
-                    RatingView(rewardAd: self.rewardAd)
-                        .transition(.flipFromRight)
-                        .navigationBarBackButtonHidden(true)
-                        .navigationBarTitle("")
-                        .navigationBarHidden(true)
-                }
-                else {
-                    HomeView()
-                        .transition(self.view ? .flipFromRight : .flipFromLeft)
-                        .navigationBarBackButtonHidden(true)
-                        .navigationBarTitle("")
-                        .navigationBarHidden(true)
-                }
+                }.transition(.scale)
             }
             else {
                 NavigationView {
@@ -72,8 +60,8 @@ struct MainView: View {
 
 //MARK: FrontView
 struct FrontView: View {
-    @State var screenwidth = UIScreen.main.bounds.width
-    @State var screenheight = UIScreen.main.bounds.height
+    let screenwidth = UIScreen.main.bounds.width
+    let screenheight = UIScreen.main.bounds.height
     @State var login = false
     @State var signup = false
     
@@ -1207,12 +1195,10 @@ struct HomeView: View {
     @State var report = false
     
     @State var stats = true
+    @State var settings = false
     var rewardAd: Rewarded
     let screenwidth = UIScreen.main.bounds.width
     let screenheight = UIScreen.main.bounds.height
-    init() {
-        self.rewardAd = Rewarded()
-    }
     var body: some View {
         ZStack {
             //MARK: Hold
@@ -1232,8 +1218,6 @@ struct HomeView: View {
                 }.padding(.top, self.screenheight*0.11)
                 Spacer()
             }.frame(height: self.screenheight).offset(x: self.show ? 0 : -150).animation(.easeInOut(duration: 0.5))*/
-            
-            //MARK: RatingView
             VStack {
                 if self.index == 2 {
                     VStack {
@@ -1287,9 +1271,12 @@ struct HomeView: View {
                         VStack(spacing: 10) {
                             HStack {
                                 Button(action: {
-                                    withAnimation() {
+                                    /*withAnimation() {
                                         UserDefaults.standard.set(true, forKey: "settings")
                                         NotificationCenter.default.post(name: NSNotification.Name("StatusChange"), object: nil)
+                                    }*/
+                                    withAnimation {
+                                        self.settings.toggle()
                                     }
                                 }) {
                                     Image("settings")
@@ -1350,20 +1337,20 @@ struct HomeView: View {
                                 }
                             }
                             //MARK: Rate Button
-                            Button(action: {
-                                withAnimation {
-                                    UserDefaults.standard.set(true, forKey: "rating")
-                                    NotificationCenter.default.post(name: NSNotification.Name("StatusChange"), object: nil)
-                                }
-                            }) {
-                                Text("Rate")
-                                    .font(Font.custom("ProximaNova-Regular", size: 24))
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(Color("personality"))
-                                    .frame(width: screenwidth/1.75, height: 50)
-                                    .background(Color(.white))
-                                    .cornerRadius(25)
-                            }.padding(.top, 10)
+                            NavigationLink(destination: RatingView(rating: self.$rating, rewardAd: self.rewardAd), isActive: self.$rating) {
+                                Button(action: {
+                                    self.rating.toggle()
+                                    
+                                }) {
+                                    Text("Rate")
+                                        .font(Font.custom("ProximaNova-Regular", size: 24))
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(Color("personality"))
+                                        .frame(width: screenwidth/1.75, height: 50)
+                                        .background(Color(.white))
+                                        .cornerRadius(25)
+                                }.padding(.top, 10)
+                            }
                             Spacer()
                             //MARK: Ad
                             /*if self.adappear {
@@ -1409,7 +1396,7 @@ struct HomeView: View {
                                                     .padding(.horizontal, 10).padding(.vertical, 5)
                                                     .background(Color("lightgray").cornerRadius(15).opacity(self.stats ? 0 : 0.4))
                                             }
-                                        }.padding(.horizontal, 60).padding(.bottom, self.stats ? 0 : 5)
+                                        }.padding(.horizontal, 60).padding(.bottom, self.stats ? 5 : 0)
                                         if self.stats {
                                             YourStatistics()
                                         }
@@ -1820,84 +1807,9 @@ struct HomeView: View {
             .scaleEffect(self.show ? 0.95 : 1)
             .offset(x: self.show ? screenwidth/2.75 : 0, y: self.show ? 2 : 0)
             
-            //MARK: Menu
-            /*HStack {
-                VStack(alignment: .leading, spacing: self.screenheight*0.0185) {
-                    Text("Menu")
-                        .font(Font.custom("ProximaNova-Regular", size: self.screenheight*0.0345))
-                        .fontWeight(.semibold)
-                        .foregroundColor(Color(.black).opacity(0.3))
-                    Button(action: {
-                        self.index = 0
-                        self.show.toggle()
-                    }) {
-                        HStack {
-                            Image("home")
-                                .resizable()
-                                .frame(width: self.screenheight*0.03, height: self.screenheight*0.03)
-                            Text("Home")
-                                .font(Font.custom("ProximaNova-Regular", size: self.screenheight*0.025))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color(.black).opacity(0.3))
-                            Spacer()
-                        }.frame(width: 120).padding(.leading, 10)
-                    }.buttonStyle(PlainButtonStyle())
-                    Button(action: {
-                        self.index = 1
-                        self.show.toggle()
-                    }) {
-                        HStack {
-                            Image("profile")
-                                .resizable()
-                                .frame(width: self.screenheight*0.03, height: self.screenheight*0.03)
-                            Text("Profile")
-                                .font(Font.custom("ProximaNova-Regular", size: self.screenheight*0.025))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color(.black).opacity(0.3))
-                            Spacer()
-                        }.frame(width: 120).padding(.leading, 10)
-                    }.buttonStyle(PlainButtonStyle())
-                    Button(action: {
-                        self.index = 2
-                        self.show.toggle()
-                    }) {
-                        HStack {
-                            Image("settings")
-                                .resizable()
-                                .frame(width: self.screenheight*0.03, height: self.screenheight*0.03)
-                            Text("Settings")
-                                .font(Font.custom("ProximaNova-Regular", size: self.screenheight*0.025))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color(.black).opacity(0.3))
-                            Spacer()
-                        }.frame(width: 120).padding(.leading, 10)
-                    }.buttonStyle(PlainButtonStyle())
-                    Rectangle().frame(width: 120, height: 2).foregroundColor(Color("personality")).padding(.vertical, 15)
-                    Button(action: {
-                        let firebaseAuth = Auth.auth()
-                        do {
-                          try firebaseAuth.signOut()
-                        } catch let signOutError as NSError {
-                          print ("Error signing out: %@", signOutError)
-                        }
-                        UserDefaults.standard.set(false, forKey: "status")
-                        NotificationCenter.default.post(name: NSNotification.Name("StatusChange"), object: nil)
-                    }) {
-                        HStack {
-                            Image("signout")
-                                .resizable()
-                                .frame(width: self.screenheight*0.03, height: self.screenheight*0.03)
-                            Text("LogOut")
-                                .font(Font.custom("ProximaNova-Regular", size: self.screenheight*0.025))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color("personality"))
-                            Spacer()
-                        }.frame(width: 120).padding(.leading, 10)
-                    }.buttonStyle(PlainButtonStyle())
-                    Spacer()
-                }.frame(height: self.screenheight).padding(.top, self.screenheight*0.117).padding(.leading, 10)
-                Spacer()
-            }.frame(height: self.screenheight).offset(x: self.show ? 0 : -150).animation(.easeInOut(duration: 0.5))*/
+            SettingView(settings: self.$settings)
+                .offset(x: self.settings ? 0 : -screenwidth).animation(.spring())
+            
         }.edgesIgnoringSafeArea(.all).onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                 self.recentratings = true
@@ -1913,6 +1825,7 @@ struct HomeView: View {
 //MARK: RatingView
 struct RatingView: View {
     @EnvironmentObject var observer: observer
+    @Binding var rating: Bool
     @State var ad: Bool = UserDefaults.standard.value(forKey: "ad") as? Bool ?? false
     @State var showad: Bool = UserDefaults.standard.value(forKey: "showad") as? Bool ?? false
     @State var count: Int = 0
@@ -2211,11 +2124,7 @@ struct RatingView: View {
             VStack {
                 HStack {
                     Button(action: {
-                        withAnimation {
-                            UserDefaults.standard.set(false, forKey: "rating")
-                            UserDefaults.standard.set(false, forKey: "view")
-                            NotificationCenter.default.post(name: NSNotification.Name("StatusChange"), object: nil)
-                        }
+                        self.rating.toggle()
                     }) {
                         Image(systemName: "chevron.left.circle")
                             .resizable()
@@ -2436,18 +2345,19 @@ struct RatingView: View {
 //MARK: SettingsView
 struct SettingView: View {
     @EnvironmentObject var observer: observer
+    @Binding var settings: Bool
+    @State var social = false
+    @State var photos = false
     let screenwidth = UIScreen.main.bounds.width
     let screenheight = UIScreen.main.bounds.height
     var body: some View {
         ZStack {
-            VStack {
+            VStack(spacing: 10) {
                 HStack {
                     Spacer()
                     Button(action: {
                         withAnimation {
-                            UserDefaults.standard.set(false, forKey: "settings")
-                            UserDefaults.standard.set(true, forKey: "view")
-                            NotificationCenter.default.post(name: NSNotification.Name("StatusChange"), object: nil)
+                            self.settings.toggle()
                         }
                     }) {
                         Image(systemName: "chevron.right.circle")
@@ -2456,21 +2366,282 @@ struct SettingView: View {
                             .foregroundColor(Color(.white))
                     }.padding(.trailing, 15)
                 }.padding(.top, self.screenheight*0.044)
-                Text("Settings")
-                    .font(Font.custom("ProximaNova-Regular", size: 30))
-                    .fontWeight(.semibold)
-                    .foregroundColor(Color(.white))
                 HStack {
                     Text("Settings")
-                        .font(Font.custom("ProximaNova-Regular", size: 24))
+                        .font(Font.custom("ProximaNova-Regular", size: 30))
                         .fontWeight(.semibold)
-                        .foregroundColor(Color(.white))
+                        .foregroundColor(Color(.gray))
+                    Spacer()
+                }.frame(width: screenwidth - 50)
+                ZStack {
+                    RoundedRectangle(cornerRadius: 30)
+                        .foregroundColor(.white)
+                        .frame(width: screenwidth - 40, height: screenheight/2)
+                        .shadow(radius: 5)
+                    HStack {
+                        VStack(alignment: .leading, spacing: 15) {
+                            Group {
+                                HStack {
+                                    Text("Name")
+                                        .font(Font.custom("ProximaNova-Regular", size: 26))
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(Color(.black))
+                                        .padding(.top, 15)
+                                        .padding(.leading, 20)
+                                    Spacer()
+                                    Text(self.observer.myprofile.Name)
+                                        .font(Font.custom("ProximaNova-Regular", size: 26))
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(Color(.gray))
+                                        .padding(.top, 15)
+                                        .padding(.trailing, 20)
+                                }
+                                
+                                Divider().frame(width: screenwidth - 40)
+                            }
+                            
+                            HStack {
+                                Text("Age")
+                                    .font(Font.custom("ProximaNova-Regular", size: 26))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color(.black))
+                                    .padding(.leading, 20)
+                                Spacer()
+                                Text(self.observer.myprofile.Age)
+                                    .font(Font.custom("ProximaNova-Regular", size: 26))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color(.gray))
+                                    .padding(.trailing, 20)
+                            }
+                            
+                            Divider().frame(width: screenwidth - 40)
+                            
+                            HStack {
+                                Text("Socials")
+                                    .font(Font.custom("ProximaNova-Regular", size: 26))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color(.black))
+                                    .padding(.leading, 20)
+                                Spacer()
+                                NavigationLink(destination: Socials(social: self.$social), isActive: self.$social) {
+                                    Button(action: {
+                                        self.social.toggle()
+                                    }) {
+                                        Image(systemName: "chevron.right")
+                                            .frame(width: 20, height: 20)
+                                            .foregroundColor(.gray)
+                                            .padding(.trailing, 15)
+                                    }
+                                }
+                            }
+                            
+                            Divider().frame(width: screenwidth - 40)
+                            
+                            HStack {
+                                Text("Photos")
+                                    .font(Font.custom("ProximaNova-Regular", size: 26))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color(.black))
+                                    .padding(.leading, 20)
+                                Spacer()
+                                NavigationLink(destination: Photos(photos: self.$photos), isActive: self.$photos) {
+                                    Button(action: {
+                                        self.photos.toggle()
+                                    }) {
+                                        Image(systemName: "chevron.right")
+                                            .frame(width: 20, height: 20)
+                                            .foregroundColor(.gray)
+                                            .padding(.trailing, 15)
+                                    }
+                                }
+                            }
+                            
+                            Divider().frame(width: screenwidth - 40)
+                            
+                            HStack {
+                                Text("Bio")
+                                    .font(Font.custom("ProximaNova-Regular", size: 26))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color(.black))
+                                    .padding(.leading, 20)
+                                Spacer()
+                                Button(action: {
+                                    
+                                }) {
+                                    Image(systemName: "chevron.right")
+                                        .frame(width: 20, height: 20)
+                                        .foregroundColor(.gray)
+                                        .padding(.trailing, 15)
+                                }
+                            }
+                            
+                            Divider().frame(width: screenwidth - 40)
+                            
+                            Spacer()
+                        }.frame(width: screenwidth - 40, height: screenheight/2)
+                    }.frame(width: screenwidth - 40, height: screenheight/2)
+                }.padding(.bottom, 40)
+                HStack {
+                    Button(action: {
+                        let firebaseAuth = Auth.auth()
+                        do {
+                          try firebaseAuth.signOut()
+                        } catch let signOutError as NSError {
+                          print ("Error signing out: %@", signOutError)
+                        }
+                        UserDefaults.standard.set(false, forKey: "status")
+                        NotificationCenter.default.post(name: NSNotification.Name("StatusChange"), object: nil)
+                    }) {
+                        Text("Log Out")
+                            .font(Font.custom("ProximaNova-Regular", size: 24))
+                            .foregroundColor(Color(.white))
+                    }
                 }.frame(width: self.screenwidth - 40, height: 50)
-                    .background(Color(.white).cornerRadius(15))
-                    .shadow(color: .gray, radius: 10, x: 0, y: 5)
+                    .background(RoundedRectangle(cornerRadius: 25).foregroundColor(Color("personality")))
                 Spacer()
             }
-        }.frame(width: screenwidth, height: screenheight).background(Color("personality").edgesIgnoringSafeArea(.all))
+        }.frame(width: screenwidth, height: screenheight).background(Color("lightgray").edgesIgnoringSafeArea(.all))
+    }
+}
+
+
+//MARK: Socials
+struct Socials: View {
+    @EnvironmentObject var observer: observer
+    @Binding var social: Bool
+    let screenwidth = UIScreen.main.bounds.width
+    let screenheight = UIScreen.main.bounds.height
+    var body: some View {
+        VStack {
+            HStack {
+                Button(action: {
+                    withAnimation {
+                        self.social.toggle()
+                    }
+                }) {
+                    Image(systemName: "chevron.left.circle")
+                        .resizable()
+                        .frame(width: 40, height: 40)
+                        .foregroundColor(Color(.white))
+                }.padding(.leading, 15)
+                Spacer()
+            }.padding(.top, self.screenheight*0.044)
+            Text("Socials")
+                .font(Font.custom("ProximaNova-Regular", size: 30))
+                .fontWeight(.semibold)
+                .foregroundColor(Color(.gray))
+            HStack {
+                VStack(alignment: .leading, spacing: 15) {
+                    HStack {
+                        Text("Instagram")
+                            .font(Font.custom("ProximaNova-Regular", size: 26))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color(.black))
+                            .padding(.leading, 20)
+                        Image("instagram")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                        Spacer()
+                        Text(self.observer.myprofile.Socials[0])
+                            .font(Font.custom("ProximaNova-Regular", size: 26))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color(.gray))
+                            .padding(.trailing, 20)
+                    }.padding(.top, 15)
+                    
+                    Divider().frame(width: screenwidth - 40)
+                    
+                    HStack {
+                        Text("Snapchat")
+                            .font(Font.custom("ProximaNova-Regular", size: 26))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color(.black))
+                            .padding(.leading, 20)
+                        Image("snapchat")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                        Spacer()
+                        Text(self.observer.myprofile.Socials[1])
+                            .font(Font.custom("ProximaNova-Regular", size: 26))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color(.gray))
+                            .padding(.trailing, 20)
+                    }
+                    
+                    Divider().frame(width: screenwidth - 40)
+                    
+                    HStack {
+                        Text("Twitter")
+                            .font(Font.custom("ProximaNova-Regular", size: 26))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color(.black))
+                            .padding(.leading, 20)
+                        Image("twitter")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                        Spacer()
+                        Text(self.observer.myprofile.Socials[2])
+                            .font(Font.custom("ProximaNova-Regular", size: 26))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color(.gray))
+                            .padding(.trailing, 20)
+                    }.padding(.bottom, 15)
+                    
+                }.frame(width: screenwidth - 40).background(Color(.white).cornerRadius(25).shadow(radius: 5))
+            }.frame(width: screenwidth - 40)
+            Button(action: {
+                
+            }) {
+                HStack {
+                    Text("Edit Socials")
+                        .font(Font.custom("ProximaNova-Regular", size: 20))
+                        .foregroundColor(Color(.gray))
+                    Image(systemName: "pencil")
+                        .resizable()
+                        .frame(width: 20, height: 20)
+                        .foregroundColor(.gray)
+                }
+            }
+            Spacer()
+        }.frame(width: screenwidth, height: screenheight)
+            .background(Color("lightgray").edgesIgnoringSafeArea(.all))
+        .navigationBarTitle("")
+        .navigationBarHidden(true)
+        .navigationBarBackButtonHidden(true)
+    }
+}
+
+
+//MARK: Photos
+struct Photos: View {
+    @Binding var photos: Bool
+    let screenwidth = UIScreen.main.bounds.width
+    let screenheight = UIScreen.main.bounds.height
+    var body: some View {
+        VStack {
+            HStack {
+                Button(action: {
+                    withAnimation {
+                        self.photos.toggle()
+                    }
+                }) {
+                    Image(systemName: "chevron.left.circle")
+                        .resizable()
+                        .frame(width: 40, height: 40)
+                        .foregroundColor(Color(.white))
+                }.padding(.leading, 15)
+                Spacer()
+            }.padding(.top, self.screenheight*0.044)
+            Text("Photos")
+                .font(Font.custom("ProximaNova-Regular", size: 30))
+                .fontWeight(.semibold)
+                .foregroundColor(Color(.gray))
+            Spacer()
+        }.frame(width: screenwidth, height: screenheight)
+        .background(Color("lightgray").edgesIgnoringSafeArea(.all))
+        .navigationBarTitle("")
+        .navigationBarHidden(true)
+        .navigationBarBackButtonHidden(true)
     }
 }
 
@@ -3286,7 +3457,7 @@ struct RatingProfile: View {
                                                 Rectangle()
                                                     .foregroundColor(Color(.white))
                                                     .frame(width: 120, height: 180)
-                                                    .cornerRadius(15)
+                                                    .cornerRadius(20)
                                             }
                                         }
                                         VStack(spacing: 5) {
@@ -3799,7 +3970,7 @@ struct ProfileRatingSlider: View {
                         .animation(nil)
                     Spacer()
                 }
-            }.cornerRadius(10)
+            }.cornerRadius(15)
                 .gesture(DragGesture(minimumDistance: 0).onChanged({ value in
                     self.percentage = 10 - min(max(0, Float(value.location.y / geometry.size.height * 100)), 100)/10
                 }))
