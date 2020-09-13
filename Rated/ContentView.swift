@@ -1319,7 +1319,7 @@ struct HomeView: View {
                                             self.stats = true
                                         }) {
                                             VStack(spacing: 2.5) {
-                                                Text("Your Stats")
+                                                Text("Statistics")
                                                     .font(Font.custom("ProximaNova-Regular", size: 24))
                                                     .fontWeight(.semibold)
                                                     .lineLimit(1)
@@ -2093,7 +2093,7 @@ struct RatingView: View {
                     }) {
                         Image(systemName: "chevron.left.circle")
                             .resizable()
-                            .frame(width: 40, height: 40)
+                            .frame(width: 45, height: 45)
                             .foregroundColor(Color("personality"))
                     }.padding(.leading, 15)
                     Spacer()
@@ -2102,17 +2102,17 @@ struct RatingView: View {
                     }) {
                         HStack {
                             Text(String(self.observer.keys))
-                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                .font(Font.custom("ProximaNova-Regular", size: 26))
                                 .fontWeight(.semibold)
                                 .foregroundColor(Color("personality"))
                                 .animation(nil)
                             Image("key")
                                 .resizable()
-                                .frame(width: 35, height: 35)
+                                .frame(width: 40, height: 40)
                                 .foregroundColor(Color("personality"))
                         }
                     }.padding(.trailing, 10)
-                }.padding(.top, self.screenheight*0.044)
+                }.padding(.top, self.screenheight*0.048)
                 Spacer()
                 /*Button(action: {
                     if self.nonext {
@@ -2293,7 +2293,7 @@ struct RatingView: View {
                 }
             }.animation(.spring()).offset(x: self.newkeyx, y: self.newkey).scaleEffect((self.newkey < 0) ? 1 : 1.9).opacity((self.showkey) ? 1 : 0)
             
-        }.background(Color("personality").edgesIgnoringSafeArea(.all))
+        }.background(Color(.white).edgesIgnoringSafeArea(.all))
         .navigationBarTitle("")
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
@@ -2765,27 +2765,27 @@ struct Photos: View {
                 .padding(.bottom, 10)
             //MARK: Photo 1
             VStack(spacing: 20) {
-                HStack {
+                HStack(spacing: 20) {
                     ZStack {
                         if self.profilepics[0].count != 0 {
                             Image(uiImage: UIImage(data: self.profilepics[0])!)
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
-                                .frame(width: self.screenwidth/2 - 40, height: (self.screenwidth/2 - 40)*1.3)
+                                .frame(width: self.screenwidth/2 - 60, height: (self.screenwidth/2 - 60)*1.3)
                                 .animation(nil)
                                 .cornerRadius(15)
                         }
                         else if self.newphotos[0] {
                             Color("lightgray")
                                 .opacity(0.3)
-                                .frame(width: self.screenwidth/2 - 40, height: (self.screenwidth/2 - 40)*1.3)
+                                .frame(width: self.screenwidth/2 - 60, height: (self.screenwidth/2 - 60)*1.3)
                                 .cornerRadius(15)
                         }
                         else {
                             WebImage(url: URL(string: self.observer.myprofile.ProfilePics[0]))
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
-                                .frame(width: self.screenwidth/2 - 40, height: (self.screenwidth/2 - 40)*1.3)
+                                .frame(width: self.screenwidth/2 - 60, height: (self.screenwidth/2 - 60)*1.3)
                                 .animation(nil)
                                 .cornerRadius(15)
                         }
@@ -2832,31 +2832,30 @@ struct Photos: View {
                                     }
                                     Spacer()
                                 }
-                            }.frame(width: self.screenwidth/2 - 40, height: (self.screenwidth/2 - 40)*1.3)
+                            }.frame(width: self.screenwidth/2 - 60, height: (self.screenwidth/2 - 60)*1.3)
                         }
                     }
-                    Spacer()
                     //MARK: Photo 2
                     ZStack {
                         if self.profilepics[1].count != 0 {
                             Image(uiImage: UIImage(data: self.profilepics[1])!)
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
-                                .frame(width: self.screenwidth/2 - 40, height: (self.screenwidth/2 - 40)*1.3)
+                                .frame(width: self.screenwidth/2 - 60, height: (self.screenwidth/2 - 60)*1.3)
                                 .animation(nil)
                                 .cornerRadius(15)
                         }
                         else if self.newphotos[1] {
                             Color("lightgray")
                                 .opacity(0.3)
-                                .frame(width: self.screenwidth/2 - 40, height: (self.screenwidth/2 - 40)*1.3)
+                                .frame(width: self.screenwidth/2 - 60, height: (self.screenwidth/2 - 60)*1.3)
                                 .cornerRadius(15)
                         }
                         else {
                             WebImage(url: URL(string: self.observer.myprofile.ProfilePics[1]))
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
-                                .frame(width: self.screenwidth/2 - 40, height: (self.screenwidth/2 - 40)*1.3)
+                                .frame(width: self.screenwidth/2 - 60, height: (self.screenwidth/2 - 60)*1.3)
                                 .animation(nil)
                                 .cornerRadius(15)
                         }
@@ -2903,33 +2902,33 @@ struct Photos: View {
                                     }
                                     Spacer()
                                 }
-                            }.frame(width: self.screenwidth/2 - 40, height: (self.screenwidth/2 - 40)*1.3)
+                            }.frame(width: self.screenwidth/2 - 60, height: (self.screenwidth/2 - 60)*1.3)
                         }
                     }
-                }.frame(width: screenwidth - 60)
+                }
                 
-                HStack {
+                HStack(spacing: 20) {
                     //MARK: Photo 3
                     ZStack {
                         if self.profilepics[2].count != 0 {
                             Image(uiImage: UIImage(data: self.profilepics[2])!)
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
-                                .frame(width: self.screenwidth/2 - 40, height: (self.screenwidth/2 - 40)*1.3)
+                                .frame(width: self.screenwidth/2 - 60, height: (self.screenwidth/2 - 60)*1.3)
                                 .animation(nil)
                                 .cornerRadius(15)
                         }
                         else if self.newphotos[2] {
                             Color("lightgray")
                                 .opacity(0.3)
-                                .frame(width: self.screenwidth/2 - 40, height: (self.screenwidth/2 - 40)*1.3)
+                                .frame(width: self.screenwidth/2 - 60, height: (self.screenwidth/2 - 60)*1.3)
                                 .cornerRadius(15)
                         }
                         else {
                             WebImage(url: URL(string: self.observer.myprofile.ProfilePics[2]))
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
-                                .frame(width: self.screenwidth/2 - 40, height: (self.screenwidth/2 - 40)*1.3)
+                                .frame(width: self.screenwidth/2 - 60, height: (self.screenwidth/2 - 60)*1.3)
                                 .animation(nil)
                                 .cornerRadius(15)
                         }
@@ -2976,31 +2975,30 @@ struct Photos: View {
                                     }
                                     Spacer()
                                 }
-                            }.frame(width: self.screenwidth/2 - 40, height: (self.screenwidth/2 - 40)*1.3)
+                            }.frame(width: self.screenwidth/2 - 60, height: (self.screenwidth/2 - 60)*1.3)
                         }
                     }
-                    Spacer()
                     //MARK: Photo 4
                     ZStack {
                         if self.profilepics[3].count != 0 {
                             Image(uiImage: UIImage(data: self.profilepics[3])!)
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
-                                .frame(width: self.screenwidth/2 - 40, height: (self.screenwidth/2 - 40)*1.3)
+                                .frame(width: self.screenwidth/2 - 60, height: (self.screenwidth/2 - 60)*1.3)
                                 .animation(nil)
                                 .cornerRadius(15)
                         }
                         else if self.newphotos[3] {
                             Color("lightgray")
                                 .opacity(0.3)
-                                .frame(width: self.screenwidth/2 - 40, height: (self.screenwidth/2 - 40)*1.3)
+                                .frame(width: self.screenwidth/2 - 60, height: (self.screenwidth/2 - 60)*1.3)
                                 .cornerRadius(15)
                         }
                         else {
                             WebImage(url: URL(string: self.observer.myprofile.ProfilePics[3]))
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
-                                .frame(width: self.screenwidth/2 - 40, height: (self.screenwidth/2 - 40)*1.3)
+                                .frame(width: self.screenwidth/2 - 60, height: (self.screenwidth/2 - 60)*1.3)
                                 .animation(nil)
                                 .cornerRadius(15)
                         }
@@ -3047,10 +3045,10 @@ struct Photos: View {
                                     }
                                     Spacer()
                                 }
-                            }.frame(width: self.screenwidth/2 - 40, height: (self.screenwidth/2 - 40)*1.3)
+                            }.frame(width: self.screenwidth/2 - 60, height: (self.screenwidth/2 - 60)*1.3)
                         }
                     }
-                }.frame(width: screenwidth - 60)
+                }
             }.padding(20).background(Color(.white).cornerRadius(30).shadow(radius: 5)).padding(.bottom, 10)
             //MARK: Edit Photos
             if loading {
@@ -4178,6 +4176,7 @@ struct RatingProfile: View {
     @Binding var count: Int
     @State var y: CGFloat = 45
     @State var height: CGFloat = 0
+    @State var bio = false
     let screenwidth = UIScreen.main.bounds.width
     let screenheight = UIScreen.main.bounds.height
     
@@ -4190,9 +4189,9 @@ struct RatingProfile: View {
                         WebImage(url: URL(string: self.observer.users[self.observer.rated].ProfilePics[self.count]))
                             .resizable()
                             .aspectRatio(contentMode: .fill)
-                            .frame(width: screenwidth - 20, height: (screenwidth - 20)*1.5)
+                            .frame(width: screenwidth - 20, height: (screenwidth - 20)*1.6)
                             .animation(nil)
-                            //.cornerRadius(20)
+                            .cornerRadius(25)
                         HStack {
                             Button(action: {
                                 if self.count != 0 {
@@ -4200,7 +4199,7 @@ struct RatingProfile: View {
                                 }
                             }) {
                                 Color(.white).opacity(0.0)
-                                    .frame(width: screenwidth/3, height: (screenwidth - 20)*1.5)
+                                    .frame(width: screenwidth/3, height: (screenwidth - 20)*1.6)
                             }
                             Spacer()
                             Button(action: {
@@ -4209,14 +4208,78 @@ struct RatingProfile: View {
                                 }
                             }) {
                                 Color(.white).opacity(0.0)
-                                    .frame(width: screenwidth/3, height: (screenwidth - 20)*1.5)
+                                    .frame(width: screenwidth/3, height: (screenwidth - 20)*1.6)
                             }
                         }.padding(.horizontal, 20)
+                        VStack(spacing: 0) {
+                            Spacer()
+                            HStack {
+                                Text(self.observer.users[self.observer.rated].Name.uppercased() + " " + self.observer.users[self.observer.rated].Age)
+                                    .font(Font.custom("ProximaNova-Regular", size: 60))
+                                    .fontWeight(.semibold)
+                                    .lineLimit(1)
+                                    .frame(width: screenwidth/2, height: 50)
+                                    .foregroundColor(.white)
+                                    .minimumScaleFactor(0.02)
+                                    .padding(.horizontal, 20)
+                                Spacer()
+                            }
+                            HStack(spacing: 5) {
+                                Spacer()
+                                HStack {
+                                    Circle()
+                                        .frame(width: self.count == 0 ? 15 : 10, height: self.count == 0 ? 15 : 10)
+                                        .foregroundColor(self.count == 0 ? .gray : Color("lightgray"))
+                                    Circle()
+                                        .frame(width: self.count == 1 ? 15 : 10, height: self.count == 1 ? 15 : 10)
+                                        .foregroundColor(self.count == 1 ? .gray : Color("lightgray"))
+                                    Circle()
+                                        .frame(width: self.count == 2 ? 15 : 10, height: self.count == 2 ? 15 : 10)
+                                        .foregroundColor(self.count == 2 ? .gray : Color("lightgray"))
+                                    Circle()
+                                        .frame(width: self.count == 3 ? 15 : 10, height: self.count == 3 ? 15 : 10)
+                                        .foregroundColor(self.count == 3 ? .gray : Color("lightgray"))
+                                }.padding(5)
+                                    .background(Color(.white).opacity(0.2).cornerRadius(10))
+                                .padding(.bottom, 10)
+                                .padding(.trailing, 10)
+                            }
+                        }.frame(width: screenwidth - 20, height: (screenwidth - 20)*1.6)
                     }
                     Spacer()
-                    
-                }.frame(width: screenwidth-20, height: screenheight/1.15).background(Color("lightgray").cornerRadius(20))
-                    .cornerRadius(20)
+                    HStack(spacing: 10) {
+                        Button(action: {
+                            
+                        }) {
+                            Image(self.observer.socialunlock ? "social" : "lock")
+                                .resizable()
+                                .frame(width: 25, height: 25)
+                                .foregroundColor(self.observer.socialunlock ? .blue : .red)
+                                .padding(20)
+                                .background(Circle().frame(width: 65, height: 65).foregroundColor(.white).shadow(radius: 10))
+                        }
+                        Button(action: {
+                            self.bio.toggle()
+                        }) {
+                            Image(self.bio ? "eye" : "heart")
+                                .resizable()
+                                .frame(width: 30, height: 30)
+                                .padding(20)
+                                .foregroundColor(.white)
+                                .background(Circle().frame(width: 70, height: 70).foregroundColor(Color(self.bio ? "appearance" : "personality")).shadow(radius: 10))
+                        }
+                        Button(action: {
+                            
+                        }) {
+                            Image("social")
+                                .resizable()
+                                .frame(width: 25, height: 25)
+                                .padding(20)
+                                .foregroundColor(.blue)
+                                .background(Circle().frame(width: 65, height: 65).foregroundColor(.white).shadow(radius: 10))
+                        }
+                    }
+                }.frame(width: screenwidth-20, height: screenheight/1.2)//.background(Color("lightgray").cornerRadius(25))
             }/*
             VStack {
                 Spacer()
@@ -5086,6 +5149,13 @@ class observer: ObservableObject {
                 for document in querySnapshot!.documents {
                     if document.get("ID") as! String != self.id! && self.users.count < 100 {
                         if (document.get("Gender") as! String == self.myprofile.Preferences[0] && (document.get("Preferences") as! [String])[1] == self.myprofile.Gender) || (document.get("Preferences") as! [String])[1] == "Everyone" && ((document.get("Gender") as! String == self.myprofile.Preferences[0]) || self.myprofile.Preferences[0] == "Everyone") || (document.get("Preferences") as! [String])[1] == self.myprofile.Gender {
+                            
+                            if (Int(document.get("Age") as! String) ?? 0 >= (self.myprofile.Preferences[2].prefix(2) as NSString).integerValue && Int(document.get("Age") as! String) ?? 0 <= (self.myprofile.Preferences[2].suffix(2) as NSString).integerValue) && Int(self.myprofile.Age) ?? 0 >= ((document.get("Preferences") as! [String])[2].prefix(2) as NSString).integerValue && Int(self.myprofile.Age) ?? 0 <= ((document.get("Preferences") as! [String])[2].suffix(2) as NSString).integerValue {
+                                print("bruh")
+                            }
+                            else {
+                                print("deez")
+                            }
                             var check = true
                             for rate in document.get("Rates") as! [String] {
                                 if String(rate.suffix(rate.count-9)) == self.id! {
