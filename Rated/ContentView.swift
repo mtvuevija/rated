@@ -1799,7 +1799,7 @@ struct RatingView: View {
     @State var showcomment: Bool = false
     @State var comment = ""
     @State var unlocksocials: Bool = false
-    @State var unlock: Bool = false
+    //@State var unlock: Bool = false
     @State var newkey: CGFloat = UIScreen.main.bounds.height
     @State var newkeyx: CGFloat = 0
     @State var showkey: Bool = false
@@ -1811,6 +1811,7 @@ struct RatingView: View {
     
     @State var rating = false
     @State var bio = false
+    @State var report = false
     let categories = ["General", "Education", "Occupation", "Music", "Sports", "Movies", "TV-Shows", "Hobbies", "Motto", "Future"]
     var rewardAd: Rewarded
     let screenwidth = UIScreen.main.bounds.width
@@ -1891,6 +1892,7 @@ struct RatingView: View {
                                                         .lineLimit(1)
                                                         .frame(width: screenwidth/2, height: 50)
                                                         .foregroundColor(.white)
+                                                        .shadow(radius: 10)
                                                         .minimumScaleFactor(0.02)
                                                         .padding(20)
                                                     Spacer()
@@ -1951,13 +1953,13 @@ struct RatingView: View {
                                                 }.frame(width: screenwidth - 20, height: (screenwidth - 20)*1.6 - 20)
                                             }.offset(y: self.bio ? -(screenwidth - 20)*0.8 : (screenwidth - 20)*0.8)
                                         }.frame(width: screenwidth - 20, height: (screenwidth - 20)*1.6).cornerRadius(25)
-                                    }.frame(width: screenwidth - 20, height: (screenwidth - 20)*1.6).cornerRadius(25)
+                                    }.frame(width: screenwidth - 20, height: (screenwidth - 20)*1.6).cornerRadius(25).scaleEffect(self.next ? 0 : 1)
                                     //Spacer()
                                     //MARK: Bottom UI Buttons
                                     HStack(spacing: 10) {
                                         if !self.rating {
                                             Button(action: {
-                                                
+                                                self.report.toggle()
                                             }) {
                                                 Image(systemName: "ellipsis")
                                                     .resizable()
@@ -1981,7 +1983,7 @@ struct RatingView: View {
                                         }
                                         ZStack {
                                             RoundedRectangle(cornerRadius: 37.5)
-                                                .frame(width: self.rating ? 265 : 75, height: 75)
+                                                .frame(width: self.rating ? 265 : 65, height: self.rating ? 75 : 65)
                                                 .foregroundColor(self.rating ? .white : .yellow)
                                                 .shadow(color: self.rating ? .gray : .yellow, radius: 5)
                                             
@@ -2015,7 +2017,7 @@ struct RatingView: View {
                                                 }) {
                                                     Image("rate")
                                                         .resizable()
-                                                        .frame(width: 35, height: 35)
+                                                        .frame(width: 25, height: 25)
                                                         .foregroundColor(.white)
                                                         .padding(20)
                                                 }
@@ -2111,17 +2113,6 @@ struct RatingView: View {
                         }.padding(.trailing, 10)
                     }.padding(.top, self.screenheight*0.048)
                     Spacer()
-                    /*Button(action: {
-                        
-                    }) {
-                        Text("Next")
-                            .font(Font.custom("ProximaNova-Regular", size: 20))
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color("personality"))
-                            .frame(width: 130, height: 50)
-                            .background(self.nonext ? Color(.gray).opacity(0.3) : Color(.white))
-                            .cornerRadius(25)
-                    }.padding(.bottom, self.screenheight*0.0325)*/
                 }
             }.blur(radius: self.unlocksocials || self.showkeys || self.showcomment ? 4 : 0).animation(.spring())
             //MARK: Comment
@@ -2133,10 +2124,38 @@ struct RatingView: View {
                         .opacity(0)
                         .frame(width: self.screenwidth, height: self.screenheight)
                 }
-                Color(.white)
-                    .opacity(0)
                 ZStack {
                     VStack(spacing: 5) {
+                        HStack(spacing: 30) {
+                            VStack(spacing: 0) {
+                                Image("eye")
+                                    .renderingMode(.template)
+                                    .resizable()
+                                    .frame(width: 25, height: 25)
+                                    .foregroundColor(Color("appearance"))
+                                Text(String(Double(self.appearance).truncate(places: 1)))
+                                    .font(Font.custom("ProximaNova-Regular", size: 20))
+                                    .fontWeight(.semibold)
+                                    .lineLimit(1)
+                                    .frame(height: 20)
+                                    .minimumScaleFactor(0.02)
+                                    .foregroundColor(Color("appearance"))
+                            }
+                            VStack(spacing: 0) {
+                                Image("heart")
+                                    .renderingMode(.template)
+                                    .resizable()
+                                    .frame(width: 25, height: 25)
+                                    .foregroundColor(Color("personality"))
+                                Text(String(Double(self.personality).truncate(places: 1)))
+                                    .font(Font.custom("ProximaNova-Regular", size: 20))
+                                    .fontWeight(.semibold)
+                                    .lineLimit(1)
+                                    .frame(height: 20)
+                                    .minimumScaleFactor(0.02)
+                                    .foregroundColor(Color("personality"))
+                            }
+                        }.shadow(radius: 10)
                         HStack {
                             Image("comment")
                                 .resizable()
@@ -2150,31 +2169,29 @@ struct RatingView: View {
                                 .minimumScaleFactor(0.02)
                                 .foregroundColor(Color(.black))
                             Spacer()
-                        }.padding(.vertical, 10)
+                        }.padding(.vertical, 5)
                         if self.showcomment {
                             ResizingTextFieldRed(text: self.$comment)
                                 .frame(width: self.screenwidth/1.5 - 40, height: 100)
                                 .padding(.horizontal, 10)
                                 .padding(.vertical, 5)
                                 .background(Color("lightgray").opacity(0.4).cornerRadius(15))
+                                .animation(.spring())
+                            HStack(spacing: 0) {
+                                Spacer()
+                                Text(String(self.comment.count) + "/100 Characters")
+                                    .font(Font.custom("ProximaNova-Regular", size: 14))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor((self.comment.count <= 100) ? Color(.gray) : Color("personality"))
+                                    .animation(nil)
+                            }.frame(width: self.screenwidth/1.5 - 20).padding(.trailing, 10).padding(.bottom, 10).animation(.spring())
                         }
-                        HStack(spacing: 0) {
-                            Spacer()
-                            Text(String(self.comment.count))
-                                .font(Font.custom("ProximaNova-Regular", size: 14))
-                                .fontWeight(.semibold)
-                                .foregroundColor((self.comment.count <= 100) ? Color(.gray) : Color("personality"))
-                                .animation(nil)
-                            Text("/100 Characters")
-                                .font(Font.custom("ProximaNova-Regular", size: 14))
-                                .fontWeight(.semibold)
-                                .foregroundColor((self.comment.count <= 100) ? Color(.gray) : Color("personality"))
-                        }.frame(width: self.screenwidth/1.5 - 20).padding(.trailing, 10).padding(.bottom, 10)
                         HStack(spacing: 5) {
                             Button(action: {
                                 self.showcomment = false
+                                self.bio = false
                                 self.next.toggle()
-                                self.comment = "N/A"
+                                self.comment = "No Comment"
                                 //UpdateRating(user: self.observer.users[self.observer.rated], appearance: Double(self.appearance), personality: Double(self.personality), keys: self.observer.keys, comment: self.comment)
                                 self.showrating = false
                                 self.showsocials = false
@@ -2213,8 +2230,8 @@ struct RatingView: View {
                                 Text("No Comment")
                                     .font(Font.custom("ProximaNova-Regular", size: 14))
                                     .fontWeight(.semibold)
-                                    .foregroundColor(Color(.white))
-                            }.frame(width: self.screenwidth/3.25 - 5, height: 40).background(Color("personality").cornerRadius(5))
+                                    .foregroundColor(Color(.black))
+                            }.frame(width: self.screenwidth/3.25 - 5, height: 40).background(Color(.white).cornerRadius(15).shadow(radius: 1))
                             
                             Button(action: {
                                 if self.comment.count > 100 {
@@ -2223,6 +2240,7 @@ struct RatingView: View {
                                     return
                                 }
                                 self.showcomment = false
+                                self.bio = false
                                 self.next.toggle()
                                 //UpdateRating(user: self.observer.users[self.observer.rated], appearance: Double(self.appearance), personality: Double(self.personality), keys: self.observer.keys, comment: self.comment)
                                 self.showrating = false
@@ -2258,12 +2276,58 @@ struct RatingView: View {
                                 Text("Send")
                                     .font(Font.custom("ProximaNova-Regular", size: 14))
                                     .fontWeight(.semibold)
-                                    .foregroundColor(Color(.white))
-                            }.frame(width: self.screenwidth/3.25 - 5, height: 40).background(Color("personality").cornerRadius(5))
-                        }.padding(.bottom, 5)
+                                    .foregroundColor(Color(.black))
+                            }.frame(width: self.screenwidth/3.25 - 5, height: 40).background(Color(.white).cornerRadius(15).shadow(radius: 1))
+                        }//.padding(.bottom, 5)
+                        
                     }.frame(width: screenwidth/1.5).padding(20).background(Color(.white).cornerRadius(25).shadow(radius: 10))
                 }
-            }.opacity(self.showcomment ? 1 : 0).animation(.easeInOut(duration: 0.2))
+            }.opacity(self.showcomment ? 1 : 0).animation(.spring())
+            //MARK: Report
+            VStack {
+                //Spacer()
+                VStack(spacing: 20) {
+                    Button(action: {
+                    }) {
+                        HStack {
+                            Spacer()
+                            Text("Block User")
+                                .font(Font.custom("ProximaNova-Regular", size: 22))
+                                .foregroundColor(Color(.black))
+                                .frame(height: 50)
+                            Spacer()
+                        }.padding(.horizontal, 20).background(Color(.white).cornerRadius(25).shadow(radius: 10))
+                    }
+                    Button(action: {
+                        
+                    }) {
+                        HStack {
+                            Spacer()
+                            Text("Report User")
+                                .font(Font.custom("ProximaNova-Regular", size: 22))
+                                //.fontWeight(.semibold)
+                                .foregroundColor(Color(.white))
+                                .frame(height: 50)
+                            Spacer()
+                        }.padding(.horizontal, 20).background(Color("personality").cornerRadius(25).shadow(radius: 10))
+                    }.padding(.bottom, 10)
+                    
+                    Button(action: {
+                        self.report.toggle()
+                    }) {
+                        HStack {
+                            Spacer()
+                            Text("Cancel")
+                                .font(Font.custom("ProximaNova-Regular", size: 22))
+                                //.fontWeight(.semibold)
+                                .foregroundColor(Color(.black))
+                                .frame(height: 50)
+                            Spacer()
+                        }.padding(.horizontal, 20).background(Color(.white).cornerRadius(25).shadow(radius: 10))
+                    }
+                    
+                }.padding(20).background(Color(.white).cornerRadius(25).shadow(radius: 10)).padding(20)
+            }.frame(height: screenheight).offset(y: self.report ? 0 : screenheight).animation(.spring())
             //MARK: Socials
             if self.observer.users[self.observer.rated].Socials[0] == "N/A" && self.observer.users[self.observer.rated].Socials[1] == "N/A" && self.observer.users[self.observer.rated].Socials[2] == "N/A" {
                 ZStack {
@@ -2381,15 +2445,15 @@ struct RatingView: View {
                                             Text("-1")
                                                 .font(Font.custom("ProximaNova-Regular", size: 20))
                                                 .fontWeight(.semibold)
-                                                .foregroundColor(Color("personality"))
+                                                .foregroundColor(Color("appearance"))//Color("personality"))
                                                 .animation(nil)
                                             Image("key")
                                                 .resizable()
                                                 .frame(width: 15, height: 15)
-                                                .foregroundColor(Color("personality"))
+                                                .foregroundColor(Color("appearance"))//Color("personality"))
                                         }
                                     }
-                                }.padding(10).background(Color("personality").cornerRadius(10)).padding(.top, 10)
+                                }.padding(10).background(Color("appearance").cornerRadius(10)).padding(.top, 10)
                             }//.padding(.horizontal, self.screenwidth*0.12)
                         }
                     }.padding(20).background(Color(.white).cornerRadius(20))
@@ -5463,6 +5527,8 @@ class observer: ObservableObject {
                 }
                 for document in querySnapshot!.documents {
                     if document.get("ID") as! String != self.id! && self.users.count < 100 {
+                        
+                        
                         if (document.get("Gender") as! String == self.myprofile.Preferences[0] && (document.get("Preferences") as! [String])[1] == self.myprofile.Gender) || (document.get("Preferences") as! [String])[1] == "Everyone" && ((document.get("Gender") as! String == self.myprofile.Preferences[0]) || self.myprofile.Preferences[0] == "Everyone") || (document.get("Preferences") as! [String])[1] == self.myprofile.Gender {
                             
                             if (Int(document.get("Age") as! String) ?? 0 >= (self.myprofile.Preferences[2].prefix(2) as NSString).integerValue && Int(document.get("Age") as! String) ?? 0 <= (self.myprofile.Preferences[2].suffix(2) as NSString).integerValue) && Int(self.myprofile.Age) ?? 0 >= ((document.get("Preferences") as! [String])[2].prefix(2) as NSString).integerValue && Int(self.myprofile.Age) ?? 0 <= ((document.get("Preferences") as! [String])[2].suffix(2) as NSString).integerValue {
@@ -5755,13 +5821,36 @@ func CheckUser(complete: @escaping (Bool)->Void) {
 
 //MARK: UpdateRating
 func UpdateRating(user: UserData, appearance: Double, personality: Double, keys: Int, comment: String) {
+    var stroverall = ""
+    var strappearance = ""
+    var strpersonality = ""
     let overall = Double(Double(personality)*Double(user.Percentage).truncate(places: 2) + Double(appearance)*Double(1-user.Percentage).truncate(places: 2)).truncate(places: 1)
     let newoverall = Double(user.OverallRating*Double(user.Rates.count+1) + overall)/Double(user.Rates.count+2).truncate(places: 1)
     let newappearance = Double(user.AppearanceRating*Double(user.Rates.count+1) + appearance)/Double(user.Rates.count+2).truncate(places: 1)
     let newpersonality = Double(user.PersonalityRating*Double(user.Rates.count+1) + personality)/Double(user.Rates.count+2).truncate(places: 1)
+    
     let db = Firestore.firestore()
     let uid = Auth.auth().currentUser?.uid
-    db.collection("users").document(user.id).updateData(["OverallRating": newoverall.truncate(places: 1), "AppearanceRating": newappearance.truncate(places: 1), "PersonalityRating": newpersonality.truncate(places: 1), "Rates": FieldValue.arrayUnion([String(appearance.truncate(places: 1)) + String(personality.truncate(places: 1)) + String(overall) + uid!]), "Comments": FieldValue.arrayUnion([comment])])
+    if overall == 10.0 {
+        stroverall = "10."
+    }
+    else {
+        stroverall = String(overall)
+    }
+    if appearance == 10.0 {
+        strappearance = "10."
+    }
+    else {
+        strappearance = String(appearance.truncate(places: 1))
+    }
+    if personality == 10.0 {
+        strpersonality = "10."
+    }
+    else {
+        strpersonality = String(personality.truncate(places: 1))
+    }
+    
+    db.collection("users").document(user.id).updateData(["OverallRating": newoverall.truncate(places: 1), "AppearanceRating": newappearance.truncate(places: 1), "PersonalityRating": newpersonality.truncate(places: 1), "Rates": FieldValue.arrayUnion([strappearance + strpersonality + stroverall + uid!]), "Comments": FieldValue.arrayUnion([comment])])
     db.collection("users").document(uid!).updateData(["Key": keys])
     db.collection("users").document(user.id).updateData(["Lock": FieldValue.arrayUnion([false])])
     print(user.Percentage, newappearance, newpersonality, newoverall)
@@ -5829,10 +5918,6 @@ struct ResizingTextField: UIViewRepresentable {
         return view
     }
     func updateUIView(_ uiView: UITextView, context: UIViewRepresentableContext<ResizingTextField>) {
-        if text.count == 0 {
-            uiView.textColor = UIColor(named: color)!.withAlphaComponent(0.7)
-            uiView.text = "Write Something"
-        }
     }
     class Coordinator : NSObject, UITextViewDelegate {
         var parent: ResizingTextField
@@ -5866,7 +5951,7 @@ struct ResizingTextFieldRed: UIViewRepresentable {
             view.text = "Leave a comment on what you liked the most about this person. Be Nice."
         }
         else {
-            view.textColor = .gray//UIColor(named: "personality")
+            view.textColor = .gray
             view.text = text
         }
         view.backgroundColor = .clear
@@ -5886,11 +5971,11 @@ struct ResizingTextFieldRed: UIViewRepresentable {
         func textViewDidBeginEditing(_ textView: UITextView) {
             if parent.text.count != 0 {
                 textView.text = parent.text
-                textView.textColor = .gray//UIColor(named: "personality")
+                textView.textColor = .gray
             }
             else {
                 textView.text = ""
-                textView.textColor = .gray//UIColor(named: "personality")
+                textView.textColor = .gray
             }
         }
         func textViewDidChange(_ textView: UITextView) {
