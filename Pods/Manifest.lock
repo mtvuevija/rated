@@ -348,7 +348,6 @@ PODS:
     - nanopb/encode (= 1.30905.0)
   - nanopb/decode (1.30905.0)
   - nanopb/encode (1.30905.0)
-  - NavigationStack (0.1.0)
   - PromisesObjC (1.2.9)
   - SDWebImage (5.8.1):
     - SDWebImage/Core (= 5.8.1)
@@ -362,7 +361,6 @@ DEPENDENCIES:
   - Firebase/Firestore
   - Firebase/Storage
   - Google-Mobile-Ads-SDK
-  - NavigationStack (~> 0.1.0)
   - SDWebImageSwiftUI
 
 SPEC REPOS:
@@ -390,7 +388,6 @@ SPEC REPOS:
     - GTMSessionFetcher
     - leveldb-library
     - nanopb
-    - NavigationStack
     - PromisesObjC
     - SDWebImage
     - SDWebImageSwiftUI
@@ -419,11 +416,10 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 6f5c8abbab8a9bce4bb3f057e317728ec6182b10
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
   nanopb: c43f40fadfe79e8b8db116583945847910cbabc9
-  NavigationStack: 336d0335e171d82c66e9942b80d91d7f207c6ba9
   PromisesObjC: b48e0338dbbac2207e611750777895f7a5811b75
   SDWebImage: e3eae2eda88578db0685a0c88597fdadd9433f05
   SDWebImageSwiftUI: 43687ffe232ddd33fe0659498b7ca9884fdd6b35
 
-PODFILE CHECKSUM: 850ef31afe3204b57fe17691ef426492a2e592e7
+PODFILE CHECKSUM: d0c29f2cb9cc99b21431d9b9e4da56344f127176
 
 COCOAPODS: 1.9.3
