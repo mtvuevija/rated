@@ -188,6 +188,14 @@ struct SignUpView: View {
     //Account Info
     @State var name = ""
     @State var age = ""
+    var closedRange: ClosedRange<Date> {
+        let hundredYears = Calendar.current.date(byAdding: .year, value: -100, to: Date())!
+        let thenow = Date()
+        
+        return hundredYears...thenow
+    }
+    @State var bdate = ""
+    @State var date = Date()
     @State var profilepics = [Data(), Data(), Data(), Data()]
     @State var gender = ""
     @State var percentage: Float = 5
@@ -462,15 +470,13 @@ struct SignUpView: View {
                     }.padding(.bottom, 30)
                     
                     Button(action: {
-                        /*if self.name.count < 1 {
+                        if self.name.count < 1 {
                             
                         }
                         else {
                             self.next -= self.screenwidth
                             self.count += 1
-                        }*/
-                        self.next -= self.screenwidth
-                        self.count += 1
+                        }
                     }) {
                         Text("Next")
                             .font(Font.custom("ProximaNova-Regular", size: 20))
@@ -498,7 +504,12 @@ struct SignUpView: View {
                         .fontWeight(.semibold)
                         .foregroundColor(Color(.white))
                     
-                    ZStack {
+                    DatePicker("", selection: $date, in: closedRange, displayedComponents: .date)
+                        .frame(width: screenwidth - 40)
+                        .foregroundColor(.black)
+                        .padding(10)
+                    
+                    /*ZStack {
                         RoundedRectangle(cornerRadius: 15)
                             .stroke(lineWidth: 5)
                             .foregroundColor(.white)
@@ -514,19 +525,27 @@ struct SignUpView: View {
                             .frame(width: 50, height: 50)
                             .keyboardType(.numberPad)
                             .multilineTextAlignment(.center)
-                    }.padding(.bottom, 30)
+                    }.padding(.bottom, 30)*/
                     
                     Button(action: {
-                        /*if Int(self.age) ?? 0 < 18 {
+                        let components = Calendar.current.dateComponents([.year, .month, .day], from: self.date, to: Date())
+                        self.age = String(components.year!)
+                        print(self.date.description.prefix(10))
+                        self.bdate = String(self.date.description.prefix(10))
+                        /*let dateFormatter = DateFormatter()
+                        dateFormatter.dateFormat = "yyyy-MM-dd"
+                        let date1 = dateFormatter.date(from: self.bdate)!
+                        let components1 = Calendar.current.dateComponents([.year, .month, .day], from: date1, to: Date())
+                        print(components1)*/
+                        //print(components, self.age)
+                        if Int(self.age) ?? 0 < 18 {
                             self.msg = "You must be 18 or older to register."
                             self.alert.toggle()
                         }
                         else {
                             self.next -= self.screenwidth
                             self.count += 1
-                        }*/
-                        self.next -= self.screenwidth
-                        self.count += 1
+                        }
                     }) {
                         Text("Next")
                             .font(Font.custom("ProximaNova-Regular", size: 20))
@@ -1108,7 +1127,7 @@ struct SignUpView: View {
                             
                             let overall = Double(Double(self.selfratingpersonality)*per + Double(self.selfratingappearance)*Double(1-per)).truncate(places: 1)
                             
-                            CreateUser(name: self.name, age: self.age, gender: self.gender, percentage: per, overallrating: overall, appearancerating: Double(self.selfratingappearance).truncate(places: 1), personalityrating: Double(self.selfratingpersonality).truncate(places: 1), profilepics: self.profilepics, photopostion: self.position, bio: self.text, socials: socials) { (val) in
+                            CreateUser(name: self.name, bdate: self.bdate, gender: self.gender, percentage: per, overallrating: overall, appearancerating: Double(self.selfratingappearance).truncate(places: 1), personalityrating: Double(self.selfratingpersonality).truncate(places: 1), profilepics: self.profilepics, photopostion: self.position, bio: self.text, socials: socials) { (val) in
                                 if val {
                                     self.showprofile.toggle()
                                     self.next -= self.screenwidth
@@ -1242,6 +1261,13 @@ struct HomeView: View {
     
     @State var stats = true
     @State var settings = false
+    @State var gender: CGFloat = 1
+    @State var ratinggender: CGFloat = 1
+    @State var width: CGFloat = 0
+    @State var width1: CGFloat = 15
+    @State var saved = false
+    @State var changed = false
+    
     var rewardAd: Rewarded
     let screenwidth = UIScreen.main.bounds.width
     let screenheight = UIScreen.main.bounds.height
@@ -1328,8 +1354,16 @@ struct HomeView: View {
                         if self.stats {
                             NavigationLink(destination: RatingView(rating1: self.$rating, rewardAd: self.rewardAd), isActive: self.$rating) {
                                 Button(action: {
-                                    self.rating.toggle()
-                                    
+                                    if self.changed {
+                                        self.observer.refreshUsers()
+                                        self.changed = false
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                            self.rating = true
+                                        }
+                                    }
+                                    else {
+                                        self.rating = true
+                                    }
                                 }) {
                                     Text("Rate")
                                         .font(Font.custom("ProximaNova-Regular", size: 24))
@@ -1396,12 +1430,52 @@ struct HomeView: View {
                                         YourStatistics()
                                     }
                                     else {
-                                        RatingSettings()
+                                        ZStack {
+                                            RatingSettings(gender: self.$gender, ratinggender: self.$ratinggender, width: self.$width, width1: self.$width1)
+                                            Text("SAVED")
+                                                .font(Font.custom("ProximaNova-Regular", size: 26))
+                                                .fontWeight(.semibold)
+                                                .padding(15).padding(.horizontal, 15)
+                                                .foregroundColor(.white)
+                                                .background(Color(.gray).cornerRadius(25))
+                                                .opacity(self.saved ? 1 : 0).animation(.spring())
+                                        }
                                         HStack {
                                             Button(action: {
+                                                if self.gender == -1 {
+                                                    self.observer.myprofile.Preferences[0] = "Male"
+                                                }
+                                                else if self.gender == 0 {
+                                                    self.observer.myprofile.Preferences[0] = "Female"
+                                                }
+                                                else {
+                                                    self.observer.myprofile.Preferences[0] = "Everyone"
+                                                }
+                                                
+                                                if self.ratinggender == -1 {
+                                                    self.observer.myprofile.Preferences[1] = "Male"
+                                                }
+                                                else if self.ratinggender == 0 {
+                                                    self.observer.myprofile.Preferences[1] = "Female"
+                                                }
+                                                else {
+                                                    self.observer.myprofile.Preferences[1] = "Everyone"
+                                                }
+                                                
+                                                self.observer.myprofile.Preferences[2] = self.width < 0 ? "18-" : (String(Int(self.width/2.71 + 18)) + "-")
+                                                self.observer.myprofile.Preferences[2] = (self.width1 > 220 || Int(self.width1/2.71 + 18) >= 99) ? self.observer.myprofile.Preferences[2]+"60" : self.observer.myprofile.Preferences[2]+String(Int(self.width1/2.71 + 18))
+                                                
+                                                self.observer.myprofile.Preferences[2] = self.width < 0 ? "18-" : (String(Int(self.width/2.71 + 18)) + "-")
+                                                self.observer.myprofile.Preferences[2] = self.width1 > 220 || Int(self.width1/2.71 + 18) >= 99 ? self.observer.myprofile.Preferences[2]+"99" : self.observer.myprofile.Preferences[2]+String(Int(self.width1/2.71 + 18))
+                                                
                                                 let db = Firestore.firestore()
                                                 let uid = Auth.auth().currentUser?.uid
                                                 db.collection("users").document(uid!).updateData(["Preferences": self.observer.myprofile.Preferences])
+                                                self.changed = true
+                                                self.saved = true
+                                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.25) {
+                                                    self.saved = false
+                                                }
                                             }) {
                                                 Text("Save")
                                                     .font(Font.custom("ProximaNova-Regular", size: 24))
@@ -1410,7 +1484,7 @@ struct HomeView: View {
                                                     .frame(width: screenwidth/3.5, height: screenheight*0.05)
                                                     .background(Color(.white).cornerRadius(screenheight*0.025).shadow(radius: 10))
                                             }
-                                            NavigationLink(destination: RatingView(rating1: self.$rating, rewardAd: self.rewardAd), isActive: self.$rating) {
+                                            /*NavigationLink(destination: RatingView(rating1: self.$rating, rewardAd: self.rewardAd), isActive: self.$rating) {
                                                 Button(action: {
                                                     self.observer.refreshUsers()
                                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -1424,7 +1498,7 @@ struct HomeView: View {
                                                         .frame(width: screenwidth/3.5, height: screenheight*0.05)
                                                         .background(Color(.white).cornerRadius(screenheight*0.025).shadow(radius: 10))
                                                 }
-                                            }
+                                            }*/
                                         }.padding(.top, screenheight*0.01)
                                     }
                                     Spacer()
@@ -1478,14 +1552,19 @@ struct HomeView: View {
                                 Button(action: {
                                     self.homecomment = true
                                 }) {
-                                    ZStack {
+                                    /*ZStack {
                                         RoundedRectangle(cornerRadius: 10)
                                             .foregroundColor(Color("personality"))
                                             .frame(width: screenwidth*0.133, height: screenwidth*0.133)
-                                        Image("comment")
-                                            .resizable()
-                                            .frame(width: screenwidth*0.086, height: screenwidth*0.086)
-                                    }
+                                        
+                                    }*/
+                                    Image("commentbutton")
+                                        .renderingMode(.template)
+                                        .resizable()
+                                        .frame(width: screenwidth*0.076, height: screenwidth*0.076)
+                                        .foregroundColor(.white)
+                                        .padding(10)
+                                        .background(Color(.blue).opacity(0.5).cornerRadius(10))
                                 }.buttonStyle(PlainButtonStyle())
                                 Button(action: {
                                     if self.observer.keys > 0 && !self.observer.lock[self.unlockindex] {
@@ -1613,8 +1692,8 @@ struct HomeView: View {
                                         .foregroundColor(Color("personality"))
                                         .padding(.horizontal, 10)
                                         .padding(.vertical, 5)
-                                }.background(Color(.white).cornerRadius(10)).padding(.trailing, 10)
-                            }.frame(width: self.screenheight/3 - 55, height: 60).background(Color("personality").cornerRadius(10))
+                                }.background(Color(.white).cornerRadius(15)).padding(.trailing, 10)
+                            }.frame(width: self.screenheight/3 - 55, height: 60).background(Color("personality").cornerRadius(20))
                         }
                         Button(action: {
                             
@@ -1639,8 +1718,8 @@ struct HomeView: View {
                                         .foregroundColor(Color("personality"))
                                         .padding(.horizontal, 10)
                                         .padding(.vertical, 5)
-                                }.background(Color(.white).cornerRadius(10)).padding(.trailing, 10)
-                            }.frame(width: self.screenheight/3 - 55, height: 60).background(Color("personality").cornerRadius(10))
+                                }.background(Color(.white).cornerRadius(15)).padding(.trailing, 10)
+                            }.frame(width: self.screenheight/3 - 55, height: 60).background(Color("personality").cornerRadius(20))
                         }
                         Button(action: {
                             self.rewardAd.showAd(rewardFunction: {
@@ -1676,8 +1755,8 @@ struct HomeView: View {
                                         .resizable()
                                         .frame(width: 30, height: 30)
                                         .padding(.trailing, 5)
-                                }.background(Color(.white).cornerRadius(10)).padding(.trailing, 10)
-                            }.frame(width: self.screenheight/3 - 55, height: 60).background(Color("personality").cornerRadius(10))
+                                }.background(Color(.white).cornerRadius(15)).padding(.trailing, 10)
+                            }.frame(width: self.screenheight/3 - 55, height: 60).background(Color("personality").cornerRadius(20))
                         }.buttonStyle(PlainButtonStyle())
                     }.padding(20).background(Color(.white).cornerRadius(25).shadow(radius: 10))
                 }.offset(y: self.showkeys ? 0 : self.screenheight).opacity(self.showkeys ? 1 : 0)
@@ -1842,12 +1921,14 @@ struct RatingView: View {
                     VStack {
                         Spacer().frame(height: self.screenheight/8)
                         RatingAd()
-                            .frame(width: screenwidth - 40, height: screenheight/1.5)
+                            .frame(width: screenwidth - 30, height: (screenwidth - 20)*1.6 - 10)
                             .background(Color("lightgray"))
                             .cornerRadius(25)
                             .padding(5)
                             .background(Color(.gray).cornerRadius(30))
                             .scaleEffect(self.showad ? 1 : 0).animation(.easeInOut(duration: 0.5))
+                            .padding(.bottom, 20)
+                            .padding(.top, 20)
                         Button(action: {
                             self.newkey = 0
                             self.showkey = true
@@ -1880,7 +1961,7 @@ struct RatingView: View {
                                 .fontWeight(.semibold)
                                 .padding(10).padding(.horizontal, 30)
                                 .foregroundColor(.gray)
-                                .background(Color(.white).cornerRadius(20))
+                                .background(Color(.white).cornerRadius(30))
                                 .shadow(radius: 10)
                         }
                     }.frame(width: self.screenwidth, height: self.screenheight)
@@ -2079,7 +2160,7 @@ struct RatingView: View {
                                                 if self.nonext {
                                                     
                                                 }
-                                                else if self.ad {
+                                                /*else if self.ad {
                                                     self.newkey = 0
                                                     self.showkey = true
                                                     DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
@@ -2105,7 +2186,7 @@ struct RatingView: View {
                                                     }
                                                     self.observer.socialunlock = false
                                                     self.unlocksocials = false
-                                                }
+                                                }*/
                                                 else {
                                                     self.showcomment.toggle()
                                                 }
@@ -2114,8 +2195,7 @@ struct RatingView: View {
                                                     .resizable()
                                                     .frame(width: 30, height: 30)
                                                     .foregroundColor(.gray)
-                                                    .padding(10)//12.5)
-                                                    //.background(Circle().frame(width: 45, height: 45).foregroundColor(.white).shadow(radius: 5))
+                                                    .padding(10)
                                             }
                                         }
                                     }
@@ -2502,7 +2582,7 @@ struct RatingView: View {
                         .frame(width: self.screenwidth, height: self.screenheight)
                 }
                 VStack {
-                    Text("Keys")
+                    Text("Key Shop")
                         .font(Font.custom("ProximaNova-Regular", size: 30))
                         .fontWeight(.semibold)
                         .foregroundColor(.black)
@@ -2516,6 +2596,7 @@ struct RatingView: View {
                                     .font(Font.custom("ProximaNova-Regular", size: 16))
                                     .fontWeight(.semibold)
                                     .foregroundColor(Color(.white))
+                                    .multilineTextAlignment(.center)
                             }.frame(width: 70).padding(.leading, 10)
                             Spacer()
                             HStack(spacing: 0) {
@@ -2525,7 +2606,7 @@ struct RatingView: View {
                                     .foregroundColor(.black)
                                     .padding(.horizontal, 10)
                                     .padding(.vertical, 5)
-                            }.background(Color(.white).cornerRadius(10)).padding(.trailing, 10)
+                            }.background(Color(.white).cornerRadius(15)).padding(.trailing, 10)
                         }.frame(width: self.screenheight/3 - 55, height: 60).background(Color("personality").cornerRadius(20).shadow(radius: 5))
                     }
                     Button(action: {
@@ -2542,7 +2623,7 @@ struct RatingView: View {
                                     .resizable()
                                     .frame(width: 25, height: 25)
                                     .foregroundColor(Color(.white))
-                            }.padding(.leading, 10)
+                            }.padding(.leading, 15)
                             Spacer()
                             HStack(spacing: 0) {
                                 Text("$4.99")
@@ -2551,7 +2632,7 @@ struct RatingView: View {
                                     .foregroundColor(.black)
                                     .padding(.horizontal, 10)
                                     .padding(.vertical, 5)
-                            }.background(Color(.white).cornerRadius(10)).padding(.trailing, 10)
+                            }.background(Color(.white).cornerRadius(15)).padding(.trailing, 10)
                         }.frame(width: self.screenheight/3 - 55, height: 60).background(Color("personality").cornerRadius(20).shadow(radius: 5))
                     }
                     Button(action: {
@@ -2588,8 +2669,8 @@ struct RatingView: View {
                                     .resizable()
                                     .frame(width: 30, height: 30)
                                     .padding(.trailing, 5)
-                            }.background(Color(.white).cornerRadius(20)).padding(.trailing, 10)
-                        }.frame(width: self.screenheight/3 - 55, height: 60).background(Color("personality").cornerRadius(10).shadow(radius: 5))
+                            }.background(Color(.white).cornerRadius(15)).padding(.trailing, 10)
+                        }.frame(width: self.screenheight/3 - 55, height: 60).background(Color("personality").cornerRadius(20).shadow(radius: 5))
                     }.buttonStyle(PlainButtonStyle())
                 }.padding(20).background(Color(.white).cornerRadius(25).shadow(radius: 10))
             }.offset(y: self.showkeys ? 0 : self.screenheight).animation(.spring())
@@ -2611,14 +2692,6 @@ struct RatingView: View {
                         .frame(width: 35, height: 35)
                 }
             }.animation(.spring()).offset(x: self.newkeyx, y: self.newkey).scaleEffect((self.newkey < 0) ? 1 : 1.9).opacity((self.showkey) ? 1 : 0)
-            
-            
-            /*VStack {
-                Spacer()
-                RoundedRectangle(cornerRadius: 25)
-                    .foregroundColor(.white)
-                    .frame(width: screenwidth/1.5, height: 200)
-            }*/
         }.background(Color(.white).edgesIgnoringSafeArea(.all))
         .navigationBarTitle("")
         .navigationBarHidden(true)
@@ -3529,7 +3602,7 @@ struct Bio: View {
                         .frame(height: screenheight * 0.05)
                         .minimumScaleFactor(0.01)
                         .foregroundColor(Color(.gray))
-                        .padding(.bottom, screenheight * 0.0065)
+                        //.padding(.bottom, screenheight * 0.0045)
                 }
                 VStack(spacing: 0) {//screenheight * 0.009) {
                     ForEach(self.categories, id: \.self) { cat in
@@ -3643,7 +3716,7 @@ struct Bio: View {
                             }
                         }
                     }
-                }.cornerRadius(25).background(Color(.white).cornerRadius(25).shadow(radius: 5)).padding(.bottom, screenheight*0.008).padding(.top, 10)
+                }.cornerRadius(25).background(Color(.white).cornerRadius(25).shadow(radius: 5)).padding(.bottom, screenheight*0.008).padding(.top, self.edit ? 10 : 0)
                 //MARK: Edit Bio
                 if self.edit {
                     HStack(spacing: screenwidth*0.053) {
@@ -3997,8 +4070,8 @@ struct ShowProfile: View {
                         self.report.toggle()
                     }) {
                         Color(.white)
-                            .opacity(0.1)
-                            .frame(width: screenwidth - 60, height: (screenwidth - 60)*1.6)
+                            .opacity(0)
+                            .frame(width: screenwidth - 60, height: (screenwidth - 60)*1.6 + 105)
                     }
                     VStack(spacing: 20) {
                         Button(action: {
@@ -4336,10 +4409,10 @@ struct RatingSettings: View {
     @EnvironmentObject var observer: observer
     let screenwidth = UIScreen.main.bounds.width
     let screenheight = UIScreen.main.bounds.height
-    @State var gender: CGFloat = 1
-    @State var ratinggender: CGFloat = 1
-    @State var width: CGFloat = 0
-    @State var width1: CGFloat = 15
+    @Binding var gender: CGFloat
+    @Binding var ratinggender: CGFloat
+    @Binding var width: CGFloat
+    @Binding var width1: CGFloat
     @State var first = false
     @State var second = false
     var body: some View {
@@ -4360,38 +4433,38 @@ struct RatingSettings: View {
                 HStack(spacing: 0) {
                     Button(action: {
                         self.gender = -1
-                        self.observer.myprofile.Preferences[0] = "Male"
+                        //self.observer.myprofile.Preferences[0] = "Male"
                     }) {
                         Text("Male")
                             .font(Font.custom("ProximaNova-Regular", size: 16))
                             .fontWeight(.semibold)
                             .foregroundColor(.white)
                             .lineLimit(1)
-                            .frame(width: 78)
+                            .frame(width: 80)
                             .minimumScaleFactor(0.01)
                     }
                     Button(action: {
                         self.gender = 0
-                        self.observer.myprofile.Preferences[0] = "Female"
+                        //self.observer.myprofile.Preferences[0] = "Female"
                     }) {
                         Text("Female")
                             .font(Font.custom("ProximaNova-Regular", size: 16))
                             .fontWeight(.semibold)
                             .foregroundColor(.white)
                             .lineLimit(1)
-                            .frame(width: 78)
+                            .frame(width: 80)
                             .minimumScaleFactor(0.01)
                     }
                     Button(action: {
                         self.gender = 1
-                        self.observer.myprofile.Preferences[0] = "Everyone"
+                        //self.observer.myprofile.Preferences[0] = "Everyone"
                     }) {
                         Text("Everyone")
                             .font(Font.custom("ProximaNova-Regular", size: 16))
                             .fontWeight(.semibold)
                             .foregroundColor(.white)
                             .lineLimit(1)
-                            .frame(width: 78)
+                            .frame(width: 80)
                             .minimumScaleFactor(0.01)
                     }
                 }.frame(width: 240, height: 40)
@@ -4412,7 +4485,7 @@ struct RatingSettings: View {
                 HStack(spacing: 0) {
                     Button(action: {
                         self.ratinggender = -1
-                        self.observer.myprofile.Preferences[1] = "Male"
+                        //self.observer.myprofile.Preferences[1] = "Male"
                     }) {
                         Text("Male")
                             .font(Font.custom("ProximaNova-Regular", size: 16))
@@ -4424,7 +4497,7 @@ struct RatingSettings: View {
                     }
                     Button(action: {
                         self.ratinggender = 0
-                        self.observer.myprofile.Preferences[1] = "Female"
+                        //self.observer.myprofile.Preferences[1] = "Female"
                     }) {
                         Text("Female")
                             .font(Font.custom("ProximaNova-Regular", size: 16))
@@ -4436,7 +4509,7 @@ struct RatingSettings: View {
                     }
                     Button(action: {
                         self.ratinggender = 1
-                        self.observer.myprofile.Preferences[1] = "Everyone"
+                        //self.observer.myprofile.Preferences[1] = "Everyone"
                     }) {
                         Text("Everyone")
                             .font(Font.custom("ProximaNova-Regular", size: 16))
@@ -4455,12 +4528,12 @@ struct RatingSettings: View {
                     .fontWeight(.semibold)
                     .foregroundColor(.black)
                     .padding(.trailing, 10)
-                Text(self.width < 0 ? "18 - " : String(Int(self.width/5.24 + 18)) + " - ")
+                Text(self.width < 0 ? "18 - " : String(Int(self.width/2.71 + 18)) + " - ")
                     .font(Font.custom("ProximaNova-Regular", size: 18))
                     .fontWeight(.semibold)
                     .foregroundColor(Color("personality"))
                     .animation(nil)
-                Text(self.width1 > 220 || Int(self.width1/5.24 + 18) >= 60 ? "60" : String(Int(self.width1/5.24 + 19)))
+                Text(self.width1 > 220 || Int(self.width1/2.71 + 18) >= 99 ? "99" : String(Int(self.width1/2.71 + 18)))
                     .font(Font.custom("ProximaNova-Regular", size: 18))
                     .fontWeight(.semibold)
                     .foregroundColor(Color("personality"))
@@ -4491,8 +4564,8 @@ struct RatingSettings: View {
                             self.first = true
                         }).onEnded({ (value) in
                             self.first.toggle()
-                            self.observer.myprofile.Preferences[2] = self.width < 0 ? "18-" : (String(Int(self.width/5.24 + 18)) + "-")
-                            self.observer.myprofile.Preferences[2] = (self.width1 > 220 || Int(self.width1/5.24 + 18) >= 60) ? self.observer.myprofile.Preferences[2]+"60" : self.observer.myprofile.Preferences[2]+String(Int(self.width1/5.24 + 19))
+                            /*self.observer.myprofile.Preferences[2] = self.width < 0 ? "18-" : (String(Int(self.width/5.24 + 18)) + "-")
+                            self.observer.myprofile.Preferences[2] = (self.width1 > 220 || Int(self.width1/5.24 + 18) >= 60) ? self.observer.myprofile.Preferences[2]+"60" : self.observer.myprofile.Preferences[2]+String(Int(self.width1/5.24 + 19))*/
                         })).animation(nil)
                     Circle()
                         .foregroundColor(Color("personality"))
@@ -4505,11 +4578,11 @@ struct RatingSettings: View {
                             self.second = true
                         }).onEnded({ (value) in
                             self.second.toggle()
-                            self.observer.myprofile.Preferences[2] = self.width < 0 ? "18-" : (String(Int(self.width/5.24 + 18)) + "-")
-                            self.observer.myprofile.Preferences[2] = self.width1 > 220 || Int(self.width1/5.24 + 18) >= 60 ? self.observer.myprofile.Preferences[2]+"60" : self.observer.myprofile.Preferences[2]+String(Int(self.width1/5.24 + 19))
+                            /*self.observer.myprofile.Preferences[2] = self.width < 0 ? "18-" : (String(Int(self.width/5.24 + 18)) + "-")
+                            self.observer.myprofile.Preferences[2] = self.width1 > 220 || Int(self.width1/5.24 + 18) >= 60 ? self.observer.myprofile.Preferences[2]+"60" : self.observer.myprofile.Preferences[2]+String(Int(self.width1/5.24 + 19))*/
                         })).animation(nil)
                     if self.first {
-                        Text(self.width < 0 ? "18" : String(Int(self.width/5.24 + 18)))
+                        Text(self.width < 0 ? "18" : String(Int(self.width/2.71 + 18)))
                             .font(Font.custom("ProximaNova-Regular", size: 14))
                             .fontWeight(.semibold)
                             .foregroundColor(Color("personality"))
@@ -4517,7 +4590,7 @@ struct RatingSettings: View {
                             .animation(nil)
                     }
                     if self.second {
-                        Text(self.width1 > 220 || Int(self.width1/5.24 + 18) >= 60 ? "60" : String(Int(self.width1/5.24 + 19)))
+                        Text(self.width1 > 220 || Int(self.width1/2.71 + 18) >= 99 ? "99" : String(Int(self.width1/2.71 + 18)))
                             .font(Font.custom("ProximaNova-Regular", size: 14))
                             .fontWeight(.semibold)
                             .foregroundColor(Color("personality"))
@@ -4545,8 +4618,8 @@ struct RatingSettings: View {
             else {
                 self.ratinggender = 1
             }
-            self.width = CGFloat((self.observer.myprofile.Preferences[2].prefix(2) as NSString).doubleValue-18)*5.24
-            self.width1 = CGFloat((self.observer.myprofile.Preferences[2].suffix(2) as NSString).doubleValue-18)*5.24
+            self.width = CGFloat((self.observer.myprofile.Preferences[2].prefix(2) as NSString).doubleValue-18)*2.71
+            self.width1 = CGFloat((self.observer.myprofile.Preferences[2].suffix(2) as NSString).doubleValue-18)*2.71
             
         }
     }
@@ -5162,7 +5235,7 @@ struct HomeProfile: View {
                                 self.count -= 1
                             }
                         }) {
-                            Color(.white).opacity(0.0)
+                            Color(.white).opacity(0)
                                 .frame(width: screenwidth/3, height: (screenwidth - 20)*1.3)
                         }
                         Spacer()
@@ -5173,7 +5246,7 @@ struct HomeProfile: View {
                                 self.count += 1
                             }
                         }) {
-                            Color(.white).opacity(0.0)
+                            Color(.white).opacity(0)
                                 .frame(width: screenwidth/3, height: (screenwidth - 20)*1.3)
                         }
                     }.padding(.horizontal, 20)
@@ -5730,7 +5803,14 @@ class observer: ObservableObject {
                                 self.showratings.append(false)
                             }
                         }
-                        let age = document.get("Age") as! String
+                        
+                        let bdate = document.get("Birthdate") as! String
+                        let dateFormatter = DateFormatter()
+                        dateFormatter.dateFormat = "yyyy-MM-dd"
+                        let date = dateFormatter.date(from: bdate)!
+                        let components = Calendar.current.dateComponents([.year, .month, .day], from: date, to: Date())
+                        let age = String(components.year!)
+                        print(age)
                         let bio = document.get("Bio") as! [String]
                         let gender = document.get("Gender") as! String
                         let id = document.get("ID") as! String
@@ -5751,38 +5831,44 @@ class observer: ObservableObject {
                 for document in querySnapshot!.documents {
                     if document.get("ID") as! String != self.id! && self.users.count < 100 {
                         
-                        
+                        let bdate = document.get("Birthdate") as! String
+                        let dateFormatter = DateFormatter()
+                        dateFormatter.dateFormat = "yyyy-MM-dd"
+                        let date = dateFormatter.date(from: bdate)!
+                        let components = Calendar.current.dateComponents([.year, .month, .day], from: date, to: Date())
+                        let age1 = components.year!
+                        print(age1)
                         if (document.get("Gender") as! String == self.myprofile.Preferences[0] && (document.get("Preferences") as! [String])[1] == self.myprofile.Gender) || (document.get("Preferences") as! [String])[1] == "Everyone" && ((document.get("Gender") as! String == self.myprofile.Preferences[0]) || self.myprofile.Preferences[0] == "Everyone") || (document.get("Preferences") as! [String])[1] == self.myprofile.Gender {
-                            
-                            if (Int(document.get("Age") as! String) ?? 0 >= (self.myprofile.Preferences[2].prefix(2) as NSString).integerValue && Int(document.get("Age") as! String) ?? 0 <= (self.myprofile.Preferences[2].suffix(2) as NSString).integerValue) && Int(self.myprofile.Age) ?? 0 >= ((document.get("Preferences") as! [String])[2].prefix(2) as NSString).integerValue && Int(self.myprofile.Age) ?? 0 <= ((document.get("Preferences") as! [String])[2].suffix(2) as NSString).integerValue {
+                            if (age1 >= (self.myprofile.Preferences[2].prefix(2) as NSString).integerValue && age1 <= (self.myprofile.Preferences[2].suffix(2) as NSString).integerValue) && Int(self.myprofile.Age) ?? 0 >= ((document.get("Preferences") as! [String])[2].prefix(2) as NSString).integerValue && Int(self.myprofile.Age) ?? 0 <= ((document.get("Preferences") as! [String])[2].suffix(2) as NSString).integerValue {
                                 print("bruh")
+                                var check = true
+                                for rate in document.get("Rates") as! [String] {
+                                    if String(rate.suffix(rate.count-9)) == self.id! {
+                                        check = false
+                                    }
+                                }
+                                if check {
+                                    let age = String(age1)
+                                    print(age)
+                                    let bio = document.get("Bio") as! [String]
+                                    let gender = document.get("Gender") as! String
+                                    let id = document.get("ID") as! String
+                                    let name = document.get("Name") as! String
+                                    let percentage = document.get("Percentage") as! Double
+                                    let profilepics = document.get("ProfilePics") as! [String]
+                                    let rates = document.get("Rates") as! [String]
+                                    let overallrating = document.get("OverallRating") as! Double
+                                    let appearancerating = document.get("AppearanceRating") as! Double
+                                    let personalityrating = document.get("PersonalityRating") as! Double
+                                    let selfrating = document.get("SelfRating") as! Double
+                                    let socials = document.get("Socials") as! [String]
+                                    let report = document.get("Report") as! Double
+                                    let preferences = document.get("Preferences") as! [String]
+                                    self.users.append(UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Preferences: preferences))
+                                }
                             }
                             else {
                                 print("deez")
-                            }
-                            var check = true
-                            for rate in document.get("Rates") as! [String] {
-                                if String(rate.suffix(rate.count-9)) == self.id! {
-                                    check = false
-                                }
-                            }
-                            if check {
-                                let age = document.get("Age") as! String
-                                let bio = document.get("Bio") as! [String]
-                                let gender = document.get("Gender") as! String
-                                let id = document.get("ID") as! String
-                                let name = document.get("Name") as! String
-                                let percentage = document.get("Percentage") as! Double
-                                let profilepics = document.get("ProfilePics") as! [String]
-                                let rates = document.get("Rates") as! [String]
-                                let overallrating = document.get("OverallRating") as! Double
-                                let appearancerating = document.get("AppearanceRating") as! Double
-                                let personalityrating = document.get("PersonalityRating") as! Double
-                                let selfrating = document.get("SelfRating") as! Double
-                                let socials = document.get("Socials") as! [String]
-                                let report = document.get("Report") as! Double
-                                let preferences = document.get("Preferences") as! [String]
-                                self.users.append(UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Preferences: preferences))
                             }
                         }
                     }
@@ -5791,7 +5877,12 @@ class observer: ObservableObject {
                 for users in self.userrates {
                     for document in querySnapshot!.documents {
                         if document.get("ID") as! String == users.substring(fromIndex: 9) {
-                            let age = document.get("Age") as! String
+                            let bdate = document.get("Birthdate") as! String
+                            let dateFormatter = DateFormatter()
+                            dateFormatter.dateFormat = "yyyy-MM-dd"
+                            let date = dateFormatter.date(from: bdate)!
+                            let components = Calendar.current.dateComponents([.year, .month, .day], from: date, to: Date())
+                            let age = String(components.year!)
                             let bio = document.get("Bio") as! [String]
                             let gender = document.get("Gender") as! String
                             let id = document.get("ID") as! String
@@ -5824,31 +5915,46 @@ class observer: ObservableObject {
             }
             for document in querySnapshot!.documents {
                 if document.get("ID") as! String != self.id! && self.users.count < 100 {
+                    
+                    let bdate = document.get("Birthdate") as! String
+                    let dateFormatter = DateFormatter()
+                    dateFormatter.dateFormat = "yyyy-MM-dd"
+                    let date = dateFormatter.date(from: bdate)!
+                    let components = Calendar.current.dateComponents([.year, .month, .day], from: date, to: Date())
+                    let age1 = components.year!
+                    
                     if (document.get("Gender") as! String == self.myprofile.Preferences[0] && (document.get("Preferences") as! [String])[1] == self.myprofile.Gender) || (document.get("Preferences") as! [String])[1] == "Everyone" && ((document.get("Gender") as! String == self.myprofile.Preferences[0]) || self.myprofile.Preferences[0] == "Everyone") || (document.get("Preferences") as! [String])[1] == self.myprofile.Gender {
-                        var check = true
-                        for rate in document.get("Rates") as! [String] {
-                            if String(rate.suffix(rate.count-9)) == self.id! {
-                                check = false
+                        
+                        if (age1 >= (self.myprofile.Preferences[2].prefix(2) as NSString).integerValue && age1 <= (self.myprofile.Preferences[2].suffix(2) as NSString).integerValue) && age1 >= ((document.get("Preferences") as! [String])[2].prefix(2) as NSString).integerValue && age1 <= ((document.get("Preferences") as! [String])[2].suffix(2) as NSString).integerValue {
+                            print("bruh")
+                            var check = true
+                            for rate in document.get("Rates") as! [String] {
+                                if String(rate.suffix(rate.count-9)) == self.id! {
+                                    check = false
+                                }
+                            }
+                            if check {
+                                let age = String(age1)
+                                let bio = document.get("Bio") as! [String]
+                                let gender = document.get("Gender") as! String
+                                let id = document.get("ID") as! String
+                                let name = document.get("Name") as! String
+                                let percentage = document.get("Percentage") as! Double
+                                let profilepics = document.get("ProfilePics") as! [String]
+                                let rates = document.get("Rates") as! [String]
+                                let overallrating = document.get("OverallRating") as! Double
+                                let appearancerating = document.get("AppearanceRating") as! Double
+                                let personalityrating = document.get("PersonalityRating") as! Double
+                                let selfrating = document.get("SelfRating") as! Double
+                                let socials = document.get("Socials") as! [String]
+                                let report = document.get("Report") as! Double
+                                let preferences = document.get("Preferences") as! [String]
+                                newusers.append(UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Preferences: preferences))
+                                self.users = newusers
                             }
                         }
-                        if check {
-                            let age = document.get("Age") as! String
-                            let bio = document.get("Bio") as! [String]
-                            let gender = document.get("Gender") as! String
-                            let id = document.get("ID") as! String
-                            let name = document.get("Name") as! String
-                            let percentage = document.get("Percentage") as! Double
-                            let profilepics = document.get("ProfilePics") as! [String]
-                            let rates = document.get("Rates") as! [String]
-                            let overallrating = document.get("OverallRating") as! Double
-                            let appearancerating = document.get("AppearanceRating") as! Double
-                            let personalityrating = document.get("PersonalityRating") as! Double
-                            let selfrating = document.get("SelfRating") as! Double
-                            let socials = document.get("Socials") as! [String]
-                            let report = document.get("Report") as! Double
-                            let preferences = document.get("Preferences") as! [String]
-                            newusers.append(UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Preferences: preferences))
-                            self.users = newusers
+                        else {
+                            print("deez")
                         }
                     }
                 }
@@ -5857,8 +5963,11 @@ class observer: ObservableObject {
     }
     func relogin() {
         self.users = [UserData]()
+        if id == nil || UserDefaults.standard.value(forKey: "notsignedup") as? Bool ?? true {
+            print("burh")
+            return
+        }
         let db = Firestore.firestore()
-        let uid = Auth.auth().currentUser?.uid
         db.collection("users").getDocuments() { (querySnapshot, err) in
             if err != nil {
                 print((err?.localizedDescription)!)
@@ -5866,7 +5975,7 @@ class observer: ObservableObject {
             }
             else {
                 for document in querySnapshot!.documents {
-                    if uid! == document.get("ID") as! String {
+                    if self.id! == (document.get("ID") as! String) {
                         self.lock = document.get("Lock") as! [Bool]
                         self.userrates = document.get("Rates") as! [String]
                         self.keys = document.get("Keys") as! Int
@@ -5878,7 +5987,13 @@ class observer: ObservableObject {
                                 self.showratings.append(false)
                             }
                         }
-                        let age = document.get("Age") as! String
+                        
+                        let bdate = document.get("Birthdate") as! String
+                        let dateFormatter = DateFormatter()
+                        dateFormatter.dateFormat = "yyyy-MM-dd"
+                        let date = dateFormatter.date(from: bdate)!
+                        let components = Calendar.current.dateComponents([.year, .month, .day], from: date, to: Date())
+                        let age = String(components.year!)
                         let bio = document.get("Bio") as! [String]
                         let gender = document.get("Gender") as! String
                         let id = document.get("ID") as! String
@@ -5898,30 +6013,45 @@ class observer: ObservableObject {
                 }
                 for document in querySnapshot!.documents {
                     if document.get("ID") as! String != self.id! && self.users.count < 100 {
+                        
+                        let bdate = document.get("Birthdate") as! String
+                        let dateFormatter = DateFormatter()
+                        dateFormatter.dateFormat = "yyyy-MM-dd"
+                        let date = dateFormatter.date(from: bdate)!
+                        let components = Calendar.current.dateComponents([.year, .month, .day], from: date, to: Date())
+                        let age1 = components.year!
+                        
                         if (document.get("Gender") as! String == self.myprofile.Preferences[0] && (document.get("Preferences") as! [String])[1] == self.myprofile.Gender) || (document.get("Preferences") as! [String])[1] == "Everyone" && ((document.get("Gender") as! String == self.myprofile.Preferences[0]) || self.myprofile.Preferences[0] == "Everyone") || (document.get("Preferences") as! [String])[1] == self.myprofile.Gender {
-                            var check = true
-                            for rate in document.get("Rates") as! [String] {
-                                if String(rate.suffix(rate.count-9)) == self.id! {
-                                    check = false
+                            
+                            if (age1 >= (self.myprofile.Preferences[2].prefix(2) as NSString).integerValue && age1 <= (self.myprofile.Preferences[2].suffix(2) as NSString).integerValue) && age1 >= ((document.get("Preferences") as! [String])[2].prefix(2) as NSString).integerValue && age1 <= ((document.get("Preferences") as! [String])[2].suffix(2) as NSString).integerValue {
+                                print("bruh")
+                                var check = true
+                                for rate in document.get("Rates") as! [String] {
+                                    if String(rate.suffix(rate.count-9)) == self.id! {
+                                        check = false
+                                    }
+                                }
+                                if check {
+                                    let age = String(age1)
+                                    let bio = document.get("Bio") as! [String]
+                                    let gender = document.get("Gender") as! String
+                                    let id = document.get("ID") as! String
+                                    let name = document.get("Name") as! String
+                                    let percentage = document.get("Percentage") as! Double
+                                    let profilepics = document.get("ProfilePics") as! [String]
+                                    let rates = document.get("Rates") as! [String]
+                                    let overallrating = document.get("OverallRating") as! Double
+                                    let appearancerating = document.get("AppearanceRating") as! Double
+                                    let personalityrating = document.get("PersonalityRating") as! Double
+                                    let selfrating = document.get("SelfRating") as! Double
+                                    let socials = document.get("Socials") as! [String]
+                                    let report = document.get("Report") as! Double
+                                    let preferences = document.get("Preferences") as! [String]
+                                    self.users.append(UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Preferences: preferences))
                                 }
                             }
-                            if check {
-                                let age = document.get("Age") as! String
-                                let bio = document.get("Bio") as! [String]
-                                let gender = document.get("Gender") as! String
-                                let id = document.get("ID") as! String
-                                let name = document.get("Name") as! String
-                                let percentage = document.get("Percentage") as! Double
-                                let profilepics = document.get("ProfilePics") as! [String]
-                                let rates = document.get("Rates") as! [String]
-                                let overallrating = document.get("OverallRating") as! Double
-                                let appearancerating = document.get("AppearanceRating") as! Double
-                                let personalityrating = document.get("PersonalityRating") as! Double
-                                let selfrating = document.get("SelfRating") as! Double
-                                let socials = document.get("Socials") as! [String]
-                                let report = document.get("Report") as! Double
-                                let preferences = document.get("Preferences") as! [String]
-                                self.users.append(UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Preferences: preferences))
+                            else {
+                                print("deez")
                             }
                         }
                     }
@@ -5930,7 +6060,12 @@ class observer: ObservableObject {
                 for users in self.userrates {
                     for document in querySnapshot!.documents {
                         if document.get("ID") as! String == users.substring(fromIndex: 9) {
-                            let age = document.get("Age") as! String
+                            let bdate = document.get("Birthdate") as! String
+                            let dateFormatter = DateFormatter()
+                            dateFormatter.dateFormat = "yyyy-MM-dd"
+                            let date = dateFormatter.date(from: bdate)!
+                            let components = Calendar.current.dateComponents([.year, .month, .day], from: date, to: Date())
+                            let age = String(components.year!)
                             let bio = document.get("Bio") as! [String]
                             let gender = document.get("Gender") as! String
                             let id = document.get("ID") as! String
@@ -5959,14 +6094,14 @@ class observer: ObservableObject {
 
 
 //MARK: CreateUser
-func CreateUser(name: String, age: String, gender: String, percentage: Double, overallrating: Double, appearancerating: Double, personalityrating: Double, profilepics: [Data], photopostion: [Int], bio: [String], socials: [String], complete: @escaping (Bool)-> Void) {
+func CreateUser(name: String, bdate: String, gender: String, percentage: Double, overallrating: Double, appearancerating: Double, personalityrating: Double, profilepics: [Data], photopostion: [Int], bio: [String], socials: [String], complete: @escaping (Bool)-> Void) {
     let db = Firestore.firestore()
     let storage = Storage.storage().reference()
     let uid = Auth.auth().currentUser?.uid
     var images = [String]()
     var newbio = [String]()
     
-    db.collection("users").document(uid!).setData(["Name": name, "Age": age, "Gender": gender, "Percentage": percentage, "SelfRating": overallrating, "ProfilePics": [String](), "Bio": [String](), "Rates": [String](), "OverallRating": overallrating, "AppearanceRating": appearancerating, "PersonalityRating": personalityrating, "ID": uid!, "Lock": [Bool](), "Keys": 0, "Comments": [String](), "Socials": socials, "Report": 0, "Preferences": ["Everyone", "Everyone", "18-60"]]) { (err) in
+    db.collection("users").document(uid!).setData(["Name": name, "Birthdate": bdate, "Gender": gender, "Percentage": percentage, "SelfRating": overallrating, "ProfilePics": [String](), "Bio": [String](), "Rates": [String](), "OverallRating": overallrating, "AppearanceRating": appearancerating, "PersonalityRating": personalityrating, "ID": uid!, "Lock": [Bool](), "Keys": 0, "Comments": [String](), "Socials": socials, "Report": 0, "Preferences": ["Everyone", "Everyone", "18-60"]]) { (err) in
         if err != nil{
             print((err?.localizedDescription)!)
             complete(false)
@@ -6035,7 +6170,7 @@ func CheckUser(complete: @escaping (Bool)->Void) {
                     complete(true)
                 }
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                 complete(false)
             }
         }
@@ -6270,15 +6405,17 @@ struct Bar: View {
                 }
             }) {
                 ZStack {
-                    Circle()
+                    /*Circle()
                         .foregroundColor(Color("lightgray"))
-                        .frame(width: screenheight*0.074, height: screenheight*0.074)
+                        .frame(width: screenheight*0.074, height: screenheight*0.074)*/
                     WebImage(url: URL(string: self.observer.ratesinfo[self.index].ProfilePics[0]))
                         .resizable()
                         .aspectRatio(contentMode: .fill)
-                        .frame(width: screenheight*0.07, height: screenheight*0.07)
-                        .cornerRadius(screenwidth*0.08)
+                        .frame(width: screenheight*0.06, height: screenheight*0.06)
                         .blur(radius: !self.observer.lock[self.index] ? 4 : 0)
+                        .cornerRadius(15)
+                        .padding(5)
+                        .background(Color(.blue).opacity(0.5).cornerRadius(20))
                     if !self.observer.lock[self.index] {
                         Image("lock")
                             //.renderingMode(.template)
@@ -6297,8 +6434,8 @@ struct Bar: View {
                             ZStack() {
                                 Rectangle()
                                     .fill(Color("appearance"))
-                                    .frame(width: (self.screenwidth/20)*rating.appearance, height: screenheight*0.034)
-                                    .cornerRadius(2.5)
+                                    .frame(width: (self.screenwidth/20)*rating.appearance, height: screenheight*0.036)
+                                    .cornerRadius(5)
                                 Text(String(Double(rating.appearance)))
                                     .font(Font.custom("ProximaNova-Regular", size: 16))
                                     .fontWeight(.semibold)
@@ -6306,13 +6443,13 @@ struct Bar: View {
                                     .animation(nil)
                             }
                             Spacer().frame(width: ((self.screenwidth/20)*10) - (self.screenwidth/20)*rating.appearance)
-                        }.frame(width: self.screenwidth/2).background(Color("lightgray").cornerRadius(2.5))
+                        }.frame(width: self.screenwidth/2).background(Color("lightgray")).cornerRadius(10)
                         HStack {
                             ZStack {
                                 Rectangle()
                                     .fill(Color("personality"))
-                                    .frame(width: (self.screenwidth/20)*rating.personality, height: screenheight*0.034)
-                                    .cornerRadius(2.5)
+                                    .frame(width: (self.screenwidth/20)*rating.personality, height: screenheight*0.036)
+                                    .cornerRadius(5)
                                 Text(String(Double(rating.personality)))
                                     .font(Font.custom("ProximaNova-Regular", size: 16))
                                     .fontWeight(.semibold)
@@ -6320,7 +6457,7 @@ struct Bar: View {
                                     .animation(nil)
                             }
                             Spacer().frame(width: ((self.screenwidth/20)*10) - (self.screenwidth/20)*rating.personality)
-                        }.frame(width: self.screenwidth/2).background(Color("lightgray").cornerRadius(2.5))
+                        }.frame(width: self.screenwidth/2).background(Color("lightgray")).cornerRadius(10)
                     }.frame(width: self.screenwidth/2)
                 }
             }
@@ -6346,7 +6483,7 @@ struct Bar: View {
                         }
                     }
                     Spacer().frame(width: ((self.screenwidth/20)*10) - (self.screenwidth/20)*rating.overall)
-                }.frame(width: self.screenwidth/2).background(Color("lightgray").cornerRadius(5))
+                    }.frame(width: self.screenwidth/2).background(Color("lightgray").cornerRadius(5)).cornerRadius(20)
             }
             Button(action: {
                 self.unlockindex = self.index
@@ -6356,11 +6493,13 @@ struct Bar: View {
                     /*RoundedRectangle(cornerRadius: 5)
                         .frame(width: screenwidth*0.147, height: screenwidth*0.147)
                         .foregroundColor(Color("lightgray"))*/
-                    Image("comment")
+                    Image("commentbutton")
+                        .renderingMode(.template)
                         .resizable()
-                        .frame(width: screenwidth*0.1, height: screenwidth*0.1)
-                        .padding(10)
-                        .background(Circle().foregroundColor(.white).shadow(radius: 1))
+                        .frame(width: screenwidth*0.07, height: screenwidth*0.07)
+                        .padding(15)
+                        .foregroundColor(.white)
+                        .background(Color(.blue).opacity(0.5).cornerRadius(20))
                 }
             }.buttonStyle(PlainButtonStyle())
                 .padding(.trailing, 10)
