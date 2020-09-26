@@ -1873,42 +1873,44 @@ struct HomeView: View {
                                 }
                             }
                             Button(action: {
-                                if self.confirm {
-                                    let db = Firestore.firestore()
-                                    let uid = Auth.auth().currentUser?.uid
-                                    self.report.toggle()
-                                    self.homecomment.toggle()
-                                    
-                                    self.observer.ratesinfo[self.unlockindex].Report += 1
-                                    db.collection("users").document(self.observer.ratesinfo[self.unlockindex].id).updateData(["Report": self.observer.ratesinfo[self.unlockindex].Report])
-                                    self.observer.numrates -= 1
-                                    
-                                    self.observer.comments.remove(at: self.unlockindex)
-                                    self.observer.userrates.remove(at: self.unlockindex)
-                                    self.observer.lock.remove(at: self.unlockindex)
-                                    self.observer.ratesinfo.remove(at: self.unlockindex)
-                                    
-                                    self.confirm.toggle()
-                                    let total = CGFloat(self.observer.userrates.count + 1)
-                                    var atotal: CGFloat = self.observer.selfratings.appearance
-                                    var ptotal: CGFloat = self.observer.selfratings.personality
-                                    var ototal: CGFloat = self.observer.selfratings.overall
-                                    for num in self.observer.userrates {
-                                        atotal += CGFloat((num.prefix(3) as NSString).doubleValue)
-                                        ptotal += CGFloat((num.prefix(6).suffix(3) as NSString).doubleValue)
-                                        ototal += CGFloat((num.prefix(9).suffix(3) as NSString).doubleValue)
+                                withAnimation {
+                                    if self.confirm {
+                                        let db = Firestore.firestore()
+                                        let uid = Auth.auth().currentUser?.uid
+                                        self.report.toggle()
+                                        self.homecomment.toggle()
+                                        
+                                        self.observer.ratesinfo[self.unlockindex].Report += 1
+                                        db.collection("users").document(self.observer.ratesinfo[self.unlockindex].id).updateData(["Report": self.observer.ratesinfo[self.unlockindex].Report])
+                                        self.observer.numrates -= 1
+                                        
+                                        self.observer.comments.remove(at: self.unlockindex)
+                                        self.observer.userrates.remove(at: self.unlockindex)
+                                        self.observer.lock.remove(at: self.unlockindex)
+                                        self.observer.ratesinfo.remove(at: self.unlockindex)
+                                        
+                                        self.confirm.toggle()
+                                        let total = CGFloat(self.observer.userrates.count + 1)
+                                        var atotal: CGFloat = self.observer.selfratings.appearance
+                                        var ptotal: CGFloat = self.observer.selfratings.personality
+                                        var ototal: CGFloat = self.observer.selfratings.overall
+                                        for num in self.observer.userrates {
+                                            atotal += CGFloat((num.prefix(3) as NSString).doubleValue)
+                                            ptotal += CGFloat((num.prefix(6).suffix(3) as NSString).doubleValue)
+                                            ototal += CGFloat((num.prefix(9).suffix(3) as NSString).doubleValue)
+                                        }
+                                        self.observer.rating = ratingtype(overall: ototal/total, appearance: atotal/total, personality: ptotal/total)
+                                        self.observer.myprofile.OverallRating = Double(ototal/total)
+                                        self.observer.myprofile.AppearanceRating = Double(atotal/total)
+                                        self.observer.myprofile.PersonalityRating = Double(ptotal/total)
+                                        db.collection("users").document(uid!).updateData(["Rates": self.observer.userrates, "Comments": self.observer.comments, "Lock": self.observer.lock, "OverallRating": ototal/total, "AppearanceRating": atotal/total, "PersonalityRating": ptotal/total])
                                     }
-                                    self.observer.rating = ratingtype(overall: ototal/total, appearance: atotal/total, personality: ptotal/total)
-                                    self.observer.myprofile.OverallRating = Double(ototal/total)
-                                    self.observer.myprofile.AppearanceRating = Double(atotal/total)
-                                    self.observer.myprofile.PersonalityRating = Double(ptotal/total)
-                                    db.collection("users").document(uid!).updateData(["Rates": self.observer.userrates, "Comments": self.observer.comments, "Lock": self.observer.lock, "OverallRating": ototal/total, "AppearanceRating": atotal/total, "PersonalityRating": ptotal/total])
-                                }
-                                else if self.confirm1 {
-                                    
-                                }
-                                else {
-                                    self.confirm.toggle()
+                                    else if self.confirm1 {
+                                        
+                                    }
+                                    else {
+                                        self.confirm.toggle()
+                                    }
                                 }
                             }) {
                                 HStack {
@@ -2506,7 +2508,7 @@ struct RatingView: View {
                                     self.personality = 5
                                     if self.observer.users.count != self.observer.rated+1 {
                                         self.observer.rated += 1
-                                        if self.observer.ratings == 4 {
+                                        if self.observer.ratings == 1 {
                                             self.ad = true
                                             DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
                                                 self.showad.toggle()
@@ -2587,46 +2589,67 @@ struct RatingView: View {
                                     .padding(5)
                             }
                         }
-                        Button(action: {
-                            if self.confirm {
-                                if self.observer.socialunlock {
-                                    print("yeah")
-                                }
-                            }
-                            else if self.confirm1 {
-                                print("bruh")
-                            }
-                            else {
-                                self.confirm.toggle()
-                            }
-                        }) {
-                            HStack {
-                                Spacer()
-                                Text(self.confirm || self.confirm1 ? "Confirm" : "Report Socials")
-                                    .font(Font.custom("ProximaNova-Regular", size: 22))
-                                    //.fontWeight(.semibold)
-                                    .animation(nil)
-                                    .foregroundColor(.black)//self.confirm ? Color(.black) : Color(.red))
-                                    .frame(height: 50)
-                                Spacer()
-                            }.padding(.horizontal, 20).background(Color(.white).cornerRadius(25).shadow(radius: 5, y: 2.5))
-                        }
-                        if !self.confirm && !self.confirm1 {
+                        if !self.confirm && !self.confirm1 && self.observer.socialunlock {
                             Button(action: {
-                                self.confirm1.toggle()
+                                self.confirm.toggle()
                             }) {
                                 HStack {
                                     Spacer()
-                                    Text("Report User")
+                                    Text("Report Socials")
                                         .font(Font.custom("ProximaNova-Regular", size: 22))
-                                        .lineLimit(1)
+                                        //.fontWeight(.semibold)
                                         .animation(nil)
-                                        .foregroundColor(.black)//Color(.white))
-                                        .frame(maxWidth: .infinity)
+                                        .foregroundColor(.black)//self.confirm ? Color(.black) : Color(.red))
                                         .frame(height: 50)
                                     Spacer()
                                 }.padding(.horizontal, 20).background(Color(.white).cornerRadius(25).shadow(radius: 5, y: 2.5))
                             }
+                        }
+                        Button(action: {
+                            if self.confirm || self.confirm1 {
+                                let db = Firestore.firestore()
+                                let reports = self.observer.users[self.observer.rated].Report + 1
+                                db.collection("users").document(self.observer.users[self.observer.rated].id).updateData(["Report": reports])
+                                self.report.toggle()
+                                self.confirm1 = false
+                                self.confirm = false
+                                self.showcomment = false
+                                self.bio = false
+                                self.next.toggle()
+                                self.showrating = false
+                                self.showsocials = false
+                                self.count = 0
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                    self.appearance = 5
+                                    self.personality = 5
+                                    if self.observer.users.count != self.observer.rated+1 {
+                                        self.observer.rated += 1
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                            self.next.toggle()
+                                        }
+                                    }
+                                    else {
+                                    }
+                                }
+                                self.comment = ""
+                                self.observer.socialunlock = false
+                                self.unlocksocials = false
+                            }
+                            else {
+                                self.confirm1.toggle()
+                            }
+                        }) {
+                            HStack {
+                                Spacer()
+                                Text(self.confirm || self.confirm1 ? "Confirm" : "Report User")
+                                    .font(Font.custom("ProximaNova-Regular", size: 22))
+                                    .lineLimit(1)
+                                    .animation(nil)
+                                    .foregroundColor(.black)//Color(.white))
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 50)
+                                Spacer()
+                            }.padding(.horizontal, 20).background(Color(.white).cornerRadius(25).shadow(radius: 5, y: 2.5))
                         }
                         Button(action: {
                             if self.confirm {
@@ -2806,7 +2829,7 @@ struct RatingView: View {
                             .resizable()
                             .frame(width: 30, height: 30)
                             .foregroundColor(Color(.gray))
-                    }.padding(.bottom, 20)
+                    }.padding(.vertical, 10)
                     
                     Button(action: {
                         
@@ -2828,7 +2851,7 @@ struct RatingView: View {
                                     .padding(.horizontal, 10)
                                     .padding(.vertical, 5)
                             }.background(Color(.white).cornerRadius(15)).padding(.trailing, 10)
-                        }.frame(width: self.screenheight/3 - 35, height: 70).background(Color("lightgray").cornerRadius(20).shadow(radius: 5, y: 1.5))
+                        }.frame(width: self.screenheight/3 - 35, height: 70).background(Color("lightgray").cornerRadius(20))//.shadow(radius: 5, y: 1.5))
                     }
                     
                     Button(action: {
@@ -2855,7 +2878,7 @@ struct RatingView: View {
                                     .padding(.horizontal, 10)
                                     .padding(.vertical, 5)
                             }.background(Color(.white).cornerRadius(15)).padding(.trailing, 10)
-                        }.frame(width: self.screenheight/3 - 35, height: 70).background(Color("lightgray").cornerRadius(20).shadow(radius: 5, y: 1.5))
+                        }.frame(width: self.screenheight/3 - 35, height: 70).background(Color("lightgray").cornerRadius(20))//.shadow(radius: 5, y: 1.5))
                     }
                     Button(action: {
                         self.rewardAd.showAd(rewardFunction: {
@@ -2892,9 +2915,9 @@ struct RatingView: View {
                                     .frame(width: 30, height: 30)
                                     .padding(.trailing, 5)
                             }.background(Color(.white).cornerRadius(15)).padding(.trailing, 10)
-                        }.frame(width: self.screenheight/3 - 35, height: 70).background(Color("lightgray").cornerRadius(20).shadow(radius: 5, y: 1.5))
+                        }.frame(width: self.screenheight/3 - 35, height: 70).background(Color("lightgray").cornerRadius(20))//.shadow(radius: 5, y: 1.5))
                     }.buttonStyle(PlainButtonStyle())
-                }.padding(30).background(Color(.white).cornerRadius(25).shadow(radius: 10))
+                }.padding(20).background(Color(.white).cornerRadius(25).shadow(radius: 10))
             }.offset(y: self.showkeys ? 0 : self.screenheight).animation(.spring())
             //MARK: Key
             ZStack {
@@ -2946,9 +2969,12 @@ struct SettingView: View {
                     Button(action: {
                         withAnimation {
                             self.settings.toggle()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                self.profile = true
+                            }
                         }
                     }) {
-                        Image("back")//systemName: "chevron.right.circle")
+                        Image("back")
                             .resizable()
                             .frame(width: 30, height: 27.5)
                             .foregroundColor(Color(.white))
@@ -3100,7 +3126,7 @@ struct SettingView: View {
                                 }
                             }
                         }.padding(.bottom, 15)
-                    }.frame(width: screenwidth - 40).background(Color(.white).cornerRadius(30).shadow(radius: 5)).padding(.bottom, 40)
+                    }.frame(width: screenwidth - 40).background(Color(.white).cornerRadius(30)).padding(.bottom, 40)
                 }
                 //MARK: Settings
                 else {
@@ -3122,7 +3148,7 @@ struct SettingView: View {
                         }.padding(.top, 15)
                         
                         Divider().frame(width: screenwidth - 40)
-                    }.frame(width: screenwidth - 40).background(Color(.white).cornerRadius(25).shadow(radius: 5))
+                    }.frame(width: screenwidth - 40).background(Color(.white)).cornerRadius(25)
                     HStack {
                         Button(action: {
                             let firebaseAuth = Auth.auth()
@@ -3284,7 +3310,7 @@ struct Socials: View {
                             .padding(.trailing, 5)
                     }.padding(.horizontal, 20).frame(width: screenwidth - 40).padding(.bottom, self.edit ? 15 : 0)
                 }
-            }.frame(width: screenwidth - 40).background(Color(.white).cornerRadius(25).shadow(radius: 5)).padding(.bottom, 20)
+            }.frame(width: screenwidth - 40).background(Color(.white).cornerRadius(25)).padding(.bottom, 20)
             
             if self.edit {
                 HStack(spacing: 20) {
@@ -3686,7 +3712,7 @@ struct Photos: View {
                         }
                     }
                 }
-            }.padding(20).background(Color(.white).cornerRadius(35).shadow(radius: 5)).padding(.bottom, 20)
+            }.padding(20).background(Color(.white).cornerRadius(35)).padding(.bottom, 20)
             //MARK: Edit Photos
             if loading {
                 WhiteLoader()
@@ -3841,7 +3867,7 @@ struct Bio: View {
                         .frame(height: screenheight * 0.05)
                         .minimumScaleFactor(0.01)
                         .foregroundColor(Color(.gray))
-                        //.padding(.bottom, screenheight * 0.0045)
+                        .padding(.top, 10)
                 }
                 VStack(spacing: 0) {//screenheight * 0.009) {
                     ForEach(self.categories, id: \.self) { cat in
@@ -3908,7 +3934,7 @@ struct Bio: View {
                                             .padding(.leading, 5)
                                             .background(Color("lightgray").opacity(0.3).cornerRadius(15))
                                             .padding(.bottom, self.screenheight*0.0061)
-                                            .padding(.bottom, self.categories.firstIndex(of: cat)! == 9 ? self.screenheight*2*0.0061 : 0)
+                                            //.padding(.bottom, self.categories.firstIndex(of: cat)! == 9 ? self.screenheight*2*0.0061 : 0)
                                         HStack {
                                             Button(action: {
                                                 self.newbio[self.index] = ""
@@ -3939,23 +3965,23 @@ struct Bio: View {
                                         }.frame(width: self.screenwidth - self.screenwidth*2*0.08).padding(.bottom, self.categories.firstIndex(of: cat)! == 9 ? self.screenheight*0.012 : 0)
                                     }
                                     else if self.selected[self.categories.firstIndex(of: cat)!] {
-                                        Text(self.des == "" ? "N/A" : self.des)
-                                            .font(Font.custom("ProximaNova-Regular", size: 16))
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(Color(.gray))
-                                            .padding(.horizontal, self.screenwidth*0.08)
-                                            .frame(width: self.screenwidth - self.screenwidth*0.16)
-                                            .fixedSize(horizontal: false, vertical: true)
+                                        VStack {
+                                            Text(self.des)
+                                                .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                .fontWeight(.semibold)
+                                                .foregroundColor(Color(.gray))
+                                                .padding(.horizontal, self.screenwidth*0.08)
+                                                .fixedSize(horizontal: false, vertical: true)
+                                        }.frame(width: 0.84*self.screenwidth)
                                             .padding(.bottom, self.screenheight*0.006)
                                             .padding(.bottom, self.categories.firstIndex(of: cat)! == 9 ? self.screenheight*0.012 : 0)
-                                            
                                     }
                                     Divider().frame(width: self.screenwidth - self.screenwidth*2*0.08)
                                 }
                             }
                         }
                     }
-                }.cornerRadius(25).background(Color(.white).cornerRadius(25).shadow(radius: 5)).padding(.bottom, self.edit ? 0 : screenheight*0.008).padding(.top, self.edit ? 10 : 0)
+                }.cornerRadius(25).background(Color(.white).cornerRadius(25)).padding(.bottom, self.edit ? 0 : screenheight*0.008).padding(.top, self.edit ? 10 : 0)
                 //MARK: Edit Bio
                 if self.edit {
                     HStack(spacing: screenwidth*0.053) {
@@ -4044,7 +4070,7 @@ struct Bio: View {
                         }
                     }
                 }
-            }.offset(y: self.shift ? CGFloat(-30*self.index) : 0).animation(.spring())
+            }.offset(y: self.shift ? CGFloat(-32*self.index) : 0).animation(.spring())
             Spacer()
         }.frame(width: screenwidth, height: screenheight)
         .background(Color("lightgray").edgesIgnoringSafeArea(.all))
