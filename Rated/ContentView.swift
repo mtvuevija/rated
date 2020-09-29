@@ -1262,6 +1262,7 @@ struct HomeView: View {
     @State var changed = false
     @State var confirm = false
     @State var confirm1 = false
+    @State var rotate = false
     
     var rewardAd: Rewarded
     let screenwidth = UIScreen.main.bounds.width
@@ -1477,23 +1478,8 @@ struct HomeView: View {
                                                     .fontWeight(.semibold)
                                                     .foregroundColor(.black)
                                                     .frame(width: screenwidth/3.5, height: screenheight*0.05)
-                                                    .background(Color(.white).cornerRadius(screenheight*0.025).shadow(radius: 10))
+                                                    .background(Color(.white).cornerRadius(screenheight*0.025).shadow(color: Color("lightgray").opacity(0.6), radius: 5))
                                             }
-                                            /*NavigationLink(destination: RatingView(rating1: self.$rating, rewardAd: self.rewardAd), isActive: self.$rating) {
-                                                Button(action: {
-                                                    self.observer.refreshUsers()
-                                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                                        self.rating = true
-                                                    }
-                                                }) {
-                                                    Text("Rate")
-                                                        .font(Font.custom("ProximaNova-Regular", size: 24))
-                                                        .fontWeight(.semibold)
-                                                        .foregroundColor(.black)
-                                                        .frame(width: screenwidth/3.5, height: screenheight*0.05)
-                                                        .background(Color(.white).cornerRadius(screenheight*0.025).shadow(radius: 10))
-                                                }
-                                            }*/
                                         }.padding(.top, screenheight*0.01)
                                     }
                                     Spacer()
@@ -1561,7 +1547,7 @@ struct HomeView: View {
                                 }) {
                                     ZStack {
                                         RoundedRectangle(cornerRadius: 10)
-                                            .foregroundColor(Color("personality"))
+                                            .foregroundColor(Color("appearance"))
                                             .frame(width: self.screenwidth/1.5 - screenwidth*0.293, height: screenwidth*0.133)
                                         HStack(spacing: 0) {
                                             Text("Unlock ")
@@ -1579,13 +1565,13 @@ struct HomeView: View {
                                                         .fontWeight(.semibold)
                                                         .lineLimit(1)
                                                         .frame(height: screenheight*0.02)
-                                                        .foregroundColor(Color("personality"))
+                                                        .foregroundColor(Color("appearance"))
                                                         .minimumScaleFactor(0.02)
                                                         .animation(nil)
                                                     Image("key")
                                                         .resizable()
                                                         .frame(width: screenheight*0.02, height: screenheight*0.02)
-                                                        .foregroundColor(Color("personality"))
+                                                        .foregroundColor(Color("appearance"))
                                                 }
                                             }.frame(width: screenwidth*0.133, height: screenheight*0.037)
                                         }
@@ -1637,6 +1623,7 @@ struct HomeView: View {
                                     .fontWeight(.semibold)
                                     .foregroundColor(Color(.gray))
                                     .frame(width: self.screenwidth/1.75)
+                                    .fixedSize(horizontal: false, vertical: true)
                             }
                         }.padding(20).background(Color(.white).cornerRadius(25).shadow(radius: 15)).blur(radius: self.report ? 2 : 0)
                     }.offset(y: self.homecomment ? 0 : self.screenheight).opacity(self.homecomment ? 1 : 0)
@@ -1651,97 +1638,270 @@ struct HomeView: View {
                             .frame(width: self.screenwidth, height: self.screenheight)
                     }
                     VStack {
-                        Text("Keys")
-                            .font(Font.custom("ProximaNova-Regular", size: 30))
-                            .fontWeight(.semibold)
-                            .foregroundColor(.black)
-                            .padding(.bottom, 15)
-                        Button(action: {
+                        VStack(spacing: 20) {
+                            HStack {
+                                Text("Keys")
+                                    .font(Font.custom("ProximaNova-Regular", size: 30))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color("personality"))
+                                Image("key")
+                                    .renderingMode(.template)
+                                    .resizable()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundColor(Color("personality"))
+                            }.padding(.vertical, 10)
+                            HStack(spacing: 15) {
+                                Button(action: {
+                                    self.rewardAd.showAd(rewardFunction: {
+                                        self.observer.keys += 3
+                                        KeyChange(keys: self.observer.keys)
+                                    })
+                                }) {
+                                    ZStack() {
+                                        Color("appearance")
+                                            .cornerRadius(25)
+                                        VStack {
+                                            Image("ad")
+                                                .renderingMode(.template)
+                                                .resizable()
+                                                .frame(width: 50, height: 50)
+                                                .foregroundColor(Color(.white))
+                                            VStack(spacing: 2.5) {
+                                                Text("Watch Ad")
+                                                    .font(Font.custom("ProximaNova-Regular", size: 20))
+                                                    .fontWeight(.semibold)
+                                                    .foregroundColor(Color(.white))
+                                                HStack(spacing: 2.5) {
+                                                    Text("+3")
+                                                        .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                        .fontWeight(.semibold)
+                                                        .foregroundColor(Color(.white))
+                                                    Image("key")
+                                                        .renderingMode(.template)
+                                                        .resizable()
+                                                        .frame(width: 20, height: 20)
+                                                        .foregroundColor(Color(.white))
+                                                }
+                                            }
+                                        }
+                                    }.frame(width: 130, height: 160).padding(.leading, 10)
+                                }
+                                ZStack {
+                                    ScrollView(.horizontal, showsIndicators: false) {
+                                        HStack {
+                                            Button(action: {
+                                                
+                                            }) {
+                                                ZStack {
+                                                    Color("personality")
+                                                        .cornerRadius(25)
+                                                    HStack(spacing: 2.5) {
+                                                        Text("+20")
+                                                            .font(Font.custom("ProximaNova-Regular", size: 26))
+                                                            .fontWeight(.semibold)
+                                                            .foregroundColor(Color(.white))
+                                                        Image("key")
+                                                            .renderingMode(.template)
+                                                            .resizable()
+                                                            .frame(width: 30, height: 30)
+                                                            .foregroundColor(Color(.white))
+                                                    }.shadow(color: .white, radius: 7.5)
+                                                    VStack {
+                                                        Spacer()
+                                                        Text("$0.99")
+                                                            .font(Font.custom("ProximaNova-Regular", size: 18))
+                                                            .fontWeight(.semibold)
+                                                            .foregroundColor(Color(.white))
+                                                            .padding(.vertical, 5)
+                                                    }
+                                                }.frame(width: 110, height: 140)
+                                            }
+                                            Button(action: {
+                                                
+                                            }) {
+                                                ZStack {
+                                                    Color("personality")
+                                                        .cornerRadius(25)
+                                                    HStack(spacing: 2.5) {
+                                                        Text("+50")
+                                                            .font(Font.custom("ProximaNova-Regular", size: 26))
+                                                            .fontWeight(.semibold)
+                                                            .foregroundColor(Color(.white))
+                                                        Image("key")
+                                                            .renderingMode(.template)
+                                                            .resizable()
+                                                            .frame(width: 30, height: 30)
+                                                            .foregroundColor(Color(.white))
+                                                    }.shadow(color: .white, radius: 7.5)
+                                                    VStack {
+                                                        Spacer()
+                                                        Text("$1.99")
+                                                            .font(Font.custom("ProximaNova-Regular", size: 18))
+                                                            .fontWeight(.semibold)
+                                                            .foregroundColor(Color(.white))
+                                                            .padding(.vertical, 5)
+                                                    }
+                                                }.frame(width: 110, height: 140)
+                                            }
+                                            Button(action: {
+                                                
+                                            }) {
+                                                ZStack {
+                                                    Color("personality")
+                                                        .cornerRadius(25)
+                                                    HStack(spacing: 2.5) {
+                                                        Text("+150")
+                                                            .font(Font.custom("ProximaNova-Regular", size: 26))
+                                                            .fontWeight(.semibold)
+                                                            .foregroundColor(Color(.white))
+                                                        Image("key")
+                                                            .renderingMode(.template)
+                                                            .resizable()
+                                                            .frame(width: 30, height: 30)
+                                                            .foregroundColor(Color(.white))
+                                                    }.shadow(color: .white, radius: 7.5)
+                                                    VStack {
+                                                        Spacer()
+                                                        Text("$4.99")
+                                                            .font(Font.custom("ProximaNova-Regular", size: 18))
+                                                            .fontWeight(.semibold)
+                                                            .foregroundColor(Color(.white))
+                                                            .padding(.vertical, 5)
+                                                    }
+                                                }.frame(width: 110, height: 140)
+                                            }
+                                            Button(action: {
+                                                
+                                            }) {
+                                                ZStack {
+                                                    Color("personality")
+                                                        .cornerRadius(25)
+                                                    HStack(spacing: 2.5) {
+                                                        Text("+500")
+                                                            .font(Font.custom("ProximaNova-Regular", size: 26))
+                                                            .fontWeight(.semibold)
+                                                            .foregroundColor(Color(.white))
+                                                        Image("key")
+                                                            .renderingMode(.template)
+                                                            .resizable()
+                                                            .frame(width: 30, height: 30)
+                                                            .foregroundColor(Color(.white))
+                                                    }.shadow(color: .white, radius: 7.5)
+                                                    VStack {
+                                                        Spacer()
+                                                        Text("$9.99")
+                                                            .font(Font.custom("ProximaNova-Regular", size: 18))
+                                                            .fontWeight(.semibold)
+                                                            .foregroundColor(Color(.white))
+                                                            .padding(.vertical, 5)
+                                                    }
+                                                }.frame(width: 110, height: 140)
+                                            }
+                                        }
+                                    }.frame(height: 140)
+                                        .padding(10).background(Color("personality").opacity(0.3).cornerRadius(25)).padding(.trailing, 10)
+                                }
+                            }
+                            /*
+                            HStack {
+                                Text("Keys")
+                                    .font(Font.custom("ProximaNova-Regular", size: 30))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color("personality"))
+                                Image("key")
+                                    .renderingMode(.template)
+                                    .resizable()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundColor(Color("personality"))
+                            }.padding(.vertical, 10)
                             
-                        }) {
-                            HStack {
-                                HStack(spacing: 5) {
-                                    Text("Remove Ads")
-                                        .font(Font.custom("ProximaNova-Regular", size: 16))
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(Color(.white))
-                                }.frame(width: 70).padding(.leading, 10)
-                                Spacer()
-                                HStack(spacing: 0) {
-                                    Text("$2.99")
-                                        .font(Font.custom("ProximaNova-Regular", size: 24))
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(Color("personality"))
-                                        .padding(.horizontal, 10)
-                                        .padding(.vertical, 5)
-                                }.background(Color(.white).cornerRadius(15)).padding(.trailing, 10)
-                            }.frame(width: self.screenheight/3 - 55, height: 60).background(Color("personality").cornerRadius(20))
-                        }
-                        Button(action: {
-                            
-                        }) {
-                            HStack {
-                                HStack(spacing: 5) {
-                                    Text("∞")
-                                        .font(Font.custom("ProximaNova-Regular", size: 30))
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(Color(.white))
-                                    Image("key")
-                                        .renderingMode(.template)
-                                        .resizable()
-                                        .frame(width: 25, height: 25)
-                                        .foregroundColor(Color(.white))
-                                }.padding(.leading, 10)
-                                Spacer()
-                                HStack(spacing: 0) {
-                                    Text("$4.99")
-                                        .font(Font.custom("ProximaNova-Regular", size: 24))
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(Color("personality"))
-                                        .padding(.horizontal, 10)
-                                        .padding(.vertical, 5)
-                                }.background(Color(.white).cornerRadius(15)).padding(.trailing, 10)
-                            }.frame(width: self.screenheight/3 - 55, height: 60).background(Color("personality").cornerRadius(20))
-                        }
-                        Button(action: {
-                            self.rewardAd.showAd(rewardFunction: {
-                                self.observer.keys += 3
-                                KeyChange(keys: self.observer.keys)
-                            })
-                        }) {
-                            HStack {
-                                HStack(spacing: 5) {
-                                    Text("+3")
-                                        .font(Font.custom("ProximaNova-Regular", size: 24))
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(Color(.white))
-                                    Image("key")
-                                        .renderingMode(.template)
-                                        .resizable()
-                                        .frame(width: 25, height: 25)
-                                        .foregroundColor(Color(.white))
-                                }.frame(width: 70).padding(.leading, 10)
-                                Spacer()
-                                HStack(spacing: 0) {
-                                    VStack(spacing: 0) {
-                                        Text("Watch")
-                                            .font(Font.custom("ProximaNova-Regular", size: 14))
-                                            .fontWeight(.semibold)
-                                            .foregroundColor(Color("personality"))
-                                        Text("Ad")
+                            Button(action: {
+                                
+                            }) {
+                                HStack {
+                                    HStack(spacing: 5) {
+                                        Text("Remove Ads")
                                             .font(Font.custom("ProximaNova-Regular", size: 16))
                                             .fontWeight(.semibold)
-                                            .foregroundColor(Color("personality"))
-                                    }.frame(width: 45).padding(.vertical, 5).padding(.leading, 2.5)
-                                    Image("ad")
-                                        .resizable()
-                                        .frame(width: 30, height: 30)
-                                        .padding(.trailing, 5)
-                                }.background(Color(.white).cornerRadius(15)).padding(.trailing, 10)
-                            }.frame(width: self.screenheight/3 - 55, height: 60).background(Color("personality").cornerRadius(20))
-                        }.buttonStyle(PlainButtonStyle())
-                    }.padding(20).background(Color(.white).cornerRadius(25).shadow(radius: 10))
-                }.offset(y: self.showkeys ? 0 : self.screenheight).opacity(self.showkeys ? 1 : 0)
+                                            .foregroundColor(Color(.white))
+                                            .multilineTextAlignment(.center)
+                                    }.frame(width: 70).padding(.leading, 10)
+                                    Spacer()
+                                    HStack(spacing: 0) {
+                                        Text("$4.99")
+                                            .font(Font.custom("ProximaNova-Regular", size: 24))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(.white)
+                                            .padding(.horizontal, 10)
+                                            .padding(.vertical, 5)
+                                    }.padding(.trailing, 10)
+                                }.frame(width: self.screenheight/3 - 35, height: 70).background(Color("personality").cornerRadius(20))//.shadow(color: Color("lightgray"), radius: 10)
+                            }
+                            
+                            Button(action: {
+                                
+                            }) {
+                                HStack {
+                                    HStack(spacing: 5) {
+                                        Text("+50")
+                                            .font(Font.custom("ProximaNova-Regular", size: 24))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color(.white))
+                                        Image("key")
+                                            .renderingMode(.template)
+                                            .resizable()
+                                            .frame(width: 25, height: 25)
+                                            .rotationEffect(.degrees(rotate ? 360 : 0), anchor: .center)
+                                            .animation(Animation.linear(duration: 1).repeatForever(autoreverses: false))
+                                            .foregroundColor(Color(.white))
+                                            .onAppear() {
+                                                self.rotate.toggle()
+                                            }
+                                    }.padding(.leading, 10)
+                                    Spacer()
+                                    HStack(spacing: 0) {
+                                        Text("$1.99")
+                                            .font(Font.custom("ProximaNova-Regular", size: 24))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(.white)
+                                            .padding(.horizontal, 10)
+                                            .padding(.vertical, 5)
+                                    }.padding(.trailing, 10)
+                                }.frame(width: self.screenheight/3 - 35, height: 70).background(Color("personality").cornerRadius(20))//.shadow(color: Color("lightgray"), radius: 10)
+                            }
+                            Button(action: {
+                                self.rewardAd.showAd(rewardFunction: {
+                                    self.observer.keys += 3
+                                    KeyChange(keys: self.observer.keys)
+                                })
+                            }) {
+                                HStack {
+                                    HStack(spacing: 5) {
+                                        Text("+3")
+                                            .font(Font.custom("ProximaNova-Regular", size: 24))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color(.white))
+                                        Image("key")
+                                            .renderingMode(.template)
+                                            .resizable()
+                                            .frame(width: 25, height: 25)
+                                            .foregroundColor(Color(.white))
+                                    }.frame(width: 70).padding(.leading, 10)
+                                    Spacer()
+                                    HStack(spacing: 0) {
+                                        Text("Watch Ad")
+                                            .font(Font.custom("ProximaNova-Regular", size: 18))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(.white)
+                                            .padding(.horizontal, 10)
+                                            .padding(.vertical, 5)
+                                    }.padding(.trailing, 10)
+                                }.frame(width: self.screenheight/3 - 35, height: 70).background(Color("personality").cornerRadius(20))//.shadow(color: Color("lightgray"), radius: 10)
+                            }.buttonStyle(PlainButtonStyle())*/
+                        }.frame(width: screenwidth).padding(.vertical, 20).padding(.top, 20).background(Color(.white).cornerRadius(25).shadow(radius: 10))
+                        Spacer()
+                    }.frame(height: screenheight)
+                }.offset(y: self.showkeys ? 0 : -self.screenheight).opacity(self.showkeys ? 1 : 0).animation(.spring())
                 
                 //MARK: Report
                 ZStack {
@@ -1874,7 +2034,7 @@ struct HomeView: View {
                             }
                             Button(action: {
                                 withAnimation {
-                                    if self.confirm {
+                                    if self.confirm || self.confirm1 {
                                         let db = Firestore.firestore()
                                         let uid = Auth.auth().currentUser?.uid
                                         self.report.toggle()
@@ -1904,9 +2064,6 @@ struct HomeView: View {
                                         self.observer.myprofile.AppearanceRating = Double(atotal/total)
                                         self.observer.myprofile.PersonalityRating = Double(ptotal/total)
                                         db.collection("users").document(uid!).updateData(["Rates": self.observer.userrates, "Comments": self.observer.comments, "Lock": self.observer.lock, "OverallRating": ototal/total, "AppearanceRating": atotal/total, "PersonalityRating": ptotal/total])
-                                    }
-                                    else if self.confirm1 {
-                                        
                                     }
                                     else {
                                         self.confirm.toggle()
@@ -2027,6 +2184,7 @@ struct RatingView: View {
     @State var reportmessage = false
     @State var confirm = false
     @State var confirm1 = false
+    @State var wait = false
     let categories = ["General", "Education", "Occupation", "Music", "Sports", "Movies", "TV-Shows", "Hobbies", "Motto", "Future"]
     var rewardAd: Rewarded
     let screenwidth = UIScreen.main.bounds.width
@@ -2054,46 +2212,60 @@ struct RatingView: View {
                         RatingAd()
                             .frame(width: screenwidth - 30, height: (screenwidth - 20)*1.6 - 10)
                             .background(Color("lightgray"))
-                            .cornerRadius(25)
+                            .cornerRadius(30)
                             .padding(5)
-                            .background(Color(.gray).cornerRadius(30))
+                            .background(Color(.gray).cornerRadius(35))
                             .scaleEffect(self.showad ? 1 : 0).animation(.easeInOut(duration: 0.5))
-                            .padding(.bottom, 20)
+                            .padding(.bottom, 10)
                             .padding(.top, 20)
-                        Button(action: {
-                            self.newkey = 0
-                            self.showkey = true
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                self.newkey = -self.screenheight/2 + 57.5
-                                self.newkeyx = self.screenwidth/2 - 45
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                    self.showkey = false
-                                    self.observer.keys += 1
-                                    KeyChange(keys: self.observer.keys)
-                                    self.newkey = self.screenheight
-                                    self.newkeyx = 0
+                        if self.wait {
+                            Button(action: {
+                                self.newkey = 0
+                                self.showkey = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                    self.newkey = -self.screenheight/2 + 57.5
+                                    self.newkeyx = self.screenwidth/2 - 45
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                        self.showkey = false
+                                        self.observer.keys += 1
+                                        KeyChange(keys: self.observer.keys)
+                                        self.newkey = self.screenheight
+                                        self.newkeyx = 0
+                                    }
                                 }
-                            }
-                            
-                            self.showad = false
-                            self.next = true
-                            let seconds = 0.5
-                            DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
-                                self.ad = false
+                                
+                                self.showad = false
+                                self.next = true
+                                let seconds = 0.5
                                 DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
-                                    self.next = false
+                                    self.ad = false
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+                                        self.next = false
+                                    }
                                 }
-                            }
-                            self.observer.socialunlock = false
-                            self.unlocksocials = false
-                        }) {
-                            Text("Skip")
-                                .font(Font.custom("ProximaNova-Regular", size: 24))
-                                .fontWeight(.semibold)
-                                .padding(10).padding(.horizontal, 30)
-                                .foregroundColor(.gray)
-                                .background(Color(.white).cornerRadius(30))
-                                .shadow(radius: 10)
+                                self.observer.socialunlock = false
+                                self.unlocksocials = false
+                                self.wait = false
+                            }) {
+                                /*Text("Skip")
+                                    .font(Font.custom("ProximaNova-Regular", size: 24))
+                                    .fontWeight(.semibold)
+                                    .padding(10).padding(.horizontal, 30)
+                                    .foregroundColor(.black)
+                                    .background(Color(.white).cornerRadius(30))
+                                    .shadow(color: Color("lightgray"), radius: 10)*/
+                                VStack(spacing: 0) {
+                                    Image("skip")
+                                        .renderingMode(.template)
+                                        .resizable()
+                                        .frame(width: 60, height: 60)
+                                        .foregroundColor(.gray)
+                                    Text("Next")
+                                        .font(Font.custom("ProximaNova-Regular", size: 24))
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.gray)
+                                }
+                            }.buttonStyle(PlainButtonStyle())
                         }
                     }.frame(width: self.screenwidth, height: self.screenheight)
                         .edgesIgnoringSafeArea(.all)
@@ -2106,7 +2278,6 @@ struct RatingView: View {
                         Spacer()
                         //MARK: RatingUI
                         if self.observer.users.count != 0 {
-                            //RatingProfile(show: self.$showsocials, appearance: self.$appearance, personality: self.$personality, showrating: self.$showrating, unlock: self.$unlocksocials, count: self.$count)
                                 
                             if self.observer.users[self.observer.rated].ProfilePics[count].count != 0 {
                                 VStack(spacing: 20) {
@@ -2291,33 +2462,6 @@ struct RatingView: View {
                                                 if self.nonext {
                                                     
                                                 }
-                                                /*else if self.ad {
-                                                    self.newkey = 0
-                                                    self.showkey = true
-                                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                                        self.newkey = -self.screenheight/2 + 57.5
-                                                        self.newkeyx = self.screenwidth/2 - 45
-                                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                                            self.showkey = false
-                                                            self.observer.keys += 1
-                                                            KeyChange(keys: self.observer.keys)
-                                                            self.newkey = self.screenheight
-                                                            self.newkeyx = 0
-                                                        }
-                                                    }
-                                                    
-                                                    self.showad = false
-                                                    self.next = true
-                                                    let seconds = 0.5
-                                                    DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
-                                                        self.ad = false
-                                                        DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
-                                                            self.next = false
-                                                        }
-                                                    }
-                                                    self.observer.socialunlock = false
-                                                    self.unlocksocials = false
-                                                }*/
                                                 else {
                                                     self.showcomment.toggle()
                                                 }
@@ -2458,7 +2602,7 @@ struct RatingView: View {
                                     self.personality = 5
                                     if self.observer.users.count != self.observer.rated+1 {
                                         self.observer.rated += 1
-                                        if self.observer.ratings == 1 {
+                                        if self.observer.ratings == 0 {
                                             self.ad = true
                                             self.nonext.toggle()
                                             DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
@@ -2466,6 +2610,9 @@ struct RatingView: View {
                                             }
                                             DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
                                                 self.showad.toggle()
+                                                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                                                    self.wait = true
+                                                }
                                                 self.observer.ratings = 0
                                             }
                                         }
@@ -2764,10 +2911,8 @@ struct RatingView: View {
                             }.padding(.all, 10).background(Color(.white).cornerRadius(15)).blur(radius: !self.observer.socialunlock ? 6: 0)
                             if !self.observer.socialunlock {
                                 Image("lock")
-                                    //.renderingMode(.template)
                                     .resizable()
                                     .frame(width: 80, height: 80)
-                                    //.foregroundColor(Color("personality"))
                             }
                         }
                         if !self.observer.socialunlock {
@@ -3334,10 +3479,10 @@ struct Socials: View {
                         HStack {
                             Text("Confirm")
                                 .font(Font.custom("ProximaNova-Regular", size: 20))
+                                .fontWeight(.semibold)
                                 .foregroundColor(Color(.gray))
                             Image(systemName: "checkmark")
-                                .resizable()
-                                .frame(width: 17, height: 17)
+                                .font(Font.system(size: 18, weight: .bold))
                                 .foregroundColor(.gray)
                         }
                     }
@@ -3352,10 +3497,10 @@ struct Socials: View {
                         HStack {
                             Text("Cancel")
                                 .font(Font.custom("ProximaNova-Regular", size: 20))
+                                .fontWeight(.semibold)
                                 .foregroundColor(Color(.gray))
                             Image(systemName: "xmark")
-                                .resizable()
-                                .frame(width: 17, height: 17)
+                                .font(Font.system(size: 18, weight: .bold))
                                 .foregroundColor(.gray)
                         }
                     }
@@ -3370,10 +3515,10 @@ struct Socials: View {
                     HStack {
                         Text("Edit Socials")
                             .font(Font.custom("ProximaNova-Regular", size: 20))
+                            .fontWeight(.semibold)
                             .foregroundColor(Color(.gray))
                         Image(systemName: "pencil")
-                            .resizable()
-                            .frame(width: 20, height: 20)
+                            .font(Font.system(size: 18, weight: .bold))
                             .foregroundColor(.gray)
                     }
                 }
@@ -3769,10 +3914,10 @@ struct Photos: View {
                         HStack {
                             Text("Confirm")
                                 .font(Font.custom("ProximaNova-Regular", size: 20))
+                                .fontWeight(.semibold)
                                 .foregroundColor(Color(.gray))
                             Image(systemName: "checkmark")
-                                .resizable()
-                                .frame(width: 17, height: 17)
+                                .font(Font.system(size: 18, weight: .bold))
                                 .foregroundColor(.gray)
                         }
                     }
@@ -3786,10 +3931,10 @@ struct Photos: View {
                         HStack {
                             Text("Cancel")
                                 .font(Font.custom("ProximaNova-Regular", size: 20))
+                                .fontWeight(.semibold)
                                 .foregroundColor(Color(.gray))
                             Image(systemName: "xmark")
-                                .resizable()
-                                .frame(width: 17, height: 17)
+                                .font(Font.system(size: 18, weight: .bold))
                                 .foregroundColor(.gray)
                         }
                     }
@@ -3804,10 +3949,10 @@ struct Photos: View {
                     HStack {
                         Text("Edit Photos")
                             .font(Font.custom("ProximaNova-Regular", size: 20))
+                            .fontWeight(.semibold)
                             .foregroundColor(Color(.gray))
                         Image(systemName: "pencil")
-                            .resizable()
-                            .frame(width: 20, height: 20)
+                            .font(Font.system(size: 18, weight: .bold))
                             .foregroundColor(.gray)
                     }
                 }
@@ -3858,7 +4003,7 @@ struct Bio: View {
                 }.padding(.leading, screenwidth * 0.04)
                 Spacer()
             }.padding(.top, self.screenheight*0.044)
-            VStack {
+            VStack(spacing: 5) {
                 if !self.edit {
                     Text("Bio")
                         .font(Font.custom("ProximaNova-Regular", size: 30))
@@ -3949,7 +4094,7 @@ struct Bio: View {
                                                         .frame(height: self.screenheight*0.018)
                                                     Image(systemName: "xmark")
                                                         .resizable()
-                                                        .frame(width: self.screenheight*0.018, height: self.screenheight*0.018)
+                                                        .frame(width: self.screenheight*0.014, height: self.screenheight*0.014)
                                                         .foregroundColor(Color("personality"))
                                                 }
                                             }.padding(.leading, self.screenwidth*0.08)
@@ -3962,7 +4107,7 @@ struct Bio: View {
                                                 .frame(height: self.screenheight*0.018)
                                                 .minimumScaleFactor(0.02)
                                                 .padding(.trailing, self.screenwidth*0.08)
-                                        }.frame(width: self.screenwidth - self.screenwidth*2*0.08).padding(.bottom, self.categories.firstIndex(of: cat)! == 9 ? self.screenheight*0.012 : 0)
+                                        }.frame(width: self.screenwidth - self.screenwidth*2*0.08)//.padding(.bottom, self.categories.firstIndex(of: cat)! == 9 ? self.screenheight*0.012 : 0)
                                     }
                                     else if self.selected[self.categories.firstIndex(of: cat)!] {
                                         VStack {
@@ -3981,7 +4126,7 @@ struct Bio: View {
                             }
                         }
                     }
-                }.cornerRadius(25).background(Color(.white).cornerRadius(25)).padding(.bottom, self.edit ? 0 : screenheight*0.008).padding(.top, self.edit ? 10 : 0)
+                }.cornerRadius(25).background(Color(.white).cornerRadius(25)).padding(.bottom, self.edit ? 0 : 15).padding(.top, self.edit ? 10 : 5)
                 //MARK: Edit Bio
                 if self.edit {
                     HStack(spacing: screenwidth*0.053) {
@@ -4025,9 +4170,9 @@ struct Bio: View {
                                 Text("Confirm")
                                     .font(Font.custom("ProximaNova-Regular", size: 20))
                                     .foregroundColor(Color(.gray))
+                                    .fontWeight(.semibold)
                                 Image(systemName: "checkmark")
-                                    .resizable()
-                                    .frame(width: screenheight*0.02, height: screenheight*0.02)
+                                    .font(Font.system(size: 18, weight: .bold))
                                     .foregroundColor(.gray)
                             }
                         }
@@ -4041,9 +4186,9 @@ struct Bio: View {
                                 Text("Cancel")
                                     .font(Font.custom("ProximaNova-Regular", size: 20))
                                     .foregroundColor(Color(.gray))
+                                    .fontWeight(.semibold)
                                 Image(systemName: "xmark")
-                                    .resizable()
-                                    .frame(width: screenheight*0.02, height: screenheight*0.02)
+                                    .font(Font.system(size: 18, weight: .bold))
                                     .foregroundColor(.gray)
                             }
                         }
@@ -4060,12 +4205,12 @@ struct Bio: View {
                             Text("Edit Bio")
                                 .font(Font.custom("ProximaNova-Regular", size: 20))
                                 .foregroundColor(Color(.gray))
+                                .fontWeight(.semibold)
                                 .lineLimit(1)
                                 .frame(height: screenheight*0.025)
                                 .minimumScaleFactor(0.02)
                             Image(systemName: "pencil")
-                                .resizable()
-                                .frame(width: screenheight*0.025, height: screenheight*0.025)
+                                .font(Font.system(size: 20, weight: .bold))
                                 .foregroundColor(.gray)
                         }
                     }
@@ -4434,10 +4579,44 @@ struct ShowProfile: View {
                             }
                             Button(action: {
                                 if self.confirm {
+                                    let db = Firestore.firestore()
+                                    self.report.toggle()
+                                    self.showprofile.toggle()
+                                    self.confirm.toggle()
                                     
+                                    self.observer.ratesinfo[self.index].Report += 1
+                                    db.collection("users").document(self.observer.ratesinfo[self.index].id).updateData(["Report": self.observer.ratesinfo[self.index].Report])
                                 }
                                 else if self.confirm1 {
+                                    let db = Firestore.firestore()
+                                    let uid = Auth.auth().currentUser?.uid
+                                    self.report.toggle()
+                                    self.showprofile.toggle()
                                     
+                                    self.observer.ratesinfo[self.index].Report += 1
+                                    db.collection("users").document(self.observer.ratesinfo[self.index].id).updateData(["Report": self.observer.ratesinfo[self.index].Report])
+                                    self.observer.numrates -= 1
+                                    
+                                    self.observer.comments.remove(at: self.index)
+                                    self.observer.userrates.remove(at: self.index)
+                                    self.observer.lock.remove(at: self.index)
+                                    self.observer.ratesinfo.remove(at: self.index)
+                                    
+                                    self.confirm1.toggle()
+                                    let total = CGFloat(self.observer.userrates.count + 1)
+                                    var atotal: CGFloat = self.observer.selfratings.appearance
+                                    var ptotal: CGFloat = self.observer.selfratings.personality
+                                    var ototal: CGFloat = self.observer.selfratings.overall
+                                    for num in self.observer.userrates {
+                                        atotal += CGFloat((num.prefix(3) as NSString).doubleValue)
+                                        ptotal += CGFloat((num.prefix(6).suffix(3) as NSString).doubleValue)
+                                        ototal += CGFloat((num.prefix(9).suffix(3) as NSString).doubleValue)
+                                    }
+                                    self.observer.rating = ratingtype(overall: ototal/total, appearance: atotal/total, personality: ptotal/total)
+                                    self.observer.myprofile.OverallRating = Double(ototal/total)
+                                    self.observer.myprofile.AppearanceRating = Double(atotal/total)
+                                    self.observer.myprofile.PersonalityRating = Double(ptotal/total)
+                                    db.collection("users").document(uid!).updateData(["Rates": self.observer.userrates, "Comments": self.observer.comments, "Lock": self.observer.lock, "OverallRating": ototal/total, "AppearanceRating": atotal/total, "PersonalityRating": ptotal/total])
                                 }
                                 else {
                                     self.confirm.toggle()
@@ -4720,7 +4899,7 @@ struct YourStatistics: View {
                         .frame(width: self.index != 0 ? 7.5 : 6.5, height: self.index != 0 ? 7.5 : 6.5)
                 }.padding(.bottom, 5)
             }.frame(height: screenheight*0.234)
-        }.frame(width: screenwidth/1.25).padding(5).background(Color(.white).cornerRadius(25).shadow(radius: 15))
+        }.frame(width: screenwidth/1.25).padding(5).background(Color(.white).cornerRadius(25).shadow(color: Color("lightgray").opacity(0.6), radius: 10))
     }
 }
 
@@ -4736,7 +4915,7 @@ struct MyProfile: View {
             Color(.white)
                 .frame(width: screenwidth/1.25 + 20, height: screenheight/2.75 + 20)
                 .cornerRadius(15)
-                .shadow(radius: 15)
+                //.shadow(radius: 15)
             HStack {
                 ZStack {
                     VStack {
@@ -4757,7 +4936,7 @@ struct MyProfile: View {
                                 .foregroundColor(Color("personality").opacity(0.75))
                         }.frame(width: self.screenwidth/2 - 50)
                             .padding(5)
-                            .background(Color("lightgray").opacity(0.3).cornerRadius(5))
+                            .background(Color("lightgray").opacity(0.5).cornerRadius(5))
                         Spacer()
                     }.frame(height: screenheight/2.75)
                     VStack {
@@ -5001,7 +5180,7 @@ struct RatingSettings: View {
                     }
                 }.frame(height: 40)
             }
-        }.frame(width: screenwidth/1.25).background(Color(.white).cornerRadius(25).shadow(radius: 15)).onAppear {
+        }.frame(width: screenwidth/1.25).background(Color(.white).cornerRadius(25).shadow(color: Color("lightgray").opacity(0.6), radius: 10)).onAppear {
             if self.observer.myprofile.Preferences[0] == "Male" {
                 self.gender = -1
             }
