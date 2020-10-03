@@ -37,14 +37,14 @@ struct MainView: View {
             }
             else {
                 NavigationView {
-                    FrontView()
+                    FrontView(rewardAd: self.rewardAd)
                         .transition(.slide)
                         .navigationBarBackButtonHidden(true)
                         .navigationBarTitle("")
                         .navigationBarHidden(true)
-                }
+                }.transition(.scale)
             }
-        }.background(Color("personality").edgesIgnoringSafeArea(.all))
+        }//.background(Color("personality").edgesIgnoringSafeArea(.all))
         .onAppear {
             NotificationCenter.default.addObserver(forName: NSNotification.Name("StatusChange"), object: nil, queue: .main) { (_) in
                 self.status = UserDefaults.standard.value(forKey: "status") as? Bool ?? false
@@ -72,6 +72,8 @@ struct FrontView: View {
     @State var msg = ""
     @State var alert = false
     @State var code = false
+    @State var logged = false
+    var rewardAd: Rewarded
     
     var body: some View {
         ZStack {
@@ -92,7 +94,7 @@ struct FrontView: View {
                         Image("phone")
                             .resizable()
                             .frame(width: 35, height: 35)
-                        Text("Login With Phone Number")
+                        Text("Login With Phone")
                             .font(Font.custom("ProximaNova-Regular", size: 24))
                             .fontWeight(.medium)
                             .foregroundColor(Color(.black))
@@ -197,17 +199,20 @@ struct FrontView: View {
                                     }
                                     CheckUser() { complete in
                                         if complete {
+                                            self.observer.signin()
                                             self.observer.relogin()
                                             self.observer.signedup()
-                                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                            self.logged = true
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                                                self.loading.toggle()
                                                 UserDefaults.standard.set(false, forKey: "signup")
+                                                self.logged = false
                                                 UserDefaults.standard.set(true, forKey: "status")
                                                 NotificationCenter.default.post(name: NSNotification.Name("StatusChange"), object: nil)
                                             }
-                                            self.loading.toggle()
                                         }
                                         else {
-                                            self.msg = "This phone number is not linked to an existing account. Sign up to login."
+                                            self.msg = "This phone number is not linked to an existing account or there is an error. Sign up to login."
                                             self.alert.toggle()
                                             self.loading.toggle()
                                             self.code = false
@@ -217,6 +222,10 @@ struct FrontView: View {
                                     }
                                 }
                             }
+                            else if self.code {
+                                self.enteredcode = ""
+                                self.code = false
+                            }
                         }) {
                             Image(systemName: "arrow.left")
                                 .font(Font.system(size: 36, weight: .bold))
@@ -225,7 +234,7 @@ struct FrontView: View {
                             
                         }
                     }
-                }.padding(.bottom, 40)//.padding(10).padding(.vertical, 15).background(Color(.white).cornerRadius(30).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10)).padding(.bottom, 40)
+                }//.padding(.bottom, 20)//.padding(10).padding(.vertical, 15).background(Color(.white).cornerRadius(30).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10)).padding(.bottom, 40)
                 
                 HStack(spacing: 0) {
                     Text("New User? ")
@@ -241,53 +250,43 @@ struct FrontView: View {
                         }
                     }
                 }
-                //LabelledDivider(label: "or").frame(width: screenwidth/1.45).foregroundColor(.white)
-                
-                /*NavigationLink(destination: SignUpView(signup: self.$signup), isActive: self.$signup) {
-                    Button(action: {
-                        self.signup.toggle()
-                    }) {
-                        Text("Sign Up")
-                            .font(Font.custom("ProximaNova-Regular", size: 20))
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color("personality"))
-                            .frame(width: screenwidth/1.25, height: 40)
-                            .padding(.horizontal, 10)
-                            .background(Color(.white))
-                            .cornerRadius(15)
+                VStack(spacing: 0) {
+                    Text("By logging in or creating an account, you have read, understood, and agreed to our ")
+                        .font(Font.custom("ProximaNova-Regular", size: 14))
+                        .foregroundColor(Color(.gray).opacity(0.3))
+                        .multilineTextAlignment(.center)
+                        
+                    HStack(spacing: 0) {
+                        Button(action: {
+                            
+                        }) {
+                            Text("Terms of Use ")
+                                .font(Font.custom("ProximaNova-Regular", size: 14))
+                                .foregroundColor(Color(.gray))
+                        }
+                        Text("and ")
+                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                            .foregroundColor(Color(.gray).opacity(0.3))
+                        Button(action: {
+                            
+                        }) {
+                            Text("Privacy Policy")
+                                .font(Font.custom("ProximaNova-Regular", size: 14))
+                                .foregroundColor(Color(.gray))
+                        }
                     }
-                }*/
-            }.offset(y: -100)
-        }.frame(width: self.screenwidth, height: self.screenheight).background(LinearGradient(gradient: Gradient(colors: [Color(.white), Color("lightgray")]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all)).animation(.spring())
-            .alert(isPresented: $alert) {
-            Alert(title: Text("Error"), message: Text(self.msg), dismissButton: .default(Text("OK")))
-            }
-    }
-}
-
-
-//MARK: LoginView
-struct LoginView: View {
-    @Binding var login: Bool
-    var body: some View {
-        VStack {
-            HStack (spacing: 15) {
-                Button(action: {
-                    self.login.toggle()
+                }.fixedSize(horizontal: false, vertical: true).offset(y: 120)
+                /*Button(action: {
+                    
                 }) {
-                    Image(systemName: "chevron.left.circle")
-                        .resizable()
-                        .frame(width: 35, height: 35)
-                        .foregroundColor(Color("purp"))
-                }.padding(.leading, 15)
-            }
-            Spacer()
-            HStack {
-                Text("LoginView")
-            }
-        }.navigationBarBackButtonHidden(true)
-        .navigationBarTitle("")
-        .navigationBarHidden(true)
+                    Text("New User? ")
+                        .font(Font.custom("ProximaNova-Regular", size: 16))
+                        .foregroundColor(Color(.darkGray))
+                }*/
+            }.offset(y: -30).frame(width: self.screenwidth, height: self.screenheight).background(LinearGradient(gradient: Gradient(colors: [Color(.white), Color("lightgray")]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all)).offset(y: self.logged ? -screenheight*1.25 : 0).animation(.spring())
+        }.background(Color("personality").edgesIgnoringSafeArea(.all)).alert(isPresented: $alert) {
+            Alert(title: Text("Error"), message: Text(self.msg), dismissButton: .default(Text("OK")))
+        }
     }
 }
 
@@ -1176,7 +1175,7 @@ struct SignUpView: View {
             
             VStack {
                 //MARK: Back Button
-                HStack(spacing: 15) {
+                HStack(spacing: 5) {
                     
                     Button(action: {
                         if self.count == 1 || self.count == 3 {
@@ -1200,7 +1199,11 @@ struct SignUpView: View {
                                 .frame(width: 45, height: 45)
                                 .foregroundColor(Color(.white))
                         }*/
-                    }.padding(.leading, 15)
+                    }.padding(.horizontal, 15)
+                    Text("Sign Up")
+                        .font(Font.custom("ProximaNova-Regular", size: 36))
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color(.darkGray))
                     Spacer()
                 }.frame(width: screenwidth).padding(.top, screenheight*0.055)
                 
@@ -1221,6 +1224,7 @@ struct SignUpView: View {
 //MARK: HomeView
 struct HomeView: View {
     @EnvironmentObject var observer: observer
+    @State var start = true
     @State var index: Int = 0
     @State var rating: Bool = false
     @State var showcomment: Bool = true
@@ -1232,6 +1236,7 @@ struct HomeView: View {
     
     @State var recentratings: Bool = false
     @State var report = false
+    @State var removerating = false
     
     @State var stats = true
     @State var settings = false
@@ -1574,6 +1579,7 @@ struct HomeView: View {
                             self.showcomment = true
                             self.confirm = false
                             self.confirm1 = false
+                            self.removerating = false
                         }) {
                             Color(.white)
                                 .opacity(0)
@@ -1586,6 +1592,7 @@ struct HomeView: View {
                                     self.report = false
                                     self.confirm = false
                                     self.confirm1 = false
+                                    self.removerating = false
                                 }) {
                                     Image("commentbutton")
                                         .renderingMode(.template)
@@ -1634,7 +1641,66 @@ struct HomeView: View {
                                                 .animation(nil)
                                                 .multilineTextAlignment(.center)
                                                 .fixedSize(horizontal: false, vertical: true)
-                                            VStack(spacing: 5) {
+                                            
+                                            
+                                            if self.removerating {
+                                                Button(action: {
+                                                    self.removerating = false
+                                                }) {
+                                                    VStack(spacing: 2.5) {
+                                                        HStack(spacing: 0) {
+                                                            ZStack() {
+                                                                Rectangle()
+                                                                    .fill(Color("appearance"))
+                                                                    .frame(width: (self.screenwidth/20)*CGFloat((self.observer.userrates[self.unlockindex].prefix(3) as NSString).doubleValue), height: screenheight*0.036)
+                                                                    .cornerRadius(5)
+                                                                Text(String((self.observer.userrates[self.unlockindex].prefix(3) as NSString).doubleValue))
+                                                                    .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                                    .fontWeight(.semibold)
+                                                                    .foregroundColor(Color(.white))
+                                                                    .animation(nil)
+                                                            }
+                                                            Spacer().frame(width: ((self.screenwidth/20)*10) - (self.screenwidth/20)*CGFloat((self.observer.userrates[self.unlockindex].prefix(3) as NSString).doubleValue))
+                                                        }.frame(width: self.screenwidth/2).background(Color("lightgray")).cornerRadius(12.5)
+                                                        HStack {
+                                                            ZStack {
+                                                                Rectangle()
+                                                                    .fill(Color("personality"))
+                                                                    .frame(width: (self.screenwidth/20)*CGFloat((self.observer.userrates[self.unlockindex].prefix(6).suffix(3) as NSString).doubleValue), height: screenheight*0.036)
+                                                                    .cornerRadius(5)
+                                                                Text(String((self.observer.userrates[self.unlockindex].prefix(6).suffix(3) as NSString).doubleValue))
+                                                                    .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                                    .fontWeight(.semibold)
+                                                                    .foregroundColor(Color(.white))
+                                                                    .animation(nil)
+                                                            }
+                                                            Spacer().frame(width: ((self.screenwidth/20)*10) - (self.screenwidth/20)*CGFloat((self.observer.userrates[self.unlockindex].prefix(6).suffix(3) as NSString).doubleValue))
+                                                        }.frame(width: self.screenwidth/2).background(Color("lightgray")).cornerRadius(12.5)
+                                                    }.frame(width: self.screenwidth/2)
+                                                }
+                                            }
+                                            else {
+                                                HStack {
+                                                    Button(action: {
+                                                        self.removerating = true
+                                                    }) {
+                                                        ZStack {
+                                                            Rectangle()
+                                                                .fill(Color("purp"))
+                                                                .frame(width: (self.screenwidth/20)*CGFloat((self.observer.userrates[self.unlockindex].prefix(9).suffix(3) as NSString).doubleValue), height: screenheight*0.074)
+                                                                .cornerRadius(5)
+                                                            Text(String((self.observer.userrates[self.unlockindex].prefix(9).suffix(3) as NSString).doubleValue))
+                                                                .font(Font.custom("ProximaNova-Regular", size: 20))
+                                                                .fontWeight(.semibold)
+                                                                .foregroundColor(Color(.white))
+                                                        }
+                                                    }
+                                                    Spacer().frame(width: ((self.screenwidth/20)*10) - (self.screenwidth/20)*CGFloat((self.observer.userrates[self.unlockindex].prefix(9).suffix(3) as NSString).doubleValue))
+                                                }.frame(width: self.screenwidth/2).background(Color("lightgray").cornerRadius(5)).cornerRadius(20)
+                                            }
+                                            
+                                            
+                                            /*VStack(spacing: 5) {
                                                 Text(String((self.observer.userrates[self.unlockindex].prefix(9).suffix(3) as NSString).doubleValue))
                                                     .font(Font.custom("ProximaNova-Regular", size: 26))
                                                     .fontWeight(.bold)
@@ -1672,7 +1738,7 @@ struct HomeView: View {
                                                         }
                                                     }
                                                 }
-                                            }
+                                            }*/
                                         }.frame(width: screenwidth/1.5)
                                     }
                                     else if self.confirm1 {
@@ -1718,6 +1784,7 @@ struct HomeView: View {
                                                     self.showcomment = true
                                                     self.confirm = false
                                                     self.confirm1 = false
+                                                    self.removerating = false
                                                     /*self.observer.numrates -= 1
                                                     
                                                     self.observer.comments.remove(at: self.unlockindex)
@@ -1754,6 +1821,7 @@ struct HomeView: View {
                                                 self.showcomment = true
                                                 self.confirm = false
                                                 self.confirm1 = false
+                                                self.removerating = false
                                                 
                                                 self.observer.ratesinfo[self.unlockindex].Report += 1
                                                 db.collection("users").document(self.observer.ratesinfo[self.unlockindex].id).updateData(["Report": self.observer.ratesinfo[self.unlockindex].Report])
@@ -1772,17 +1840,18 @@ struct HomeView: View {
                                                     .foregroundColor(.black)
                                                     .frame(height: 50)
                                                 Spacer().frame(width: 2.5)
-                                                Text("-3")
-                                                    .font(Font.custom("ProximaNova-Regular", size: 20))
-                                                    .fontWeight(.semibold)
-                                                    .animation(nil)
-                                                    .foregroundColor(Color("personality"))
-                                                    .frame(height: 50)
-                                                Image("key")
-                                                    .renderingMode(.template)
-                                                    .resizable()
-                                                    .frame(width: 22.5, height: 22.5)
-                                                    .foregroundColor(Color("personality"))
+                                                HStack(spacing: 2.5) {
+                                                    Text("-3")
+                                                        .font(Font.custom("ProximaNova-Regular", size: 20))
+                                                        .fontWeight(.semibold)
+                                                        .animation(nil)
+                                                        .foregroundColor(Color(.white))
+                                                    Image("key")
+                                                        .renderingMode(.template)
+                                                        .resizable()
+                                                        .frame(width: 22.5, height: 22.5)
+                                                        .foregroundColor(Color(.white))
+                                                }.padding(5).background(Color("personality").opacity(0.8).cornerRadius(7.5))
                                             }
                                             else if self.confirm1 {
                                                 Text("Confirm")
@@ -1809,6 +1878,7 @@ struct HomeView: View {
                                         else {
                                             self.confirm1.toggle()
                                         }
+                                        self.removerating = false
                                     }) {
                                         HStack {
                                             Text(self.confirm || self.confirm1 ? "Cancel" : "Report Comment")
@@ -2045,8 +2115,14 @@ struct HomeView: View {
             //MARK: Settings
             SettingView(settings: self.$settings)
                 .offset(x: self.settings ? 0 : -screenwidth).animation(.spring())
-            
+            Color("personality")
+                .frame(width: screenwidth, height: screenheight)
+                .offset(y: self.start ? 0 : -screenheight)
+                .animation(.spring())
         }.edgesIgnoringSafeArea(.all).onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                self.start = false
+            }
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                 self.recentratings = true
             }
@@ -2310,7 +2386,7 @@ struct RatingView: View {
                                             RoundedRectangle(cornerRadius: 37.5)
                                                 .frame(width: self.rating ? 265 : 65, height: self.rating ? 75 : 65)
                                                 .foregroundColor(self.rating ? .white : .yellow)
-                                                .shadow(color: self.rating ? .gray : .yellow, radius: 5)
+                                                .shadow(color: self.rating ? Color("lightgray") : .yellow, radius: 5)
                                             
                                             if self.rating {
                                                 HStack {
@@ -2535,7 +2611,7 @@ struct RatingView: View {
                                     .font(Font.custom("ProximaNova-Regular", size: 14))
                                     .fontWeight(.semibold)
                                     .foregroundColor(Color(.black))
-                            }.frame(width: self.screenwidth/3.25 - 5, height: 40).background(Color(.white).cornerRadius(15).shadow(radius: 1))
+                            }.frame(width: self.screenwidth/3.25 - 5, height: 40).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
                             
                             Button(action: {
                                 if self.comment.count > 100 {
@@ -2581,12 +2657,12 @@ struct RatingView: View {
                                     .font(Font.custom("ProximaNova-Regular", size: 14))
                                     .fontWeight(.semibold)
                                     .foregroundColor(Color(.black))
-                            }.frame(width: self.screenwidth/3.25 - 5, height: 40).background(Color(.white).cornerRadius(15).shadow(radius: 1))
+                            }.frame(width: self.screenwidth/3.25 - 5, height: 40).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
                         }//.padding(.bottom, 5)
                         
                     }.frame(width: screenwidth/1.5).padding(20).background(Color(.white).cornerRadius(25).shadow(radius: 10))
                 }
-            }.opacity(self.showcomment ? 1 : 0).animation(.spring())
+            }.opacity(self.showcomment ? 1 : 0).offset(y: -30).animation(.spring())
             //MARK: Report
             ZStack {
                 Button(action: {
@@ -3104,7 +3180,7 @@ struct SettingView: View {
                         Image("back")
                             .resizable()
                             .frame(width: 30, height: 27.5)
-                            .foregroundColor(Color(.white))
+                            .foregroundColor(Color(.darkGray))
                             .rotationEffect(Angle(degrees: 180))
                     }.padding(.trailing, 20)
                 }.padding(.top, self.screenheight*0.055)
@@ -3117,12 +3193,12 @@ struct SettingView: View {
                                 .renderingMode(.template)
                                 .resizable()
                                 .frame(width: 35, height: 35)
-                                .foregroundColor(.white)
+                                .foregroundColor(Color(.darkGray))
                                 .opacity(self.profile ? 1 : 0.3)
                             Text("Profile")
                                 .font(Font.custom("ProximaNova-Regular", size: 24))
                                 .fontWeight(.semibold)
-                                .foregroundColor(Color(.white).opacity(self.profile ? 1 : 0.3))
+                                .foregroundColor(Color(.darkGray).opacity(self.profile ? 1 : 0.3))
                         }
                     }
                     Spacer()
@@ -3134,15 +3210,15 @@ struct SettingView: View {
                                 .renderingMode(.template)
                                 .resizable()
                                 .frame(width: 30, height: 30)
-                                .foregroundColor(.white)
+                                .foregroundColor(Color(.darkGray))
                                 .opacity(self.profile ? 0.3 : 1)
                             Text("Settings")
                                 .font(Font.custom("ProximaNova-Regular", size: 24))
                                 .fontWeight(.semibold)
-                                .foregroundColor(Color(.white).opacity(self.profile ? 0.3 : 1))
+                                .foregroundColor(Color(.darkGray).opacity(self.profile ? 0.3 : 1))
                         }
                     }
-                }.frame(width: screenwidth - 50).padding(.bottom, 10)
+                }.frame(width: screenwidth - 50).padding(.vertical, 10)
                 //MARK: Profile Edit
                 if self.profile {
                     VStack(alignment: .leading, spacing: 15) {
@@ -3203,7 +3279,7 @@ struct SettingView: View {
                                     self.social.toggle()
                                 }) {
                                     Image(systemName: "chevron.right")
-                                        .frame(width: 20, height: 20)
+                                        .font(Font.system(size: 24, weight: .bold))
                                         .foregroundColor(.gray)
                                         .padding(.trailing, 15)
                                 }
@@ -3225,7 +3301,7 @@ struct SettingView: View {
                                     self.photos.toggle()
                                 }) {
                                     Image(systemName: "chevron.right")
-                                        .frame(width: 20, height: 20)
+                                        .font(Font.system(size: 24, weight: .bold))
                                         .foregroundColor(.gray)
                                         .padding(.trailing, 15)
                                 }
@@ -3247,13 +3323,13 @@ struct SettingView: View {
                                     self.bio.toggle()
                                 }) {
                                     Image(systemName: "chevron.right")
-                                        .frame(width: 20, height: 20)
+                                        .font(Font.system(size: 24, weight: .bold))
                                         .foregroundColor(.gray)
                                         .padding(.trailing, 15)
                                 }
                             }
                         }.padding(.bottom, 15)
-                    }.frame(width: screenwidth - 40).background(Color(.white).cornerRadius(30)).padding(.bottom, 40)
+                    }.frame(width: screenwidth - 40).background(Color(.white).cornerRadius(30).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10)).padding(.bottom, 40)
                 }
                 //MARK: Settings
                 else {
@@ -3275,7 +3351,7 @@ struct SettingView: View {
                         }.padding(.top, 15)
                         
                         Divider().frame(width: screenwidth - 40)
-                    }.frame(width: screenwidth - 40).background(Color(.white)).cornerRadius(25)
+                    }.frame(width: screenwidth - 40).background(Color(.white).cornerRadius(30).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10)).cornerRadius(30)
                     HStack {
                         Button(action: {
                             let firebaseAuth = Auth.auth()
@@ -3290,14 +3366,16 @@ struct SettingView: View {
                         }) {
                             Text("Log Out")
                                 .font(Font.custom("ProximaNova-Regular", size: 24))
-                                .foregroundColor(.red)
+                                .fontWeight(.semibold)
+                                .foregroundColor(.white)
+                                .frame(width: self.screenwidth - 40, height: 50)
+                                .background(Color("personality").shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(25))
                         }
-                    }.frame(width: self.screenwidth - 40, height: 50)
-                        .background(RoundedRectangle(cornerRadius: 25).foregroundColor(.white))
+                    }
                 }
                 Spacer()
             }
-        }.frame(width: screenwidth, height: screenheight).background(Color("personality").edgesIgnoringSafeArea(.all))
+        }.frame(width: screenwidth, height: screenheight).background(LinearGradient(gradient: Gradient(colors: [Color("lightgray"), Color(.white)]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all))
     }
 }
 
@@ -3330,10 +3408,10 @@ struct Socials: View {
             Text("Socials")
                 .font(Font.custom("ProximaNova-Regular", size: 34))
                 .fontWeight(.semibold)
-                .foregroundColor(Color(.gray))
+                .foregroundColor(Color(.darkGray))
                 .padding(.vertical, 20)
             //MARK: Instagram
-            VStack(alignment: .leading, spacing: 15) {
+            VStack(spacing: 15) {
                 HStack {
                     Text("Instagram")
                         .font(Font.custom("ProximaNova-Regular", size: 26))
@@ -3355,19 +3433,21 @@ struct Socials: View {
                 }.padding(.top, 15)
                 
                 if self.edit {
-                    HStack(spacing: 5) {
-                        Text("New Handle:")
-                            .font(Font.custom("ProximaNova-Regular", size: 18))
-                            .foregroundColor(Color(.gray))
-                            .fixedSize(horizontal: true, vertical: false)
+                    ZStack {
+                        if self.newinsta.isEmpty {
+                            Text("New Handle")
+                                .font(Font.custom("ProximaNova-Regular", size: 18))
+                                .lineLimit(1)
+                                .foregroundColor(Color(.gray))
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
                         TextField("", text: self.$newinsta)
                             .font(Font.custom("ProximaNova-Regular", size: 18))
                             .foregroundColor(Color(.black))
-                            .frame(width: screenwidth/2.5, height: 40)
-                            .padding(.horizontal, 10)
-                            .background(Color("lightgray").opacity(0.5).cornerRadius(15))
-                            .padding(.trailing, 5)
-                    }.padding(.horizontal, 20).frame(width: screenwidth - 40)
+                            .multilineTextAlignment(.center)
+                            
+                    }.frame(width: screenwidth/2, height: 40)
+                        .background(Color("lightgray").opacity(0.5).cornerRadius(15))
                 }
                 
                 Divider().frame(width: screenwidth - 40)
@@ -3389,19 +3469,20 @@ struct Socials: View {
                         .padding(.trailing, 20)
                 }
                 if self.edit {
-                    HStack(spacing: 5) {
-                        Text("New Handle:")
-                            .font(Font.custom("ProximaNova-Regular", size: 18))
-                            .foregroundColor(Color(.gray))
-                            .fixedSize(horizontal: true, vertical: false)
+                    ZStack {
+                        if self.newsnap.isEmpty {
+                            Text("New Handle")
+                                .font(Font.custom("ProximaNova-Regular", size: 18))
+                                .foregroundColor(Color(.gray))
+                        }
                         TextField("", text: self.$newsnap)
                             .font(Font.custom("ProximaNova-Regular", size: 18))
                             .foregroundColor(Color(.black))
                             .frame(width: screenwidth/2.5, height: 40)
-                            .padding(.horizontal, 10)
-                            .background(Color("lightgray").opacity(0.5).cornerRadius(15))
-                            .padding(.trailing, 5)
-                    }.padding(.horizontal, 20).frame(width: screenwidth - 40)
+                            .multilineTextAlignment(.center)
+                            
+                    }.frame(width: screenwidth/2, height: 40)
+                    .background(Color("lightgray").opacity(0.5).cornerRadius(15))
                 }
                 
                 Divider().frame(width: screenwidth - 40)
@@ -3423,22 +3504,21 @@ struct Socials: View {
                         .padding(.trailing, 20)
                 }.padding(.bottom, self.edit ? 0 : 15)
                 if self.edit {
-                    HStack(spacing: 5) {
-                        Text("New Handle:")
-                            .font(Font.custom("ProximaNova-Regular", size: 18))
-                            .foregroundColor(Color(.gray))
-                            .fixedSize(horizontal: true, vertical: false)
+                    ZStack {
+                        if self.newtwitter.isEmpty {
+                            Text("New Handle")
+                                .font(Font.custom("ProximaNova-Regular", size: 18))
+                                .foregroundColor(Color(.gray))
+                        }
                         TextField("", text: self.$newtwitter)
                             .font(Font.custom("ProximaNova-Regular", size: 18))
                             .foregroundColor(Color(.black))
-                            .frame(width: screenwidth/2.5, height: 40)
-                            .padding(.horizontal, 10)
-                            .background(Color("lightgray").opacity(0.5).cornerRadius(15))
-                            .padding(.trailing, 5)
-                    }.padding(.horizontal, 20).frame(width: screenwidth - 40).padding(.bottom, self.edit ? 15 : 0)
+                            .multilineTextAlignment(.center)
+                    }.frame(width: screenwidth/2, height: 40)
+                        .background(Color("lightgray").opacity(0.5).cornerRadius(15))
+                        .padding(.bottom, self.edit ? 15 : 0)
                 }
-            }.frame(width: screenwidth - 40).background(Color(.white).cornerRadius(25)).padding(.bottom, 20)
-            
+            }.frame(width: screenwidth - 40).background(Color(.white).cornerRadius(25).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10)).padding(.bottom, 20)
             if self.edit {
                 HStack(spacing: 20) {
                     Button(action: {
@@ -3457,6 +3537,7 @@ struct Socials: View {
                         self.newinsta = ""
                         self.newsnap = ""
                         self.newtwitter = ""
+                        self.edit = false
                     }) {
                         HStack {
                             Text("Confirm")
@@ -3551,7 +3632,7 @@ struct Photos: View {
             Text("Photos")
                 .font(Font.custom("ProximaNova-Regular", size: 34))
                 .fontWeight(.semibold)
-                .foregroundColor(Color(.gray))
+                .foregroundColor(Color(.darkGray))
                 .padding(.vertical, 20)
             //MARK: Photo 1
             VStack(spacing: 20) {
@@ -3839,7 +3920,7 @@ struct Photos: View {
                         }
                     }
                 }
-            }.padding(20).background(Color(.white).cornerRadius(35)).padding(.bottom, 20)
+            }.padding(20).background(Color(.white).cornerRadius(35).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10)).padding(.bottom, 20)
             //MARK: Edit Photos
             if loading {
                 WhiteLoader()
@@ -3994,7 +4075,7 @@ struct Bio: View {
                         .lineLimit(1)
                         .frame(height: screenheight * 0.05)
                         .minimumScaleFactor(0.01)
-                        .foregroundColor(Color(.gray))
+                        .foregroundColor(Color(.darkGray))
                         .padding(.top, 10)
                 }
                 VStack(spacing: 0) {//screenheight * 0.009) {
@@ -4106,7 +4187,7 @@ struct Bio: View {
                             }
                         }
                     }
-                }.cornerRadius(35).background(Color(.white).cornerRadius(35)).padding(.bottom, self.edit ? 0 : 15).padding(.top, self.edit ? 10 : 5)
+                }.cornerRadius(35).background(Color(.white).cornerRadius(35).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10)).padding(.bottom, self.edit ? 0 : 15).padding(.top, self.edit ? 10 : 5)
                 //MARK: Edit Bio
                 if self.edit {
                     HStack(spacing: screenwidth*0.053) {
@@ -4823,80 +4904,6 @@ struct YourStatistics: View {
 }
 
 
-//MARK: MyProfile
-struct MyProfile: View {
-    @EnvironmentObject var observer: observer
-    @State var count: Int = 0
-    let screenwidth = UIScreen.main.bounds.width
-    let screenheight = UIScreen.main.bounds.height
-    var body: some View {
-        ZStack {
-            Color(.white)
-                .frame(width: screenwidth/1.25 + 20, height: screenheight/2.75 + 20)
-                .cornerRadius(15)
-                //.shadow(radius: 15)
-            HStack {
-                ZStack {
-                    VStack {
-                        WebImage(url: URL(string: self.observer.myprofile.ProfilePics[self.count]))
-                            .resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .frame(width: self.screenwidth/2 - 40, height: (self.screenwidth/2 - 40)*1.3)
-                            .animation(nil)
-                            .cornerRadius(10)
-                        HStack(spacing: 5) {
-                            Text(self.observer.myprofile.Name)
-                                .font(Font.custom("ProximaNova-Regular", size: 18))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color("personality"))
-                            Text(self.observer.myprofile.Age)
-                                .font(Font.custom("ProximaNova-Regular", size: 18))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color("personality").opacity(0.75))
-                        }.frame(width: self.screenwidth/2 - 50)
-                            .padding(5)
-                            .background(Color("lightgray").opacity(0.5).cornerRadius(5))
-                        Spacer()
-                    }.frame(height: screenheight/2.75)
-                    VStack {
-                        HStack {
-                            Button(action: {
-                                if self.count != 0 {
-                                    self.count -= 1
-                                }
-                            }) {
-                                Color(.white)
-                                    .opacity(0)
-                            }.frame(width: (self.screenwidth/2 - 40)/2)
-                            Button(action: {
-                                if self.count != 3 {
-                                    self.count += 1
-                                }
-                            }) {
-                                Color(.white)
-                                    .opacity(0)
-                            }.frame(width: (self.screenwidth/2 - 40)/2)
-                        }.frame(width: self.screenwidth/2 - 40)
-                        Spacer()
-                    }.frame(height: screenheight/2.75)
-                    VStack {
-                        ImageIndicator(count: self.$count)
-                            .scaleEffect(0.75)
-                            .padding(.top, (self.screenwidth/2 - 40)*1.3 - 30)
-                        Spacer()
-                    }.frame(height: screenheight/2.75)
-                }.frame(width: self.screenwidth/2 - 40, height: (self.screenwidth/2 - 40)*1.3)
-                ScrollView(.vertical, showsIndicators: true) {
-                    ForEach(self.observer.myprofile.Bio, id: \.self) { str in
-                        BioCardsFP(index: (String(str.prefix(2)) as NSString).integerValue, text: String(str)[2..<str.count], size1: 18, size2: 16, padding: 5, horizontalpadding: 10).animation(nil)
-                    }
-                }.frame(width: screenwidth/2 - 40, height: screenheight/2.75)
-            }
-        }.frame(height: screenheight/2.75)
-    }
-}
-
-
 //MARK: Rating Settings
 struct RatingSettings: View {
     @EnvironmentObject var observer: observer
@@ -5245,104 +5252,6 @@ struct Profile: View {
                 }.frame(height: screenheight/3.25)
             }.frame(width: screenwidth-20, height: screenheight/1.25)
             .cornerRadius(20)
-            VStack {
-                ImageIndicator(count: self.$count)
-                Spacer()
-            }.frame(width: screenwidth - 20, height: screenheight/1.25)
-        }.frame(width: screenwidth, height: screenheight)
-    }
-}
-
-
-
-
-
-//MARK: HomeProfile
-struct HomeProfile: View {
-    @State var images = [String]()
-    @State var bio = [String]()
-    @State var name = ""
-    @State var age = ""
-    @State var count: Int = 0
-    @State var screenwidth = UIScreen.main.bounds.width
-    @State var screenheight = UIScreen.main.bounds.height
-    
-    var body: some View {
-        ZStack {
-            VStack {
-                ZStack {
-                    WebImage(url: URL(string: self.images[count]))
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: screenwidth - 20, height: (screenwidth - 20)*1.3)
-                        .animation(nil)
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
-                    HStack {
-                        Button(action: {
-                            if self.count == 0 {
-                            }
-                            else {
-                                self.count -= 1
-                            }
-                        }) {
-                            Color(.white).opacity(0)
-                                .frame(width: screenwidth/3, height: (screenwidth - 20)*1.3)
-                        }
-                        Spacer()
-                        Button(action: {
-                            if self.count == 3 {
-                            }
-                            else {
-                                self.count += 1
-                            }
-                        }) {
-                            Color(.white).opacity(0)
-                                .frame(width: screenwidth/3, height: (screenwidth - 20)*1.3)
-                        }
-                    }.padding(.horizontal, 20)
-                }
-                Spacer()
-            }.frame(width: screenwidth-20, height: screenheight/1.25)
-                .cornerRadius(20)
-            VStack {
-                ImageIndicator(count: self.$count)
-                Spacer()
-            }.frame(width: screenwidth - 20, height: screenheight/1.25)
-            VStack {
-                Spacer()
-                HStack {
-                    HStack {
-                        Text(self.name.uppercased())
-                            .font(Font.custom("ProximaNova-Regular", size: 24))
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color("personality"))
-                            .padding(.leading, 10)
-                            .animation(nil)
-                        Text(self.age)
-                            .font(Font.custom("ProximaNova-Regular", size: 24))
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color("personality").opacity(0.5))
-                            .padding(.trailing, 10)
-                            .animation(nil)
-                    }.background(Color(.white).opacity(0.75).frame(height: 40).cornerRadius(7.5).shadow(radius: 20)).padding(.leading, 10)
-                    Spacer()
-                }
-                ZStack {
-                    Color(.white)
-                        .opacity(0.95)
-                        .frame(width: screenwidth - 20, height: screenheight/3.25)
-                        .cornerRadius(20)
-                    ScrollView(.vertical, showsIndicators: false) {
-                        
-                        ForEach(self.bio, id: \.self) { str in
-                            VStack {
-                                BioCardsFP(index: (String(str.prefix(2)) as NSString).integerValue, text: String(str)[2..<str.count]).animation(nil)
-                            }.frame(width: self.screenwidth - 40)
-                        }
-                    }.frame(width: screenwidth - 40, height: screenheight/3.25 - 20).cornerRadius(15)
-                }.frame(height: screenheight/3.25)
-            }.frame(width: screenwidth-20, height: screenheight/1.25)
-            .cornerRadius(20)
         }.frame(width: screenwidth, height: screenheight)
     }
 }
@@ -5384,29 +5293,6 @@ struct BioCardsFP: View {
                     .fixedSize(horizontal: false, vertical: true)
             }.padding(.vertical, self.padding)
         }
-    }
-}
-
-
-
-//MARK: ImageIndicator
-struct ImageIndicator: View {
-    @Binding var count: Int
-    var body: some View {
-        HStack(spacing: 5) {
-            Circle()
-                .foregroundColor(count == 0 ? Color("personality") : Color(.gray).opacity(0.3))
-                .frame(width: 10, height: 10)
-            Circle()
-                .foregroundColor(count == 1 ? Color("personality") : Color(.gray).opacity(0.3))
-                .frame(width: 10, height: 10)
-            Circle()
-                .foregroundColor(count == 2 ? Color("personality") : Color(.gray).opacity(0.3))
-                .frame(width: 10, height: 10)
-            Circle()
-                .foregroundColor(count == 3 ? Color("personality") : Color(.gray).opacity(0.3))
-                .frame(width: 10, height: 10)
-        }.padding(.top, 20).background(Color(.white).opacity(0.75).frame(width: 64, height: 19).cornerRadius(9.5).padding(.top, 20))
     }
 }
 
@@ -5937,6 +5823,7 @@ class observer: ObservableObject {
         }
     }
     func refreshUsers() {
+        id = Auth.auth().currentUser?.uid
         var newusers = [UserData]()
         self.rated = 0
         let db = Firestore.firestore()
@@ -5993,12 +5880,8 @@ class observer: ObservableObject {
             }
         }
     }
-    func relogin() {
-        self.users = [UserData]()
-        if id == nil || UserDefaults.standard.value(forKey: "notsignedup") as? Bool ?? true {
-            //print("burh")
-            return
-        }
+    func signin() {
+        id = Auth.auth().currentUser?.uid
         let db = Firestore.firestore()
         db.collection("users").getDocuments() { (querySnapshot, err) in
             if err != nil {
@@ -6007,6 +5890,7 @@ class observer: ObservableObject {
             }
             else {
                 for document in querySnapshot!.documents {
+                    print("1")
                     if self.id! == (document.get("ID") as! String) {
                         self.lock = document.get("Lock") as! [Bool]
                         self.userrates = document.get("Rates") as! [String]
@@ -6043,12 +5927,63 @@ class observer: ObservableObject {
                         self.myprofile = UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Preferences: preferences)
                     }
                 }
-                while self.myprofile.Preferences.count == 0 {
-                    
-                }
+            }
+        }
+    }
+    func relogin() {
+        id = Auth.auth().currentUser?.uid
+        self.users = [UserData]()
+        if id == nil || UserDefaults.standard.value(forKey: "notsignedup") as? Bool ?? true {
+            //print("burh")
+            return
+        }
+        let db = Firestore.firestore()
+        db.collection("users").getDocuments() { (querySnapshot, err) in
+            if err != nil {
+                print((err?.localizedDescription)!)
+                return
+            }
+            else {
+                /*for document in querySnapshot!.documents {
+                    if self.id! == (document.get("ID") as! String) {
+                        self.lock = document.get("Lock") as! [Bool]
+                        self.userrates = document.get("Rates") as! [String]
+                        self.keys = document.get("Keys") as! Int
+                        self.comments = document.get("Comments") as! [String]
+                        self.rating = ratingtype(overall: CGFloat(document.get("OverallRating") as! Double), appearance: CGFloat(document.get("AppearanceRating") as! Double), personality: CGFloat(document.get("PersonalityRating") as! Double))
+                        self.numrates = self.userrates.count-1
+                        if self.numrates > -1 {
+                            for _ in 0...self.numrates {
+                                self.showratings.append(false)
+                            }
+                        }
+                        
+                        let bdate = document.get("Birthdate") as! String
+                        let dateFormatter = DateFormatter()
+                        dateFormatter.dateFormat = "yyyy-MM-dd"
+                        let date = dateFormatter.date(from: bdate)!
+                        let components = Calendar.current.dateComponents([.year, .month, .day], from: date, to: Date())
+                        let age = String(components.year!)
+                        let bio = document.get("Bio") as! [String]
+                        let gender = document.get("Gender") as! String
+                        let id = document.get("ID") as! String
+                        let name = document.get("Name") as! String
+                        let percentage = document.get("Percentage") as! Double
+                        let profilepics = document.get("ProfilePics") as! [String]
+                        let rates = document.get("Rates") as! [String]
+                        let overallrating = document.get("OverallRating") as! Double
+                        let appearancerating = document.get("AppearanceRating") as! Double
+                        let personalityrating = document.get("PersonalityRating") as! Double
+                        let selfrating = document.get("SelfRating") as! Double
+                        let socials = document.get("Socials") as! [String]
+                        let report = document.get("Report") as! Double
+                        let preferences = document.get("Preferences") as! [String]
+                        self.myprofile = UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Preferences: preferences)
+                    }
+                }*/
                 for document in querySnapshot!.documents {
                     if document.get("ID") as! String != self.id! && self.users.count < 100 {
-                        
+                        print("2")
                         let bdate = document.get("Birthdate") as! String
                         let dateFormatter = DateFormatter()
                         dateFormatter.dateFormat = "yyyy-MM-dd"
@@ -6056,7 +5991,7 @@ class observer: ObservableObject {
                         let components = Calendar.current.dateComponents([.year, .month, .day], from: date, to: Date())
                         let age1 = components.year!
                         
-                        print((document.get("Preferences") as! [String]), "____" ,self.myprofile.Preferences)
+                        //print((document.get("Preferences") as! [String]), "____" ,self.myprofile.Preferences)
                         if (document.get("Gender") as! String == self.myprofile.Preferences[0] && (document.get("Preferences") as! [String])[1] == self.myprofile.Gender) || (document.get("Preferences") as! [String])[1] == "Everyone" && ((document.get("Gender") as! String == self.myprofile.Preferences[0]) || self.myprofile.Preferences[0] == "Everyone") || (document.get("Preferences") as! [String])[1] == self.myprofile.Gender {
                             
                             if (age1 >= (self.myprofile.Preferences[2].prefix(2) as NSString).integerValue && age1 <= (self.myprofile.Preferences[2].suffix(2) as NSString).integerValue) && age1 >= ((document.get("Preferences") as! [String])[2].prefix(2) as NSString).integerValue && age1 <= ((document.get("Preferences") as! [String])[2].suffix(2) as NSString).integerValue {
@@ -6202,12 +6137,14 @@ func CheckUser(complete: @escaping (Bool)->Void) {
         else {
             for document in querySnapshot!.documents {
                 if uid! == document.get("ID") as! String {
-                    UserDefaults.standard.set(false,forKey: "notsignedup")
+                    UserDefaults.standard.set(false, forKey: "notsignedup")
                     complete(true)
                 }
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                complete(false)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                if UserDefaults.standard.value(forKey: "notsignedup") as! Bool {
+                    complete(false)
+                }
             }
         }
     }
