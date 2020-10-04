@@ -200,9 +200,10 @@ struct FrontView: View {
                                     CheckUser() { complete in
                                         if complete {
                                             self.observer.signin()
-                                            self.observer.relogin()
+                                            self.observer.refreshUsers()
                                             self.observer.signedup()
                                             self.logged = true
+                                            print(self.observer.users.count, self.observer.rated)
                                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
                                                 self.loading.toggle()
                                                 UserDefaults.standard.set(false, forKey: "signup")
@@ -234,7 +235,7 @@ struct FrontView: View {
                             
                         }
                     }
-                }//.padding(.bottom, 20)//.padding(10).padding(.vertical, 15).background(Color(.white).cornerRadius(30).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10)).padding(.bottom, 40)
+                }
                 
                 HStack(spacing: 0) {
                     Text("New User? ")
@@ -276,13 +277,6 @@ struct FrontView: View {
                         }
                     }
                 }.fixedSize(horizontal: false, vertical: true).offset(y: 120)
-                /*Button(action: {
-                    
-                }) {
-                    Text("New User? ")
-                        .font(Font.custom("ProximaNova-Regular", size: 16))
-                        .foregroundColor(Color(.darkGray))
-                }*/
             }.offset(y: -30).frame(width: self.screenwidth, height: self.screenheight).background(LinearGradient(gradient: Gradient(colors: [Color(.white), Color("lightgray")]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all)).offset(y: self.logged ? -screenheight*1.25 : 0).animation(.spring())
         }.background(Color("personality").edgesIgnoringSafeArea(.all)).alert(isPresented: $alert) {
             Alert(title: Text("Error"), message: Text(self.msg), dismissButton: .default(Text("OK")))
@@ -350,433 +344,401 @@ struct SignUpView: View {
     @State var snapchat = false
     @State var snapchathandle = ""
     
+    @State var logged = false
+    
     var body: some View {
         ZStack {
-            HStack(spacing: 0) {
-                //MARK: Phone Number 1
-                VStack(spacing: 20) {
-                    Image("phone")
-                        .resizable()
-                        .padding(10)
-                        .frame(width: 75, height: 75)
-                    
-                    Text("Enter Your Phone Number")
-                        .font(Font.custom("ProximaNova-Regular", size: 26))
-                        .fontWeight(.medium)
-                        .foregroundColor(Color(.black))
-                    HStack(spacing: 15) {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 15)
-                                .foregroundColor(.white)
-                                .frame(width: self.ccode.count < 2 ? 50 : 65, height: 50)
-                                .shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10)
-                                .shadow(color: .white, radius: 15, x: -10, y: -10)
-                            
-                            HStack(spacing: 0) {
-                                Text(self.ccode.isEmpty ? "" : "+")
-                                    .foregroundColor(Color(.black))
-                                    .font(Font.custom("ProximaNova-Regular", size: 20))
-                                ZStack {
-                                    
-                                    TextField("", text: $ccode)
-                                        .foregroundColor(.black)
+            ZStack {
+                HStack(spacing: 0) {
+                    //MARK: Phone Number 1
+                    VStack(spacing: 20) {
+                        Image("phone")
+                            .resizable()
+                            .padding(10)
+                            .frame(width: 75, height: 75)
+                        
+                        Text("Enter Your Phone Number")
+                            .font(Font.custom("ProximaNova-Regular", size: 26))
+                            .fontWeight(.medium)
+                            .foregroundColor(Color(.black))
+                        HStack(spacing: 15) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 15)
+                                    .foregroundColor(.white)
+                                    .frame(width: self.ccode.count < 2 ? 50 : 65, height: 50)
+                                    .shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10)
+                                    .shadow(color: .white, radius: 15, x: -10, y: -10)
+                                
+                                HStack(spacing: 0) {
+                                    Text(self.ccode.isEmpty ? "" : "+")
+                                        .foregroundColor(Color(.black))
                                         .font(Font.custom("ProximaNova-Regular", size: 20))
-                                        .keyboardType(.numberPad)
-                                        .multilineTextAlignment(.center)
+                                    ZStack {
+                                        
+                                        TextField("", text: $ccode)
+                                            .foregroundColor(.black)
+                                            .font(Font.custom("ProximaNova-Regular", size: 20))
+                                            .keyboardType(.numberPad)
+                                            .multilineTextAlignment(.center)
+                                    }
+                                }.frame(width: self.ccode.count < 2 ? 30 : 45, height: 50)
+                            }
+                            
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 15)
+                                    //.stroke(lineWidth: 5)
+                                    .foregroundColor(.white)
+                                    .frame(width: screenwidth - 220, height: 50)
+                                    .shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10)
+                                    .shadow(color: .white, radius: 15, x: -10, y: -10)
+                                
+                                if self.phonenumber.isEmpty {
+                                    Text("Phone Number")
+                                        .foregroundColor(Color(.black).opacity(0.5))
+                                        .font(.body)
+                                        .font(Font.custom("ProximaNova-Regular", size: 22))
                                 }
-                            }.frame(width: self.ccode.count < 2 ? 30 : 45, height: 50)
+                                TextField("", text: $phonenumber)
+                                    .foregroundColor(Color(.black).opacity(0.75))
+                                    .font(Font.custom("ProximaNova-Regular", size: 20))
+                                    .frame(width: screenwidth - 240, height: 50)
+                                    .keyboardType(.numberPad)
+                                    .multilineTextAlignment(.center)
+                            }
+                            Button(action: {
+                                if self.phonenumber.count == 10 {
+                                    self.loading.toggle()
+                                    PhoneAuthProvider.provider().verifyPhoneNumber("+" + self.ccode + self.phonenumber, uiDelegate: nil) { (verificationID, error) in
+                                        if error != nil {
+                                            self.msg = (error?.localizedDescription)!
+                                            self.loading.toggle()
+                                            self.alert.toggle()
+                                            return
+                                        }
+                                        self.loading.toggle()
+                                        self.verificationcode = verificationID!
+                                        self.next -= self.screenwidth
+                                        self.count += 1
+                                    }
+                                }
+                            }) {
+                                Image(systemName: "arrow.right")
+                                    .font(Font.system(size: 30, weight: .bold))
+                                    .foregroundColor(self.phonenumber.count == 10 ? Color(.blue).opacity(0.5) : Color("lightgray"))
+                                
+                            }
+                        }//.padding(.bottom, 20)
+                        if loading {
+                            WhiteLoader()
+                        }
+                    }.frame(width: screenwidth, height: screenheight/1.3).offset(y: -100).animation(.spring())
+                    
+                    //MARK: Verification Code 2
+                    VStack(spacing: 20) {
+                        Image("phone")
+                            .resizable()
+                            .frame(width: 75, height: 75)
+                        
+                        Text("Enter The Verification Code")
+                            .font(Font.custom("ProximaNova-Regular", size: 26))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color(.black))
+                        
+                        HStack(spacing: 15) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 15)
+                                    .foregroundColor(.white)
+                                    .frame(width: screenwidth/2 - 60, height: 50)
+                                    .shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10)
+                                    .shadow(color: .white, radius: 15, x: -10, y: -10)
+                                if self.enteredcode.isEmpty {
+                                    HStack {
+                                        Text("Code")
+                                            .foregroundColor(Color(.black).opacity(0.5))
+                                            .font(Font.custom("ProximaNova-Regular", size: 20))
+                                    }.frame(width: screenwidth/2 - 80, height: 50)
+                                }
+                                TextField("", text: $enteredcode)
+                                    .font(Font.custom("ProximaNova-Regular", size: 20))
+                                    .frame(width: screenwidth/2 - 80, height: 50)
+                                    .keyboardType(.numberPad)
+                                    .foregroundColor(.black)
+                                    .multilineTextAlignment(TextAlignment.center)
+                                
+                            }
+                            Button(action: {
+                                if self.enteredcode.count == 6 {
+                                    self.loading.toggle()
+                                    let credential = PhoneAuthProvider.provider().credential(withVerificationID: self.verificationcode, verificationCode: self.enteredcode)
+                                    
+                                    Auth.auth().signIn(with: credential) { (authResult, error) in
+                                        if error != nil {
+                                            self.msg = (error?.localizedDescription)!
+                                            self.loading.toggle()
+                                            self.alert.toggle()
+                                            return
+                                        }
+                                        CheckUser() { complete in
+                                            if complete {
+                                                self.observer.signin()
+                                                self.observer.refreshUsers()
+                                                self.observer.signedup()
+                                                self.logged = true
+                                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                                                    self.logged = false
+                                                    UserDefaults.standard.set(false, forKey: "signup")
+                                                    UserDefaults.standard.set(true, forKey: "status")
+                                                    NotificationCenter.default.post(name: NSNotification.Name("StatusChange"), object: nil)
+                                                }
+                                            }
+                                            else {
+                                                self.loading.toggle()
+                                                self.next -= self.screenwidth
+                                                self.count += 1
+                                            }
+                                        }
+                                    }
+                                }
+                            }) {
+                                Image(systemName: "arrow.right")
+                                    .font(Font.system(size: 30, weight: .bold))
+                                    .foregroundColor(self.enteredcode.count == 6 ? Color(.blue).opacity(0.5) : Color("lightgray"))
+                            }
                         }
                         
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 15)
-                                //.stroke(lineWidth: 5)
-                                .foregroundColor(.white)
-                                .frame(width: screenwidth - 220, height: 50)
-                                .shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10)
-                                .shadow(color: .white, radius: 15, x: -10, y: -10)
-                            
-                            if self.phonenumber.isEmpty {
-                                Text("Phone Number")
-                                    .foregroundColor(Color(.black).opacity(0.5))
-                                    .font(.body)
-                                    .font(Font.custom("ProximaNova-Regular", size: 22))
-                            }
-                            TextField("", text: $phonenumber)
-                                .foregroundColor(Color(.black).opacity(0.75))
-                                .font(Font.custom("ProximaNova-Regular", size: 20))
-                                .frame(width: screenwidth - 240, height: 50)
-                                .keyboardType(.numberPad)
-                                .multilineTextAlignment(.center)
+                        if loading {
+                            WhiteLoader()
                         }
-                        Button(action: {
-                            if self.phonenumber.count == 10 {
-                                self.loading.toggle()
-                                PhoneAuthProvider.provider().verifyPhoneNumber("+" + self.ccode + self.phonenumber, uiDelegate: nil) { (verificationID, error) in
-                                    if error != nil {
-                                        self.msg = (error?.localizedDescription)!
-                                        self.loading.toggle()
-                                        self.alert.toggle()
-                                        return
-                                    }
-                                    self.loading.toggle()
-                                    self.verificationcode = verificationID!
+                    }.frame(width: screenwidth, height: screenheight/1.3).offset(y: -100)
+                    
+                    //MARK: Name 3
+                    VStack {
+                        Image("name")
+                            .resizable()
+                            .frame(width: 75, height: 75)
+                        
+                        Text("Enter Your First Name")
+                            .font(Font.custom("ProximaNova-Regular", size: 26))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color(.black))
+                        
+                        HStack(spacing: 15) {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 15)
+                                    .foregroundColor(.white)
+                                    .frame(width: screenwidth - 120, height: 50)
+                                    .shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10)
+                                    .shadow(color: .white, radius: 15, x: -10, y: -10)
+                                if self.name.isEmpty {
+                                    Text("First Name")
+                                        .foregroundColor(Color(.black).opacity(0.5))
+                                        .font(Font.custom("ProximaNova-Regular", size: 22))
+                                }
+                                TextField("", text: $name)
+                                    .font(Font.custom("ProximaNova-Regular", size: 22))
+                                    .frame(width: screenwidth - 140, height: 50)
+                                    .foregroundColor(Color(.black))
+                                    .multilineTextAlignment(TextAlignment.center)
+                            }
+                            Button(action: {
+                                if self.name.count > 0 {
                                     self.next -= self.screenwidth
                                     self.count += 1
                                 }
+                                self.next -= self.screenwidth
+                            }) {
+                                Image(systemName: "arrow.right")
+                                    .font(Font.system(size: 30, weight: .bold))
+                                    .foregroundColor(self.name.count > 0 ? Color(.blue).opacity(0.5) : Color("lightgray"))
+                            }
+                        }
+                    }.frame(width: screenwidth, height: screenheight/1.3).offset(y: -100)
+                    
+                    //MARK: Age 4
+                    VStack {
+                        Image("age")
+                            .resizable()
+                            .frame(width: 75, height: 75)
+                        
+                        Text("Enter Your Age")
+                            .font(Font.custom("ProximaNova-Regular", size: 26))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color(.black))
+                        
+                        DatePicker("", selection: $date, in: closedRange, displayedComponents: .date)
+                            .frame(width: screenwidth - 40)
+                            .colorInvert()
+                            .colorMultiply(Color.black)
+                            .padding(.vertical, 10)
+                            .background(Color(.white).cornerRadius(35).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10)
+                            .shadow(color: .white, radius: 15, x: -10, y: -10))
+                            .padding(.bottom, 10)
+                        
+                        Button(action: {
+                            let components = Calendar.current.dateComponents([.year, .month, .day], from: self.date, to: Date())
+                            self.age = String(components.year!)
+                            print(self.date.description.prefix(10))
+                            self.bdate = String(self.date.description.prefix(10))
+                            if Int(self.age) ?? 0 < 18 {
+                                self.msg = "You must be 18 or older to register."
+                                self.alert.toggle()
+                            }
+                            else {
+                            self.next -= self.screenwidth
+                                self.count += 1
                             }
                         }) {
                             Image(systemName: "arrow.right")
-                                .font(Font.system(size: 30, weight: .bold))
-                                .foregroundColor(self.phonenumber.count == 10 ? Color(.blue).opacity(0.5) : Color("lightgray"))
-                            
-                        }
-                    }//.padding(.bottom, 20)
-                    if loading {
-                        WhiteLoader()
-                    }
-                }.frame(width: screenwidth, height: screenheight/1.3).offset(y: -100).animation(.spring())
-                
-                //MARK: Verification Code 2
-                VStack(spacing: 20) {
-                    Image("phone")
-                        .resizable()
-                        .frame(width: 75, height: 75)
+                                .font(Font.system(size: 36, weight: .bold))
+                                .foregroundColor(Calendar.current.dateComponents([.year, .month, .day], from: self.date, to: Date()).year! >= 18 ? Color(.blue).opacity(0.5) : Color("lightgray"))
+                        }.padding(.top, 10)
+                        
+                    }.frame(width: screenwidth, height: screenheight/1.3)
                     
-                    Text("Enter The Verification Code")
-                        .font(Font.custom("ProximaNova-Regular", size: 26))
-                        .fontWeight(.semibold)
-                        .foregroundColor(Color(.black))
-                    
-                    HStack(spacing: 15) {
+                    //MARK: Gender 5
+                    VStack(spacing: 20) {
+                        Image("gender")
+                            .resizable()
+                            .scaledToFit()
+                            .padding(10)
+                            .frame(width: 75, height: 75)
+                        
+                        Text("Select Your Gender")
+                            .font(Font.custom("ProximaNova-Regular", size: 26))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color(.black))
+                        
                         ZStack {
-                            RoundedRectangle(cornerRadius: 15)
-                                .foregroundColor(.white)
-                                .frame(width: screenwidth/2 - 60, height: 50)
+                            Color(.white)
+                                .frame(width: 270, height: 60)
+                                .cornerRadius(15)
                                 .shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10)
                                 .shadow(color: .white, radius: 15, x: -10, y: -10)
-                            if self.enteredcode.isEmpty {
-                                HStack {
-                                    Text("Code")
+                            
+                            if self.genders == 0 {
+                                
+                            }
+                            else {
+                                HStack(spacing: 0) {
+                                    RoundedRectangle(cornerRadius: 15).frame(width: 85, height: 55)
+                                }.foregroundColor(Color("lightgray").opacity(0.5)).offset(x: self.genderoffest)
+                            }
+                            
+                            HStack(spacing: 0) {
+                                
+                                Button(action: {
+                                    self.genders = 1
+                                    self.genderoffest = -90
+                                    self.gender = "Male"
+                                }) {
+                                    Text("Male")
+                                        .font(Font.custom("ProximaNova-Regular", size: 20))
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(Color(.black))
+                                }.frame(width: 90)
+                                
+                                Button(action: {
+                                    self.genders = 2
+                                    self.genderoffest = 0
+                                    self.gender = "Female"
+                                }) {
+                                    Text("Female")
+                                        .font(Font.custom("ProximaNova-Regular", size: 20))
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(Color(.black))
+                                }.frame(width: 90)
+                                
+                                Button(action: {
+                                    self.genders = 3
+                                    self.genderoffest = 90
+                                    self.gender = ""
+                                }) {
+                                    Text("Other")
+                                        .font(Font.custom("ProximaNova-Regular", size: 20))
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(Color(.black))
+                                }.frame(width: 90)
+                                
+                            }
+                            
+                            
+                        }.animation(.spring()).padding(.bottom, self.genders != 3 ? 30 : 0)
+                        
+                        if self.genders == 3 {
+                            Text("Specify Your Gender")
+                                .font(Font.custom("ProximaNova-Regular", size: 20))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.black))
+                            
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 15)
+                                    .foregroundColor(.white)
+                                    .frame(width: screenwidth - 120, height: 50)
+                                    .shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10)
+                                    .shadow(color: .white, radius: 15, x: -10, y: -10)
+                                
+                                if self.gender.count < 1 {
+                                    Text("Gender")
                                         .foregroundColor(Color(.black).opacity(0.5))
                                         .font(Font.custom("ProximaNova-Regular", size: 20))
-                                }.frame(width: screenwidth/2 - 80, height: 50)
-                            }
-                            TextField("", text: $enteredcode)
-                                .font(Font.custom("ProximaNova-Regular", size: 20))
-                                .frame(width: screenwidth/2 - 80, height: 50)
-                                .keyboardType(.numberPad)
-                                .foregroundColor(.black)
-                                .multilineTextAlignment(TextAlignment.center)
-                            
-                        }
-                        Button(action: {
-                            if self.enteredcode.count == 6 {
-                                self.loading.toggle()
-                                let credential = PhoneAuthProvider.provider().credential(withVerificationID: self.verificationcode, verificationCode: self.enteredcode)
-                                
-                                Auth.auth().signIn(with: credential) { (authResult, error) in
-                                    if error != nil {
-                                        self.msg = (error?.localizedDescription)!
-                                        self.loading.toggle()
-                                        self.alert.toggle()
-                                        return
-                                    }
-                                    CheckUser() { complete in
-                                        if complete {
-                                            self.observer.relogin()
-                                            self.observer.signedup()
-                                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                                                UserDefaults.standard.set(false, forKey: "signup")
-                                                UserDefaults.standard.set(true, forKey: "status")
-                                                NotificationCenter.default.post(name: NSNotification.Name("StatusChange"), object: nil)
-                                            }
-                                        }
-                                        else {
-                                            self.loading.toggle()
-                                            self.next -= self.screenwidth
-                                            self.count += 1
-                                        }
-                                    }
                                 }
-                            }
-                        }) {
-                            Image(systemName: "arrow.right")
-                                .font(Font.system(size: 30, weight: .bold))
-                                .foregroundColor(self.enteredcode.count == 6 ? Color(.blue).opacity(0.5) : Color("lightgray"))
+                                TextField("", text: $gender)
+                                    .font(Font.custom("ProximaNova-Regular", size: 20))
+                                    .frame(width: screenwidth - 140, height: 50)
+                                    .foregroundColor(Color(.black))
+                                    .multilineTextAlignment(TextAlignment.center)
+                            }.padding(.bottom, 30)
                         }
-                    }
-                    
-                    if loading {
-                        WhiteLoader()
-                    }
-                }.frame(width: screenwidth, height: screenheight/1.3).offset(y: -100)
-                
-                //MARK: Name 3
-                VStack {
-                    Image("name")
-                        .resizable()
-                        .frame(width: 75, height: 75)
-                    
-                    Text("Enter Your First Name")
-                        .font(Font.custom("ProximaNova-Regular", size: 26))
-                        .fontWeight(.semibold)
-                        .foregroundColor(Color(.black))
-                    
-                    HStack(spacing: 15) {
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 15)
-                                .foregroundColor(.white)
-                                .frame(width: screenwidth - 120, height: 50)
-                                .shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10)
-                                .shadow(color: .white, radius: 15, x: -10, y: -10)
-                            if self.name.isEmpty {
-                                Text("First Name")
-                                    .foregroundColor(Color(.black).opacity(0.5))
-                                    .font(Font.custom("ProximaNova-Regular", size: 22))
-                            }
-                            TextField("", text: $name)
-                                .font(Font.custom("ProximaNova-Regular", size: 22))
-                                .frame(width: screenwidth - 140, height: 50)
-                                .foregroundColor(Color(.black))
-                                .multilineTextAlignment(TextAlignment.center)
-                        }
+                        
                         Button(action: {
-                            if self.name.count > 0 {
+                            if self.genders == 3 && self.gender.isEmpty || self.genders == 0 {
+                                
+                            }
+                            else {
                                 self.next -= self.screenwidth
                                 self.count += 1
                             }
-                            self.next -= self.screenwidth
-                        }) {
+                        })  {
                             Image(systemName: "arrow.right")
-                                .font(Font.system(size: 30, weight: .bold))
-                                .foregroundColor(self.name.count > 0 ? Color(.blue).opacity(0.5) : Color("lightgray"))
-                        }
-                    }
-                }.frame(width: screenwidth, height: screenheight/1.3).offset(y: -100)
-                
-                //MARK: Age 4
-                VStack {
-                    Image("age")
-                        .resizable()
-                        .frame(width: 75, height: 75)
-                    
-                    Text("Enter Your Age")
-                        .font(Font.custom("ProximaNova-Regular", size: 26))
-                        .fontWeight(.semibold)
-                        .foregroundColor(Color(.black))
-                    
-                    DatePicker("", selection: $date, in: closedRange, displayedComponents: .date)
-                        .frame(width: screenwidth - 40)
-                        .colorInvert()
-                        .colorMultiply(Color.black)
-                        .padding(.vertical, 10)
-                        .background(Color(.white).cornerRadius(35).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10)
-                        .shadow(color: .white, radius: 15, x: -10, y: -10))
-                        .padding(.bottom, 10)
-                    
-                    Button(action: {
-                        /*let components = Calendar.current.dateComponents([.year, .month, .day], from: self.date, to: Date())
-                        self.age = String(components.year!)
-                        print(self.date.description.prefix(10))
-                        self.bdate = String(self.date.description.prefix(10))
-                        if Int(self.age) ?? 0 < 18 {
-                            self.msg = "You must be 18 or older to register."
-                            self.alert.toggle()
-                        }
-                        else {*/
-                            self.next -= self.screenwidth
-                            self.count += 1
-                        //}
-                    }) {
-                        Image(systemName: "arrow.right")
-                            .font(Font.system(size: 36, weight: .bold))
-                            .foregroundColor(Calendar.current.dateComponents([.year, .month, .day], from: self.date, to: Date()).year! >= 18 ? Color(.blue).opacity(0.5) : Color("lightgray"))
-                    }.padding(.top, 10)
-                    
-                }.frame(width: screenwidth, height: screenheight/1.3)
-                
-                //MARK: Gender 5
-                VStack(spacing: 20) {
-                    Image("gender")
-                        .resizable()
-                        .scaledToFit()
-                        .padding(10)
-                        .frame(width: 75, height: 75)
-                    
-                    Text("Select Your Gender")
-                        .font(Font.custom("ProximaNova-Regular", size: 26))
-                        .fontWeight(.semibold)
-                        .foregroundColor(Color(.black))
-                    
-                    ZStack {
-                        Color(.white)
-                            .frame(width: 270, height: 60)
-                            .cornerRadius(15)
-                            .shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10)
-                            .shadow(color: .white, radius: 15, x: -10, y: -10)
-                        
-                        if self.genders == 0 {
-                            
-                        }
-                        else {
-                            HStack(spacing: 0) {
-                                RoundedRectangle(cornerRadius: 15).frame(width: 85, height: 55)
-                            }.foregroundColor(Color("lightgray").opacity(0.5)).offset(x: self.genderoffest)
+                                .font(Font.system(size: 36, weight: .bold))
+                                .foregroundColor(!(self.genders == 3 && self.gender.isEmpty || self.genders == 0) ? Color(.blue).opacity(0.5) : Color("lightgray"))
                         }
                         
-                        HStack(spacing: 0) {
-                            
-                            Button(action: {
-                                self.genders = 1
-                                self.genderoffest = -90
-                                self.gender = "Male"
-                            }) {
-                                Text("Male")
-                                    .font(Font.custom("ProximaNova-Regular", size: 20))
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(Color(.black))
-                            }.frame(width: 90)
-                            
-                            Button(action: {
-                                self.genders = 2
-                                self.genderoffest = 0
-                                self.gender = "Female"
-                            }) {
-                                Text("Female")
-                                    .font(Font.custom("ProximaNova-Regular", size: 20))
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(Color(.black))
-                            }.frame(width: 90)
-                            
-                            Button(action: {
-                                self.genders = 3
-                                self.genderoffest = 90
-                                self.gender = ""
-                            }) {
-                                Text("Other")
-                                    .font(Font.custom("ProximaNova-Regular", size: 20))
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(Color(.black))
-                            }.frame(width: 90)
-                            
-                        }
-                        
-                        
-                    }.animation(.spring()).padding(.bottom, self.genders != 3 ? 30 : 0)
+                    }.animation(.spring()).frame(width: screenwidth, height: screenheight/1.3).offset(y: self.genders == 3 ? -80 : -50)
                     
-                    if self.genders == 3 {
-                        Text("Specify Your Gender")
-                            .font(Font.custom("ProximaNova-Regular", size: 20))
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color(.black))
-                        
-                        ZStack {
-                            RoundedRectangle(cornerRadius: 15)
-                                .foregroundColor(.white)
-                                .frame(width: screenwidth - 120, height: 50)
-                                .shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10)
-                                .shadow(color: .white, radius: 15, x: -10, y: -10)
-                            
-                            if self.gender.count < 1 {
-                                Text("Gender")
-                                    .foregroundColor(Color(.black).opacity(0.5))
-                                    .font(Font.custom("ProximaNova-Regular", size: 20))
-                            }
-                            TextField("", text: $gender)
-                                .font(Font.custom("ProximaNova-Regular", size: 20))
-                                .frame(width: screenwidth - 140, height: 50)
-                                .foregroundColor(Color(.black))
-                                .multilineTextAlignment(TextAlignment.center)
-                        }.padding(.bottom, 30)
-                    }
-                    
-                    Button(action: {
-                        /*if self.genders == 3 && self.gender.isEmpty || self.genders == 0 {
-                            
-                        }
-                        else {
-                            self.next -= self.screenwidth
-                            self.count += 1
-                        }*/
-                        self.next -= self.screenwidth
-                        self.count += 1
-                    })  {
-                        Image(systemName: "arrow.right")
-                            .font(Font.system(size: 36, weight: .bold))
-                            .foregroundColor(!(self.genders == 3 && self.gender.isEmpty || self.genders == 0) ? Color(.blue).opacity(0.5) : Color("lightgray"))
-                    }
-                    
-                }.animation(.spring()).frame(width: screenwidth, height: screenheight/1.3).offset(y: self.genders == 3 ? -80 : -50)
-                
-                //MARK: What Matters? 6
-                VStack {
-                    HStack(spacing: 40) {
-                        Image("eye")
-                            .renderingMode(.template)
-                            .resizable()
-                            .frame(width: 75, height: 80)
-                            .foregroundColor(Color("appearance"))
-                        
-                        Image("heart")
-                            .renderingMode(.template)
-                            .resizable()
-                            .frame(width: 75, height: 75)
-                            .foregroundColor(Color("personality"))
-                    }
-                    
-                    Text("Appearance vs Personality")
-                        .font(Font.custom("ProximaNova-Regular", size: 26))
-                        .fontWeight(.semibold)
-                        .foregroundColor(Color(.black))
-                        .multilineTextAlignment(.center)
-                    
-                    Text("(This is how your rating will be calculated)")
-                        .font(Font.custom("ProximaNova-Regular", size: 16))
-                        .fontWeight(.semibold)
-                        .foregroundColor(Color(.darkGray))
-                    
-                    PercentageSlider(percentage: self.$percentage)
-                        .frame(width: 90, height: screenheight/2.25)
-                        .accentColor(Color("personality"))
-                        .padding(10)
-                        .background(Color(.white).cornerRadius(25).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
-                        .padding(.bottom, 25)
-                    
-                    Button(action: {
-                        self.next -= self.screenwidth
-                        self.count += 1
-                    }) {
-                        Image(systemName: "arrow.right")
-                            .font(Font.system(size: 36, weight: .bold))
-                            .foregroundColor(Color(.blue).opacity(0.5))
-                    }
-                }.frame(width: screenwidth, height: screenheight)
-                
-                Group {
-                    //MARK: Rate Yourself 7
+                    //MARK: What Matters? 6
                     VStack {
-                        Image("rating(temp)")
-                            .resizable()
-                            .frame(width: 75, height: 75)
+                        HStack(spacing: 40) {
+                            Image("eye")
+                                .renderingMode(.template)
+                                .resizable()
+                                .frame(width: 75, height: 80)
+                                .foregroundColor(Color("appearance"))
                             
-                        Text("Rate Yourself")
-                            .font(Font.custom("ProximaNova-Regular", size: 24))
+                            Image("heart")
+                                .renderingMode(.template)
+                                .resizable()
+                                .frame(width: 75, height: 75)
+                                .foregroundColor(Color("personality"))
+                        }
+                        
+                        Text("Appearance vs Personality")
+                            .font(Font.custom("ProximaNova-Regular", size: 26))
                             .fontWeight(.semibold)
                             .foregroundColor(Color(.black))
+                            .multilineTextAlignment(.center)
                         
-                        HStack(spacing: 45) {
-                            VerticalSlider(percentage: self.$selfratingappearance, title: "Appearance")
-                                .frame(width: 90, height: screenheight/2.25)
-                                .accentColor(Color("appearance"))
-                                .padding(7.5)
-                                .background(Color(.white).cornerRadius(25).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
-                            
-                            VerticalSlider(percentage: self.$selfratingpersonality, title: "Personality")
-                                .frame(width: 90, height: screenheight/2.25)
-                                .accentColor(Color("personality"))
-                                .padding(7.5)
-                                .background(Color(.white).cornerRadius(25).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
-                        }.padding(.vertical, 25)
+                        Text("(This is how your rating will be calculated)")
+                            .font(Font.custom("ProximaNova-Regular", size: 16))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color(.darkGray))
+                        
+                        PercentageSlider(percentage: self.$percentage)
+                            .frame(width: 90, height: screenheight/2.25)
+                            .accentColor(Color("personality"))
+                            .padding(10)
+                            .background(Color(.white).cornerRadius(25).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
+                            .padding(.bottom, 25)
                         
                         Button(action: {
                             self.next -= self.screenwidth
@@ -788,435 +750,471 @@ struct SignUpView: View {
                         }
                     }.frame(width: screenwidth, height: screenheight)
                     
-                    //MARK: Profile Pictures 8
-                    VStack(spacing: 20) {
+                    Group {
+                        //MARK: Rate Yourself 7
+                        VStack {
+                            Image("rating(temp)")
+                                .resizable()
+                                .frame(width: 75, height: 75)
+                                
+                            Text("Rate Yourself")
+                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.black))
+                            
+                            HStack(spacing: 45) {
+                                VerticalSlider(percentage: self.$selfratingappearance, title: "Appearance")
+                                    .frame(width: 90, height: screenheight/2.25)
+                                    .accentColor(Color("appearance"))
+                                    .padding(7.5)
+                                    .background(Color(.white).cornerRadius(25).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
+                                
+                                VerticalSlider(percentage: self.$selfratingpersonality, title: "Personality")
+                                    .frame(width: 90, height: screenheight/2.25)
+                                    .accentColor(Color("personality"))
+                                    .padding(7.5)
+                                    .background(Color(.white).cornerRadius(25).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
+                            }.padding(.vertical, 25)
+                            
+                            Button(action: {
+                                self.next -= self.screenwidth
+                                self.count += 1
+                            }) {
+                                Image(systemName: "arrow.right")
+                                    .font(Font.system(size: 36, weight: .bold))
+                                    .foregroundColor(Color(.blue).opacity(0.5))
+                            }
+                        }.frame(width: screenwidth, height: screenheight)
                         
-                        Image("profilepic")
-                            .resizable()
-                            .frame(width: 75, height: 75)
+                        //MARK: Profile Pictures 8
+                        VStack(spacing: 20) {
+                            
+                            Image("profilepic")
+                                .resizable()
+                                .frame(width: 75, height: 75)
+                            
+                            Text("Select Four Pictures")
+                                .font(Font.custom("ProximaNova-Regular", size: 26))
+                                .fontWeight(.semibold)
+                                .foregroundColor(.black)
+                            
+                            VStack(spacing: 35) {
+                                HStack(spacing: 35) {
+                                    Button(action: {
+                                        self.picker.toggle()
+                                        self.numimage = 0
+                                    }) {
+                                        if !self.showimage[0] {
+                                            ZStack {
+                                                Color(.white)
+                                                    .frame(width: self.screenwidth*0.267, height: self.screenheight*0.164)
+                                                    .cornerRadius(15)
+                                                Text("1")
+                                                    .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                    .foregroundColor(Color(.darkGray))
+                                            }
+                                        }
+                                        else {
+                                            Image(uiImage: UIImage(data: self.profilepics[0])!)
+                                                .resizable()
+                                                .renderingMode(.original)
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: self.screenwidth*0.267, height: self.screenheight*0.164)
+                                                .cornerRadius(15)
+                                        }
+                                    }.padding(7.5)
+                                    .background(Color(.white).cornerRadius(20).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
+                                    
+                                    Button(action: {
+                                        self.picker.toggle()
+                                        self.numimage = 1
+                                    }) {
+                                        if !self.showimage[1] {
+                                            ZStack {
+                                                Color(.white)
+                                                    .frame(width: self.screenwidth*0.267, height: self.screenheight*0.164)
+                                                    .cornerRadius(15)
+                                                Text("2")
+                                                    .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                    .foregroundColor(Color(.darkGray))
+                                            }
+                                        }
+                                        else {
+                                            Image(uiImage: UIImage(data: self.profilepics[1])!)
+                                                .resizable()
+                                                .renderingMode(.original)
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: self.screenwidth*0.267, height: self.screenheight*0.164)
+                                                .cornerRadius(15)
+                                        }
+                                    }.padding(7.5)
+                                    .background(Color(.white).cornerRadius(20).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
+                                }
+                                HStack(spacing: 35) {
+                                    Button(action: {
+                                        self.picker.toggle()
+                                        self.numimage = 2
+                                    }) {
+                                        if !self.showimage[2] {
+                                            ZStack {
+                                                Color(.white)
+                                                    .frame(width: self.screenwidth*0.267, height: self.screenheight*0.164)
+                                                    .cornerRadius(15)
+                                                Text("3")
+                                                    .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                    .foregroundColor(Color(.darkGray))
+                                            }
+                                        }
+                                        else {
+                                            Image(uiImage: UIImage(data: self.profilepics[2])!)
+                                                .resizable()
+                                                .renderingMode(.original)
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: self.screenwidth*0.267, height: self.screenheight*0.164)
+                                                .cornerRadius(15)
+                                        }
+                                    }.padding(7.5)
+                                    .background(Color(.white).cornerRadius(20).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
+                                    
+                                    Button(action: {
+                                        self.picker.toggle()
+                                        self.numimage = 3
+                                    }) {
+                                        if !self.showimage[3] {
+                                            ZStack {
+                                                Color(.white)
+                                                    .frame(width: self.screenwidth*0.267, height: self.screenheight*0.164)
+                                                    .cornerRadius(15)
+                                                Text("4")
+                                                    .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                    .foregroundColor(Color(.darkGray))
+                                            }
+                                        }
+                                        else {
+                                            Image(uiImage: UIImage(data: self.profilepics[3])!)
+                                                .resizable()
+                                                .renderingMode(.original)
+                                                .aspectRatio(contentMode: .fill)
+                                                .frame(width: self.screenwidth*0.267, height: self.screenheight*0.164)
+                                                .cornerRadius(15)
+                                        }
+                                    }.padding(7.5)
+                                    .background(Color(.white).cornerRadius(20).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
+                                    
+                                }
+                            }.padding(20)
+                            
+                            Button(action: {
+                                for val in self.showimage {
+                                    if !val {
+                                        /*self.msg = "You need to select four pictures."
+                                        self.alert.toggle()*/
+                                        return
+                                    }
+                                }
+                                self.next -= self.screenwidth
+                                self.count += 1
+                            }) {
+                                Image(systemName: "arrow.right")
+                                    .font(Font.system(size: 36, weight: .bold))
+                                    .foregroundColor((self.profilepics[0].count != 0 && self.profilepics[1].count != 0 && self.profilepics[2].count != 0 && self.profilepics[3].count != 0) ? Color(.blue).opacity(0.5) : Color("lightgray"))
+                            }
+                        }.frame(width: screenwidth, height: screenheight)
+                    }
+                    
+                    //MARK: Prompts Select 9
+                    VStack(spacing: 10) {
                         
-                        Text("Select Four Pictures")
-                            .font(Font.custom("ProximaNova-Regular", size: 26))
+                        Text("Select Topics To Create Your Bio")
+                            .font(Font.custom("ProximaNova-Regular", size: 24))
                             .fontWeight(.semibold)
+                            .padding(.horizontal, 20)
                             .foregroundColor(.black)
+                            .padding(.top, 20)
+                            .multilineTextAlignment(.center)
                         
-                        VStack(spacing: 35) {
-                            HStack(spacing: 35) {
-                                Button(action: {
-                                    self.picker.toggle()
-                                    self.numimage = 0
-                                }) {
-                                    if !self.showimage[0] {
-                                        ZStack {
-                                            Color(.white)
-                                                .frame(width: self.screenwidth*0.267, height: self.screenheight*0.164)
-                                                .cornerRadius(15)
-                                            Text("1")
-                                                .font(Font.custom("ProximaNova-Regular", size: 16))
-                                                .foregroundColor(Color(.darkGray))
-                                        }
-                                    }
-                                    else {
-                                        Image(uiImage: UIImage(data: self.profilepics[0])!)
-                                            .resizable()
-                                            .renderingMode(.original)
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: self.screenwidth*0.267, height: self.screenheight*0.164)
-                                            .cornerRadius(15)
-                                    }
-                                }.padding(7.5)
-                                .background(Color(.white).cornerRadius(20).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
-                                
-                                Button(action: {
-                                    self.picker.toggle()
-                                    self.numimage = 1
-                                }) {
-                                    if !self.showimage[1] {
-                                        ZStack {
-                                            Color(.white)
-                                                .frame(width: self.screenwidth*0.267, height: self.screenheight*0.164)
-                                                .cornerRadius(15)
-                                            Text("2")
-                                                .font(Font.custom("ProximaNova-Regular", size: 16))
-                                                .foregroundColor(Color(.darkGray))
-                                        }
-                                    }
-                                    else {
-                                        Image(uiImage: UIImage(data: self.profilepics[1])!)
-                                            .resizable()
-                                            .renderingMode(.original)
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: self.screenwidth*0.267, height: self.screenheight*0.164)
-                                            .cornerRadius(15)
-                                    }
-                                }.padding(7.5)
-                                .background(Color(.white).cornerRadius(20).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
+                        Text("(Press on the topics to bring up more info. Press the checkmark to select the topics you like and then press the pencil to edit them.)")
+                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                            .fontWeight(.semibold)
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(Color(.darkGray))
+                            .padding(.horizontal, 25)
+                        
+                        ScrollView(.vertical, showsIndicators: false) {
+                            ForEach(biocards, id: \.self) { title in
+                                BioCards(selected: self.$selectedprompts, showinfo: self.$selectedinfo, text: self.$text, index: (title.prefix(2) as NSString).integerValue, title: String(title.suffix(title.count-2)))
                             }
-                            HStack(spacing: 35) {
-                                Button(action: {
-                                    self.picker.toggle()
-                                    self.numimage = 2
-                                }) {
-                                    if !self.showimage[2] {
-                                        ZStack {
-                                            Color(.white)
-                                                .frame(width: self.screenwidth*0.267, height: self.screenheight*0.164)
-                                                .cornerRadius(15)
-                                            Text("3")
-                                                .font(Font.custom("ProximaNova-Regular", size: 16))
-                                                .foregroundColor(Color(.darkGray))
-                                        }
-                                    }
-                                    else {
-                                        Image(uiImage: UIImage(data: self.profilepics[2])!)
-                                            .resizable()
-                                            .renderingMode(.original)
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: self.screenwidth*0.267, height: self.screenheight*0.164)
-                                            .cornerRadius(15)
-                                    }
-                                }.padding(7.5)
-                                .background(Color(.white).cornerRadius(20).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
-                                
-                                Button(action: {
-                                    self.picker.toggle()
-                                    self.numimage = 3
-                                }) {
-                                    if !self.showimage[3] {
-                                        ZStack {
-                                            Color(.white)
-                                                .frame(width: self.screenwidth*0.267, height: self.screenheight*0.164)
-                                                .cornerRadius(15)
-                                            Text("4")
-                                                .font(Font.custom("ProximaNova-Regular", size: 16))
-                                                .foregroundColor(Color(.darkGray))
-                                        }
-                                    }
-                                    else {
-                                        Image(uiImage: UIImage(data: self.profilepics[3])!)
-                                            .resizable()
-                                            .renderingMode(.original)
-                                            .aspectRatio(contentMode: .fill)
-                                            .frame(width: self.screenwidth*0.267, height: self.screenheight*0.164)
-                                            .cornerRadius(15)
-                                    }
-                                }.padding(7.5)
-                                .background(Color(.white).cornerRadius(20).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
-                                
-                            }
-                        }.padding(20)
-                            //.background(Color(.white).opacity(0.6).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
-                            //.cornerRadius(25)
+                        }.padding(.vertical, 15)
+                            .frame(width: screenwidth - 60, height: screenheight/1.75)
+                            .background(Color("lightgray").opacity(0.6).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
+                            .cornerRadius(35)
                         
                         Button(action: {
-                            /*for val in self.showimage {
-                                if !val {
-                                    self.msg = "You need to select four pictures."
-                                    self.alert.toggle()
-                                    return
+                            var check = true
+                            var length = true
+                            for num in 0...9 {
+                                if self.selectedprompts[num] {
+                                    if self.text[num].isEmpty {
+                                        check = false
+                                    }
+                                    if self.text[num].count > 200 {
+                                        length = false
+                                    }
                                 }
-                            }*/
-                            self.next -= self.screenwidth
-                            self.count += 1
+                            }
+                            if check && length {
+                                for num in self.biocards {
+                                    let index = (num.prefix(2) as NSString).integerValue
+                                    if self.selectedprompts[index] {
+                                        self.text[index] = "1" + String(num.prefix(2)) + self.text[index]
+                                    }
+                                }
+                                print(self.text)
+                                self.next -= self.screenwidth
+                                self.count += 1
+                            }
+                            else if !check {
+                                self.msg = "You need to finish filling out the prompts you selected."
+                                self.alert.toggle()
+                            }
+                            else if !length {
+                                self.msg = "One of your prompt descriptions is too long. (No more than 200 characters)"
+                                self.alert.toggle()
+                            }
                         }) {
                             Image(systemName: "arrow.right")
                                 .font(Font.system(size: 36, weight: .bold))
-                                .foregroundColor((self.profilepics[0].count != 0 && self.profilepics[1].count != 0 && self.profilepics[2].count != 0 && self.profilepics[3].count != 0) ? Color(.blue).opacity(0.5) : Color("lightgray"))
+                                .foregroundColor(Color(.blue).opacity(0.5))
                         }
                     }.frame(width: screenwidth, height: screenheight)
+                    
+                    //MARK: Socials 10
+                    VStack {
+                        Text("Socials")
+                            .font(Font.custom("ProximaNova-Regular", size: 30))
+                            .fontWeight(.semibold)
+                            .foregroundColor(.black)
+                        Text("(These social media handles will be public.)")
+                            .font(Font.custom("ProximaNova-Regular", size: 16))
+                            .fontWeight(.semibold)
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(Color(.darkGray))
+                            .padding([.horizontal, .bottom], 20)
+                        VStack(spacing: 20) {
+                            HStack {
+                                Image("instagram")
+                                    .resizable()
+                                    .frame(width: 45, height: 45)
+                                    .padding(10)
+                                if self.instagram {
+                                    ZStack {
+                                        if self.instagramhandle.count < 1 {
+                                            Text("Instagram Handle")
+                                                .font(Font.custom("ProximaNova-Regular", size: 18))
+                                                .foregroundColor(.black)
+                                                .opacity(0.5)
+                                        }
+                                        TextField("", text: self.$instagramhandle)
+                                            .font(Font.custom("ProximaNova-Regular", size: 18))
+                                            .foregroundColor(.black)
+                                            .padding(10)
+                                            .frame(width: 140, height: 40)
+                                            .multilineTextAlignment(.center)
+                                    }.padding(5).background(Color("lightgray").opacity(0.5).cornerRadius(15))
+                                }
+                                Button(action: {
+                                    self.instagram.toggle()
+                                }) {
+                                    Image(systemName: self.instagram ? "xmark" : "checkmark")
+                                        .font(Font.system(size: 36, weight: .bold))
+                                        .foregroundColor(self.instagram ? Color("personality") : .gray)
+                                }.padding(10).buttonStyle(PlainButtonStyle())
+                            }.background(Color(.white).cornerRadius(25).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
+                            HStack {
+                                Image("twitter")
+                                    .resizable()
+                                    .frame(width: 45, height: 45)
+                                    .padding(10)
+                                if self.twitter {
+                                    ZStack {
+                                        if self.twitterhandle.count < 1 {
+                                            Text("Twitter Handle")
+                                                .font(Font.custom("ProximaNova-Regular", size: 18))
+                                                .foregroundColor(.black)
+                                                .opacity(0.5)
+                                        }
+                                        TextField("", text: self.$twitterhandle)
+                                            .font(Font.custom("ProximaNova-Regular", size: 18))
+                                            .foregroundColor(.black)
+                                            .padding(10)
+                                            .frame(width: 140, height: 40)
+                                            .multilineTextAlignment(.center)
+                                    }.padding(5).background(Color("lightgray").opacity(0.5).cornerRadius(15))
+                                }
+                                Button(action: {
+                                    self.twitter.toggle()
+                                }) {
+                                    Image(systemName: self.twitter ? "xmark" : "checkmark")
+                                        .font(Font.system(size: 36, weight: .bold))
+                                        .foregroundColor(self.twitter ? Color("personality") : .gray)
+                                }.padding(10).buttonStyle(PlainButtonStyle())
+                            }.background(Color(.white).cornerRadius(25).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
+                            HStack {
+                                Image("snapchat")
+                                    .resizable()
+                                    .frame(width: 45, height: 45)
+                                    .padding(10)
+                                if self.snapchat {
+                                    ZStack {
+                                        if self.snapchathandle.count < 1 {
+                                            Text("Snapchat Handle")
+                                                .font(Font.custom("ProximaNova-Regular", size: 18))
+                                                .foregroundColor(.black)
+                                                .opacity(0.5)
+                                        }
+                                        TextField("", text: self.$snapchathandle)
+                                            .font(Font.custom("ProximaNova-Regular", size: 18))
+                                            .foregroundColor(.black)
+                                            .padding(10)
+                                            .frame(width: 140, height: 40)
+                                            .multilineTextAlignment(.center)
+                                    }.padding(5).background(Color("lightgray").opacity(0.5).cornerRadius(15))
+                                }
+                                Button(action: {
+                                    self.snapchat.toggle()
+                                }) {
+                                    Image(systemName: self.snapchat ? "xmark" : "checkmark")
+                                        .font(Font.system(size: 36, weight: .bold))
+                                        .foregroundColor(self.snapchat ? Color("personality") : .gray)
+                                }.padding(10).buttonStyle(PlainButtonStyle())
+                            }.background(Color(.white).cornerRadius(25).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
+                        }
+                        
+                        Button(action: {
+                            if self.instagram && self.instagramhandle.isEmpty || self.twitter && self.twitterhandle.isEmpty || self.snapchat && self.snapchathandle.isEmpty {
+                                
+                            }
+                            else {
+                                if !self.instagram {
+                                    self.instagramhandle = "N/A"
+                                }
+                                if !self.twitter {
+                                    self.twitterhandle = "N/A"
+                                }
+                                if !self.snapchat {
+                                    self.snapchathandle = "N/A"
+                                }
+                                let socials = [self.instagramhandle, self.snapchathandle, self.twitterhandle]
+                                
+                                let per = Double(self.percentage/10).truncate(places: 1)
+                                
+                                let overall = Double(Double(self.selfratingpersonality)*per + Double(self.selfratingappearance)*Double(1-per)).truncate(places: 1)
+                                
+                                CreateUser(name: self.name, bdate: self.bdate, gender: self.gender, percentage: per, overallrating: overall, appearancerating: Double(self.selfratingappearance).truncate(places: 1), personalityrating: Double(self.selfratingpersonality).truncate(places: 1), profilepics: self.profilepics, photopostion: self.position, bio: self.text, socials: socials) { (val) in
+                                    if val {
+                                        self.showprofile.toggle()
+                                        self.next -= self.screenwidth
+                                        self.count += 1
+                                        self.observer.signedup()
+                                    }
+                                }
+                            }
+                        }) {
+                            Image(systemName: "arrow.right")
+                                .font(Font.system(size: 36, weight: .bold))
+                                .foregroundColor(!(self.instagram && self.instagramhandle.isEmpty || self.twitter && self.twitterhandle.isEmpty || self.snapchat && self.snapchathandle.isEmpty) ? Color(.blue).opacity(0.5) : Color("lightgray"))
+                        }.padding(.top, 20)
+                    }.frame(width: screenwidth, height: screenheight).offset(y: -80)
+                    
+                    //MARK: Your Profile 11
+                    VStack(spacing: 0) {
+                        Spacer()
+                        if self.showprofile {
+                            ZStack {
+                                /*VStack {
+                                    Profile(images: self.$profilepics, bio: self.$text, selected: self.$selectedprompts, name: self.$name, age: self.$age)
+                                        .scaleEffect(0.93)
+                                        .padding(.top, 30)
+                                }.frame(width: self.screenwidth, height: self.screenheight)*/
+                                VStack {
+                                    Text("Your Profile")
+                                        .font(Font.custom("ProximaNova-Regular", size: 24))
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(.white)
+                                        .padding(.top, 40)
+                                    Spacer()
+                                    Button(action: {
+                                        AddImages()
+                                        self.observer.signin()
+                                        self.observer.refreshUsers()
+                                        UserDefaults.standard.set(false, forKey: "signup")
+                                        UserDefaults.standard.set(true, forKey: "status")
+                                        UserDefaults.standard.set(false, forKey: "notsignedup")
+                                        NotificationCenter.default.post(name: NSNotification.Name("StatusChange"), object: nil)
+                                    }) {
+                                        Text("Next")
+                                            .font(Font.custom("ProximaNova-Regular", size: 20))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color("personality"))
+                                            .padding(.vertical, 10)
+                                            .padding(.horizontal, 30)
+                                    }.background(Color(.white).cornerRadius(20))
+                                    .shadow(color: .white, radius: 40, x: 0, y: 0)
+                                        .padding(.bottom, 30)
+                                }
+                            }.frame(width: self.screenwidth)
+                        }
+                    }.frame(width: screenwidth, height: screenheight)
+                    
+                }.animation(.spring()).offset(x: screenwidth*5 + next).sheet(isPresented: self.$picker) {
+                    ImagePicker(picker: self.$picker, images: self.$profilepics, showimage: self.$showimage, num: self.$numimage)
                 }
                 
-                //MARK: Prompts Select 9
-                VStack(spacing: 10) {
-                    
-                    Text("Select Topics To Create Your Bio")
-                        .font(Font.custom("ProximaNova-Regular", size: 24))
-                        .fontWeight(.semibold)
-                        .padding(.horizontal, 20)
-                        .foregroundColor(.black)
-                        .padding(.top, 20)
-                        .multilineTextAlignment(.center)
-                    
-                    Text("(Press on the topics to bring up more info. Press the checkmark to select the topics you like and then press the pencil to edit them.)")
-                        .font(Font.custom("ProximaNova-Regular", size: 14))
-                        .fontWeight(.semibold)
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(Color(.darkGray))
-                        .padding(.horizontal, 25)
-                    
-                    ScrollView(.vertical, showsIndicators: false) {
-                        ForEach(biocards, id: \.self) { title in
-                            BioCards(selected: self.$selectedprompts, showinfo: self.$selectedinfo, text: self.$text, index: (title.prefix(2) as NSString).integerValue, title: String(title.suffix(title.count-2)))
-                        }
-                    }.padding(.vertical, 15)
-                        .frame(width: screenwidth - 60, height: screenheight/1.75)
-                        .background(Color("lightgray").opacity(0.6).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
-                        .cornerRadius(35)
-                    
-                    Button(action: {
-                        var check = true
-                        var length = true
-                        for num in 0...9 {
-                            if self.selectedprompts[num] {
-                                if self.text[num].isEmpty {
-                                    check = false
-                                }
-                                if self.text[num].count > 200 {
-                                    length = false
-                                }
-                            }
-                        }
-                        if check && length {
-                            for num in self.biocards {
-                                let index = (num.prefix(2) as NSString).integerValue
-                                if self.selectedprompts[index] {
-                                    self.text[index] = "1" + String(num.prefix(2)) + self.text[index]
-                                }
-                            }
-                            print(self.text)
-                            self.next -= self.screenwidth
-                            self.count += 1
-                        }
-                        else if !check {
-                            self.msg = "You need to finish filling out the prompts you selected."
-                            self.alert.toggle()
-                        }
-                        else if !length {
-                            self.msg = "One of your prompt descriptions is too long. (No more than 200 characters)"
-                            self.alert.toggle()
-                        }
-                    }) {
-                        Image(systemName: "arrow.right")
-                            .font(Font.system(size: 36, weight: .bold))
-                            .foregroundColor(Color(.blue).opacity(0.5))
-                    }
-                }.frame(width: screenwidth, height: screenheight)
-                
-                //MARK: Socials 10
                 VStack {
-                    Text("Socials")
-                        .font(Font.custom("ProximaNova-Regular", size: 30))
-                        .fontWeight(.semibold)
-                        .foregroundColor(.black)
-                    Text("(These social media handles will be public.)")
-                        .font(Font.custom("ProximaNova-Regular", size: 16))
-                        .fontWeight(.semibold)
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(Color(.darkGray))
-                        .padding([.horizontal, .bottom], 20)
-                    VStack(spacing: 20) {
-                        HStack {
-                            Image("instagram")
+                    //MARK: Back Button
+                    HStack(spacing: 5) {
+                        
+                        Button(action: {
+                            if self.count == 1 || self.count == 3 {
+                                self.signup.toggle()
+                            }
+                            else {
+                                self.next += self.screenwidth
+                                self.count -= 1
+                            }
+                        }) {
+                            Image("back")
                                 .resizable()
-                                .frame(width: 45, height: 45)
-                                .padding(10)
-                            if self.instagram {
-                                ZStack {
-                                    if self.instagramhandle.count < 1 {
-                                        Text("Instagram Handle")
-                                            .font(Font.custom("ProximaNova-Regular", size: 18))
-                                            .foregroundColor(.black)
-                                            .opacity(0.5)
-                                    }
-                                    TextField("", text: self.$instagramhandle)
-                                        .font(Font.custom("ProximaNova-Regular", size: 18))
-                                        .foregroundColor(.black)
-                                        .padding(10)
-                                        .frame(width: 140, height: 40)
-                                        .multilineTextAlignment(.center)
-                                }.padding(5).background(Color("lightgray").opacity(0.5).cornerRadius(15))
+                                .frame(width: 30, height: 30)
+                                .foregroundColor(Color(.darkGray))
+                            /*if self.count == 11 {
+                                
                             }
-                            Button(action: {
-                                self.instagram.toggle()
-                            }) {
-                                Image(systemName: self.instagram ? "xmark" : "checkmark")
-                                    .font(Font.system(size: 36, weight: .bold))
-                                    .foregroundColor(self.instagram ? Color("personality") : .gray)
-                            }.padding(10).buttonStyle(PlainButtonStyle())
-                        }.background(Color(.white).cornerRadius(25).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
-                        HStack {
-                            Image("twitter")
-                                .resizable()
-                                .frame(width: 45, height: 45)
-                                .padding(10)
-                            if self.twitter {
-                                ZStack {
-                                    if self.twitterhandle.count < 1 {
-                                        Text("Twitter Handle")
-                                            .font(Font.custom("ProximaNova-Regular", size: 18))
-                                            .foregroundColor(.black)
-                                            .opacity(0.5)
-                                    }
-                                    TextField("", text: self.$twitterhandle)
-                                        .font(Font.custom("ProximaNova-Regular", size: 18))
-                                        .foregroundColor(.black)
-                                        .padding(10)
-                                        .frame(width: 140, height: 40)
-                                        .multilineTextAlignment(.center)
-                                }.padding(5).background(Color("lightgray").opacity(0.5).cornerRadius(15))
-                            }
-                            Button(action: {
-                                self.twitter.toggle()
-                            }) {
-                                Image(systemName: self.twitter ? "xmark" : "checkmark")
-                                    .font(Font.system(size: 36, weight: .bold))
-                                    .foregroundColor(self.twitter ? Color("personality") : .gray)
-                            }.padding(10).buttonStyle(PlainButtonStyle())
-                        }.background(Color(.white).cornerRadius(25).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
-                        HStack {
-                            Image("snapchat")
-                                .resizable()
-                                .frame(width: 45, height: 45)
-                                .padding(10)
-                            if self.snapchat {
-                                ZStack {
-                                    if self.snapchathandle.count < 1 {
-                                        Text("Snapchat Handle")
-                                            .font(Font.custom("ProximaNova-Regular", size: 18))
-                                            .foregroundColor(.black)
-                                            .opacity(0.5)
-                                    }
-                                    TextField("", text: self.$snapchathandle)
-                                        .font(Font.custom("ProximaNova-Regular", size: 18))
-                                        .foregroundColor(.black)
-                                        .padding(10)
-                                        .frame(width: 140, height: 40)
-                                        .multilineTextAlignment(.center)
-                                }.padding(5).background(Color("lightgray").opacity(0.5).cornerRadius(15))
-                            }
-                            Button(action: {
-                                self.snapchat.toggle()
-                            }) {
-                                Image(systemName: self.snapchat ? "xmark" : "checkmark")
-                                    .font(Font.system(size: 36, weight: .bold))
-                                    .foregroundColor(self.snapchat ? Color("personality") : .gray)
-                            }.padding(10).buttonStyle(PlainButtonStyle())
-                        }.background(Color(.white).cornerRadius(25).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
-                    }
-                    
-                    Button(action: {
-                        if self.instagram && self.instagramhandle.isEmpty || self.twitter && self.twitterhandle.isEmpty || self.snapchat && self.snapchathandle.isEmpty {
-                            
-                        }
-                        else {
-                            if !self.instagram {
-                                self.instagramhandle = "N/A"
-                            }
-                            if !self.twitter {
-                                self.twitterhandle = "N/A"
-                            }
-                            if !self.snapchat {
-                                self.snapchathandle = "N/A"
-                            }
-                            let socials = [self.instagramhandle, self.snapchathandle, self.twitterhandle]
-                            
-                            let per = Double(self.percentage/10).truncate(places: 1)
-                            
-                            let overall = Double(Double(self.selfratingpersonality)*per + Double(self.selfratingappearance)*Double(1-per)).truncate(places: 1)
-                            
-                            CreateUser(name: self.name, bdate: self.bdate, gender: self.gender, percentage: per, overallrating: overall, appearancerating: Double(self.selfratingappearance).truncate(places: 1), personalityrating: Double(self.selfratingpersonality).truncate(places: 1), profilepics: self.profilepics, photopostion: self.position, bio: self.text, socials: socials) { (val) in
-                                if val {
-                                    self.showprofile.toggle()
-                                    self.next -= self.screenwidth
-                                    self.count += 1
-                                    self.observer.signedup()
-                                }
-                            }
-                        }
-                    }) {
-                        Image(systemName: "arrow.right")
-                            .font(Font.system(size: 36, weight: .bold))
-                            .foregroundColor(!(self.instagram && self.instagramhandle.isEmpty || self.twitter && self.twitterhandle.isEmpty || self.snapchat && self.snapchathandle.isEmpty) ? Color(.blue).opacity(0.5) : Color("lightgray"))
-                    }.padding(.top, 20)
-                }.frame(width: screenwidth, height: screenheight).offset(y: -80)
-                
-                //MARK: Your Profile 11
-                VStack(spacing: 0) {
-                    Spacer()
-                    if self.showprofile {
-                        ZStack {
-                            VStack {
-                                Profile(images: self.$profilepics, bio: self.$text, selected: self.$selectedprompts, name: self.$name, age: self.$age)
-                                    .scaleEffect(0.93)
-                                    .padding(.top, 30)
-                            }.frame(width: self.screenwidth, height: self.screenheight)
-                            VStack {
-                                Text("Your Profile")
-                                    .font(Font.custom("ProximaNova-Regular", size: 24))
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.white)
-                                    .padding(.top, 40)
-                                Spacer()
-                                Button(action: {
-                                    AddImages()
-                                    self.observer.relogin()
-                                    UserDefaults.standard.set(false, forKey: "signup")
-                                    UserDefaults.standard.set(true, forKey: "status")
-                                    UserDefaults.standard.set(false, forKey: "notsignedup")
-                                    NotificationCenter.default.post(name: NSNotification.Name("StatusChange"), object: nil)
-                                }) {
-                                    Text("Next")
-                                        .font(Font.custom("ProximaNova-Regular", size: 20))
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(Color("personality"))
-                                        .padding(.vertical, 10)
-                                        .padding(.horizontal, 30)
-                                }.background(Color(.white).cornerRadius(20))
-                                .shadow(color: .white, radius: 40, x: 0, y: 0)
-                                    .padding(.bottom, 30)
-                            }
-                        }.frame(width: self.screenwidth)
-                    }
-                }.frame(width: screenwidth, height: screenheight)
-                
-            }.animation(.spring()).offset(x: screenwidth*5 + next).sheet(isPresented: self.$picker) {
-                ImagePicker(picker: self.$picker, images: self.$profilepics, showimage: self.$showimage, num: self.$numimage)
-            }
-            
-            VStack {
-                //MARK: Back Button
-                HStack(spacing: 5) {
-                    
-                    Button(action: {
-                        if self.count == 1 || self.count == 3 {
-                            self.signup.toggle()
-                        }
-                        else {
-                            self.next += self.screenwidth
-                            self.count -= 1
-                        }
-                    }) {
-                        Image("back")
-                            .resizable()
-                            .frame(width: 30, height: 30)
+                            else {
+                                Image(systemName: "chevron.left.circle")
+                                    .resizable()
+                                    .frame(width: 45, height: 45)
+                                    .foregroundColor(Color(.white))
+                            }*/
+                        }.padding(.horizontal, 15)
+                        Text("Sign Up")
+                            .font(Font.custom("ProximaNova-Regular", size: 36))
+                            .fontWeight(.semibold)
                             .foregroundColor(Color(.darkGray))
-                        /*if self.count == 11 {
-                            
-                        }
-                        else {
-                            Image(systemName: "chevron.left.circle")
-                                .resizable()
-                                .frame(width: 45, height: 45)
-                                .foregroundColor(Color(.white))
-                        }*/
-                    }.padding(.horizontal, 15)
-                    Text("Sign Up")
-                        .font(Font.custom("ProximaNova-Regular", size: 36))
-                        .fontWeight(.semibold)
-                        .foregroundColor(Color(.darkGray))
+                        Spacer()
+                    }.frame(width: screenwidth).padding(.top, screenheight*0.055)
+                    
                     Spacer()
-                }.frame(width: screenwidth).padding(.top, screenheight*0.055)
-                
-                Spacer()
-                
-            }.animation(.easeInOut)
-        }.navigationBarBackButtonHidden(true)
-        .navigationBarTitle("")
-        .navigationBarHidden(true)
-            .background(LinearGradient(gradient: Gradient(colors: [Color(.white), Color("lightgray")]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all))
-            .alert(isPresented: $alert) {
-            Alert(title: Text("Error"), message: Text(self.msg), dismissButton: .default(Text("OK")))
-        }
+                    
+                }.animation(.easeInOut)
+            }.navigationBarBackButtonHidden(true)
+            .navigationBarTitle("")
+            .navigationBarHidden(true)
+                .background(LinearGradient(gradient: Gradient(colors: [Color(.white), Color("lightgray")]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all))
+                .alert(isPresented: $alert) {
+                Alert(title: Text("Error"), message: Text(self.msg), dismissButton: .default(Text("OK")))
+            }.offset(y: self.logged ? -screenheight*1.25 : 0).animation(.spring())
+        }.background(Color("personality").edgesIgnoringSafeArea(.all))
     }
 }
 
@@ -1698,47 +1696,6 @@ struct HomeView: View {
                                                     Spacer().frame(width: ((self.screenwidth/20)*10) - (self.screenwidth/20)*CGFloat((self.observer.userrates[self.unlockindex].prefix(9).suffix(3) as NSString).doubleValue))
                                                 }.frame(width: self.screenwidth/2).background(Color("lightgray").cornerRadius(5)).cornerRadius(20)
                                             }
-                                            
-                                            
-                                            /*VStack(spacing: 5) {
-                                                Text(String((self.observer.userrates[self.unlockindex].prefix(9).suffix(3) as NSString).doubleValue))
-                                                    .font(Font.custom("ProximaNova-Regular", size: 26))
-                                                    .fontWeight(.bold)
-                                                    .foregroundColor(Color("purp"))
-                                                    .padding(.top, 10)
-                                                HStack(spacing: 20) {
-                                                    if self.observer.numrates >= 0 {
-                                                        VStack(spacing: 0) {
-                                                            Image("eye")
-                                                                .renderingMode(.template)
-                                                                .resizable()
-                                                                .frame(width: 25, height: 25)
-                                                                .foregroundColor(Color("appearance"))
-                                                            Text(String((self.observer.userrates[self.unlockindex].prefix(3) as NSString).doubleValue))
-                                                                .font(Font.custom("ProximaNova-Regular", size: 20))
-                                                                .fontWeight(.semibold)
-                                                                .lineLimit(1)
-                                                                .frame(height: 20)
-                                                                .minimumScaleFactor(0.02)
-                                                                .foregroundColor(Color("appearance"))
-                                                        }
-                                                        VStack(spacing: 0) {
-                                                            Image("heart")
-                                                                .renderingMode(.template)
-                                                                .resizable()
-                                                                .frame(width: 25, height: 25)
-                                                                .foregroundColor(Color("personality"))
-                                                            Text(String((self.observer.userrates[self.unlockindex].prefix(6).suffix(3) as NSString).doubleValue))
-                                                                .font(Font.custom("ProximaNova-Regular", size: 20))
-                                                                .fontWeight(.semibold)
-                                                                .lineLimit(1)
-                                                                .frame(height: 20)
-                                                                .minimumScaleFactor(0.02)
-                                                                .foregroundColor(Color("personality"))
-                                                        }
-                                                    }
-                                                }
-                                            }*/
                                         }.frame(width: screenwidth/1.5)
                                     }
                                     else if self.confirm1 {
@@ -1785,7 +1742,7 @@ struct HomeView: View {
                                                     self.confirm = false
                                                     self.confirm1 = false
                                                     self.removerating = false
-                                                    /*self.observer.numrates -= 1
+                                                    self.observer.numrates -= 1
                                                     
                                                     self.observer.comments.remove(at: self.unlockindex)
                                                     self.observer.userrates.remove(at: self.unlockindex)
@@ -1801,13 +1758,13 @@ struct HomeView: View {
                                                         atotal += CGFloat((num.prefix(3) as NSString).doubleValue)
                                                         ptotal += CGFloat((num.prefix(6).suffix(3) as NSString).doubleValue)
                                                         ototal += CGFloat((num.prefix(9).suffix(3) as NSString).doubleValue)
-                                                    }*/
+                                                    }
                                                     self.observer.keys -= 3
-                                                    /*self.observer.rating = ratingtype(overall: ototal/total, appearance: atotal/total, personality: ptotal/total)
-                                                    self.observer.myprofile.OverallRating = Double(ototal/total)
-                                                    self.observer.myprofile.AppearanceRating = Double(atotal/total)
-                                                    self.observer.myprofile.PersonalityRating = Double(ptotal/total)*/
-                                                    //db.collection("users").document(uid!).updateData(["Rates": self.observer.userrates, "Comments": self.observer.comments, "Lock": self.observer.lock, "OverallRating": ototal/total, "AppearanceRating": atotal/total, "PersonalityRating": ptotal/total, "Keys": self.observer.keys])
+                                                    self.observer.rating = ratingtype(overall: ototal/total, appearance: atotal/total, personality: ptotal/total)
+                                                    self.observer.myprofile.OverallRating = Double(ototal/total).truncate(places: 1)
+                                                    self.observer.myprofile.AppearanceRating = Double(atotal/total).truncate(places: 1)
+                                                    self.observer.myprofile.PersonalityRating = Double(ptotal/total).truncate(places: 1)
+                                                    db.collection("users").document(uid!).updateData(["Rates": self.observer.userrates, "Comments": self.observer.comments, "Lock": self.observer.lock, "OverallRating": ototal/total, "AppearanceRating": atotal/total, "PersonalityRating": ptotal/total, "Keys": self.observer.keys])
                                                     db.collection("users").document(uid!).updateData(["Keys": self.observer.keys])
                                                 }
                                                 else {
@@ -2224,13 +2181,6 @@ struct RatingView: View {
                                 self.unlocksocials = false
                                 self.wait = false
                             }) {
-                                /*Text("Skip")
-                                    .font(Font.custom("ProximaNova-Regular", size: 24))
-                                    .fontWeight(.semibold)
-                                    .padding(10).padding(.horizontal, 30)
-                                    .foregroundColor(.black)
-                                    .background(Color(.white).cornerRadius(30))
-                                    .shadow(color: Color("lightgray"), radius: 10)*/
                                 VStack(spacing: 0) {
                                     Image("skip")
                                         .renderingMode(.template)
@@ -2463,7 +2413,7 @@ struct RatingView: View {
                         Button(action: {
                             self.rating1.toggle()
                         }) {
-                            Image("back")//systemName: "chevron.left")
+                            Image("back")
                                 .resizable()
                                 .frame(width: 37, height: 35)
                                 .foregroundColor(Color(.gray))
@@ -2569,7 +2519,7 @@ struct RatingView: View {
                                 self.bio = false
                                 self.next.toggle()
                                 self.comment = "No Comment"
-                                //UpdateRating(user: self.observer.users[self.observer.rated], appearance: Double(self.appearance), personality: Double(self.personality), keys: self.observer.keys, comment: self.comment)
+                                UpdateRating(user: self.observer.users[self.observer.rated], appearance: Double(self.appearance), personality: Double(self.personality), keys: self.observer.keys, comment: self.comment)
                                 self.showrating = false
                                 self.showsocials = false
                                 self.count = 0
@@ -2622,7 +2572,7 @@ struct RatingView: View {
                                 self.showcomment = false
                                 self.bio = false
                                 self.next.toggle()
-                                //UpdateRating(user: self.observer.users[self.observer.rated], appearance: Double(self.appearance), personality: Double(self.personality), keys: self.observer.keys, comment: self.comment)
+                                UpdateRating(user: self.observer.users[self.observer.rated], appearance: Double(self.appearance), personality: Double(self.personality), keys: self.observer.keys, comment: self.comment)
                                 self.showrating = false
                                 self.showsocials = false
                                 self.count = 0
@@ -2658,11 +2608,12 @@ struct RatingView: View {
                                     .fontWeight(.semibold)
                                     .foregroundColor(Color(.black))
                             }.frame(width: self.screenwidth/3.25 - 5, height: 40).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
-                        }//.padding(.bottom, 5)
+                        }
                         
                     }.frame(width: screenwidth/1.5).padding(20).background(Color(.white).cornerRadius(25).shadow(radius: 10))
                 }
             }.opacity(self.showcomment ? 1 : 0).offset(y: -30).animation(.spring())
+            
             //MARK: Report
             ZStack {
                 Button(action: {
@@ -3354,6 +3305,8 @@ struct SettingView: View {
                     }.frame(width: screenwidth - 40).background(Color(.white).cornerRadius(30).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10)).cornerRadius(30)
                     HStack {
                         Button(action: {
+                            UserDefaults.standard.set(false, forKey: "ad")
+                            UserDefaults.standard.set(false, forKey: "showad")
                             let firebaseAuth = Auth.auth()
                             do {
                               try firebaseAuth.signOut()
@@ -3705,7 +3658,7 @@ struct Photos: View {
                                 }
                             }.frame(width: self.screenwidth/2 - 60, height: (self.screenwidth/2 - 60)*1.3)
                         }
-                    }
+                    }.padding(10).background(Color(.white).cornerRadius(35).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
                     //MARK: Photo 2
                     ZStack {
                         if self.profilepics[1].count != 0 {
@@ -3775,7 +3728,7 @@ struct Photos: View {
                                 }
                             }.frame(width: self.screenwidth/2 - 60, height: (self.screenwidth/2 - 60)*1.3)
                         }
-                    }
+                    }.padding(10).background(Color(.white).cornerRadius(35).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
                 }
                 
                 HStack(spacing: 20) {
@@ -3848,7 +3801,7 @@ struct Photos: View {
                                 }
                             }.frame(width: self.screenwidth/2 - 60, height: (self.screenwidth/2 - 60)*1.3)
                         }
-                    }
+                    }.padding(10).background(Color(.white).cornerRadius(35).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
                     //MARK: Photo 4
                     ZStack {
                         if self.profilepics[3].count != 0 {
@@ -3918,9 +3871,9 @@ struct Photos: View {
                                 }
                             }.frame(width: self.screenwidth/2 - 60, height: (self.screenwidth/2 - 60)*1.3)
                         }
-                    }
+                    }.padding(10).background(Color(.white).cornerRadius(35).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
                 }
-            }.padding(20).background(Color(.white).cornerRadius(35).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10)).padding(.bottom, 20)
+            }/*.padding(20).background(Color(.white).cornerRadius(35).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))*/.padding(.bottom, 20)
             //MARK: Edit Photos
             if loading {
                 WhiteLoader()
@@ -4144,6 +4097,7 @@ struct Bio: View {
                                         HStack {
                                             Button(action: {
                                                 self.newbio[self.index] = ""
+                                                self.selected = [false, false, false, false, false, false, false, false, false, false]
                                             }) {
                                                 HStack(spacing: self.screenwidth*0.013) {
                                                     Text("Clear")
@@ -4154,8 +4108,7 @@ struct Bio: View {
                                                         .minimumScaleFactor(0.02)
                                                         .frame(height: self.screenheight*0.018)
                                                     Image(systemName: "xmark")
-                                                        .resizable()
-                                                        .frame(width: self.screenheight*0.014, height: self.screenheight*0.014)
+                                                        .font(Font.system(size: 13, weight: .bold))
                                                         .foregroundColor(Color("personality"))
                                                 }
                                             }.padding(.leading, self.screenwidth*0.08)
@@ -5759,8 +5712,11 @@ class observer: ObservableObject {
                         let date = dateFormatter.date(from: bdate)!
                         let components = Calendar.current.dateComponents([.year, .month, .day], from: date, to: Date())
                         let age1 = components.year!
-                        if (document.get("Gender") as! String == self.myprofile.Preferences[0] && (document.get("Preferences") as! [String])[1] == self.myprofile.Gender) || (document.get("Preferences") as! [String])[1] == "Everyone" && ((document.get("Gender") as! String == self.myprofile.Preferences[0]) || self.myprofile.Preferences[0] == "Everyone") || (document.get("Preferences") as! [String])[1] == self.myprofile.Gender {
+                        
+                        if (document.get("Gender") as! String == self.myprofile.Preferences[0] && (document.get("Preferences") as! [String])[1] == self.myprofile.Gender) || ((document.get("Preferences") as! [String])[1] == "Everyone" && ((document.get("Gender") as! String == self.myprofile.Preferences[0]))) || (self.myprofile.Preferences[0] == "Everyone" && ((document.get("Preferences") as! [String])[1] == self.myprofile.Gender)) ||  (self.myprofile.Preferences[0] == "Everyone" && (document.get("Preferences") as! [String])[1] == "Everyone") {
+                            
                             if (age1 >= (self.myprofile.Preferences[2].prefix(2) as NSString).integerValue && age1 <= (self.myprofile.Preferences[2].suffix(2) as NSString).integerValue) && Int(self.myprofile.Age) ?? 0 >= ((document.get("Preferences") as! [String])[2].prefix(2) as NSString).integerValue && Int(self.myprofile.Age) ?? 0 <= ((document.get("Preferences") as! [String])[2].suffix(2) as NSString).integerValue {
+                                
                                 var check = true
                                 for rate in document.get("Rates") as! [String] {
                                     if String(rate.suffix(rate.count-9)) == self.id! {
@@ -5784,6 +5740,7 @@ class observer: ObservableObject {
                                     let report = document.get("Report") as! Double
                                     let preferences = document.get("Preferences") as! [String]
                                     self.users.append(UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Preferences: preferences))
+                                    print(name)
                                 }
                             }
                             else {
@@ -5842,10 +5799,9 @@ class observer: ObservableObject {
                     let components = Calendar.current.dateComponents([.year, .month, .day], from: date, to: Date())
                     let age1 = components.year!
                     
-                    if (document.get("Gender") as! String == self.myprofile.Preferences[0] && (document.get("Preferences") as! [String])[1] == self.myprofile.Gender) || (document.get("Preferences") as! [String])[1] == "Everyone" && ((document.get("Gender") as! String == self.myprofile.Preferences[0]) || self.myprofile.Preferences[0] == "Everyone") || (document.get("Preferences") as! [String])[1] == self.myprofile.Gender {
+                    if (document.get("Gender") as! String == self.myprofile.Preferences[0] && (document.get("Preferences") as! [String])[1] == self.myprofile.Gender) || ((document.get("Preferences") as! [String])[1] == "Everyone" && ((document.get("Gender") as! String == self.myprofile.Preferences[0]))) || (self.myprofile.Preferences[0] == "Everyone" && ((document.get("Preferences") as! [String])[1] == self.myprofile.Gender)) ||  (self.myprofile.Preferences[0] == "Everyone" && (document.get("Preferences") as! [String])[1] == "Everyone") {
                         
                         if (age1 >= (self.myprofile.Preferences[2].prefix(2) as NSString).integerValue && age1 <= (self.myprofile.Preferences[2].suffix(2) as NSString).integerValue) && age1 >= ((document.get("Preferences") as! [String])[2].prefix(2) as NSString).integerValue && age1 <= ((document.get("Preferences") as! [String])[2].suffix(2) as NSString).integerValue {
-                            //print("bruh")
                             var check = true
                             for rate in document.get("Rates") as! [String] {
                                 if String(rate.suffix(rate.count-9)) == self.id! {
@@ -5870,6 +5826,7 @@ class observer: ObservableObject {
                                 let preferences = document.get("Preferences") as! [String]
                                 newusers.append(UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Preferences: preferences))
                                 self.users = newusers
+                                print(name)
                             }
                         }
                         else {
@@ -5890,7 +5847,6 @@ class observer: ObservableObject {
             }
             else {
                 for document in querySnapshot!.documents {
-                    print("1")
                     if self.id! == (document.get("ID") as! String) {
                         self.lock = document.get("Lock") as! [Bool]
                         self.userrates = document.get("Rates") as! [String]
@@ -5927,107 +5883,6 @@ class observer: ObservableObject {
                         self.myprofile = UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Preferences: preferences)
                     }
                 }
-            }
-        }
-    }
-    func relogin() {
-        id = Auth.auth().currentUser?.uid
-        self.users = [UserData]()
-        if id == nil || UserDefaults.standard.value(forKey: "notsignedup") as? Bool ?? true {
-            //print("burh")
-            return
-        }
-        let db = Firestore.firestore()
-        db.collection("users").getDocuments() { (querySnapshot, err) in
-            if err != nil {
-                print((err?.localizedDescription)!)
-                return
-            }
-            else {
-                /*for document in querySnapshot!.documents {
-                    if self.id! == (document.get("ID") as! String) {
-                        self.lock = document.get("Lock") as! [Bool]
-                        self.userrates = document.get("Rates") as! [String]
-                        self.keys = document.get("Keys") as! Int
-                        self.comments = document.get("Comments") as! [String]
-                        self.rating = ratingtype(overall: CGFloat(document.get("OverallRating") as! Double), appearance: CGFloat(document.get("AppearanceRating") as! Double), personality: CGFloat(document.get("PersonalityRating") as! Double))
-                        self.numrates = self.userrates.count-1
-                        if self.numrates > -1 {
-                            for _ in 0...self.numrates {
-                                self.showratings.append(false)
-                            }
-                        }
-                        
-                        let bdate = document.get("Birthdate") as! String
-                        let dateFormatter = DateFormatter()
-                        dateFormatter.dateFormat = "yyyy-MM-dd"
-                        let date = dateFormatter.date(from: bdate)!
-                        let components = Calendar.current.dateComponents([.year, .month, .day], from: date, to: Date())
-                        let age = String(components.year!)
-                        let bio = document.get("Bio") as! [String]
-                        let gender = document.get("Gender") as! String
-                        let id = document.get("ID") as! String
-                        let name = document.get("Name") as! String
-                        let percentage = document.get("Percentage") as! Double
-                        let profilepics = document.get("ProfilePics") as! [String]
-                        let rates = document.get("Rates") as! [String]
-                        let overallrating = document.get("OverallRating") as! Double
-                        let appearancerating = document.get("AppearanceRating") as! Double
-                        let personalityrating = document.get("PersonalityRating") as! Double
-                        let selfrating = document.get("SelfRating") as! Double
-                        let socials = document.get("Socials") as! [String]
-                        let report = document.get("Report") as! Double
-                        let preferences = document.get("Preferences") as! [String]
-                        self.myprofile = UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Preferences: preferences)
-                    }
-                }*/
-                for document in querySnapshot!.documents {
-                    if document.get("ID") as! String != self.id! && self.users.count < 100 {
-                        print("2")
-                        let bdate = document.get("Birthdate") as! String
-                        let dateFormatter = DateFormatter()
-                        dateFormatter.dateFormat = "yyyy-MM-dd"
-                        let date = dateFormatter.date(from: bdate)!
-                        let components = Calendar.current.dateComponents([.year, .month, .day], from: date, to: Date())
-                        let age1 = components.year!
-                        
-                        //print((document.get("Preferences") as! [String]), "____" ,self.myprofile.Preferences)
-                        if (document.get("Gender") as! String == self.myprofile.Preferences[0] && (document.get("Preferences") as! [String])[1] == self.myprofile.Gender) || (document.get("Preferences") as! [String])[1] == "Everyone" && ((document.get("Gender") as! String == self.myprofile.Preferences[0]) || self.myprofile.Preferences[0] == "Everyone") || (document.get("Preferences") as! [String])[1] == self.myprofile.Gender {
-                            
-                            if (age1 >= (self.myprofile.Preferences[2].prefix(2) as NSString).integerValue && age1 <= (self.myprofile.Preferences[2].suffix(2) as NSString).integerValue) && age1 >= ((document.get("Preferences") as! [String])[2].prefix(2) as NSString).integerValue && age1 <= ((document.get("Preferences") as! [String])[2].suffix(2) as NSString).integerValue {
-                                //print("bruh")
-                                var check = true
-                                for rate in document.get("Rates") as! [String] {
-                                    if String(rate.suffix(rate.count-9)) == self.id! {
-                                        check = false
-                                    }
-                                }
-                                if check {
-                                    let age = String(age1)
-                                    let bio = document.get("Bio") as! [String]
-                                    let gender = document.get("Gender") as! String
-                                    let id = document.get("ID") as! String
-                                    let name = document.get("Name") as! String
-                                    let percentage = document.get("Percentage") as! Double
-                                    let profilepics = document.get("ProfilePics") as! [String]
-                                    let rates = document.get("Rates") as! [String]
-                                    let overallrating = document.get("OverallRating") as! Double
-                                    let appearancerating = document.get("AppearanceRating") as! Double
-                                    let personalityrating = document.get("PersonalityRating") as! Double
-                                    let selfrating = document.get("SelfRating") as! Double
-                                    let socials = document.get("Socials") as! [String]
-                                    let report = document.get("Report") as! Double
-                                    let preferences = document.get("Preferences") as! [String]
-                                    self.users.append(UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Preferences: preferences))
-                                }
-                            }
-                            else {
-                                //print("deez")
-                            }
-                        }
-                    }
-                }
-                self.users.shuffle()
                 for users in self.userrates {
                     for document in querySnapshot!.documents {
                         if document.get("ID") as! String == users.substring(fromIndex: 9) {
@@ -6058,6 +5913,7 @@ class observer: ObservableObject {
             }
         }
     }
+    
     func signedup() {
         UserDefaults.standard.set(false, forKey: "notsignedup")
     }
@@ -6223,6 +6079,27 @@ func AddImages() {
     }
 }
 
+//MARK: UIFont
+extension UIFont {
+    var bold: UIFont { return withWeight(.bold) }
+    var semibold: UIFont { return withWeight(.semibold) }
+
+    private func withWeight(_ weight: UIFont.Weight) -> UIFont {
+        var attributes = fontDescriptor.fontAttributes
+        var traits = (attributes[.traits] as? [UIFontDescriptor.TraitKey: Any]) ?? [:]
+
+        traits[.weight] = weight
+
+        attributes[.name] = nil
+        attributes[.traits] = traits
+        attributes[.family] = familyName
+
+        let descriptor = UIFontDescriptor(fontAttributes: attributes)
+
+        return UIFont(descriptor: descriptor, size: pointSize)
+    }
+}
+
 
 //MARK: ResizingTextField
 struct ResizingTextField: UIViewRepresentable {
@@ -6234,7 +6111,8 @@ struct ResizingTextField: UIViewRepresentable {
     }
     func makeUIView(context: UIViewRepresentableContext<ResizingTextField>) -> UITextView {
         let view = UITextView()
-        view.font = UIFont(name: "ProximaNova-Regular", size: 15)
+        let basefont = UIFont(name: "ProximaNova-Regular", size: 15)!
+        view.font = basefont.semibold
         if text.count == 0 {
             view.textColor = UIColor(named: color)!.withAlphaComponent(0.7)
             view.text = "Write Something"
@@ -6282,7 +6160,8 @@ struct ResizingTextFieldRed: UIViewRepresentable {
     }
     func makeUIView(context: UIViewRepresentableContext<ResizingTextFieldRed>) -> UITextView {
         let view = UITextView()
-        view.font = UIFont(name: "ProximaNova-Regular", size: 16)
+        let basefont = UIFont(name: "ProximaNova-Regular", size: 15)!
+        view.font = basefont.semibold
         if text.count == 0 {
             view.textColor = .gray//UIColor(named: "personality")!.withAlphaComponent(0.25)
             view.text = "Leave a comment on what you liked the most about this person. Be Nice."
