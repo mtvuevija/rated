@@ -2241,11 +2241,12 @@ struct RatingView: View {
                                                         .font(Font.custom("ProximaNova-Regular", size: 60))
                                                         .fontWeight(.semibold)
                                                         .lineLimit(1)
-                                                        .frame(width: screenwidth/2, height: 50)
+                                                        .frame(maxWidth: screenwidth/1.5)
                                                         .foregroundColor(.white)
                                                         .shadow(radius: 10)
                                                         .minimumScaleFactor(0.02)
-                                                        .padding(20)
+                                                        .padding(.leading, 30)
+                                                        .padding(.bottom, 20)
                                                     Spacer()
                                                 }
                                                 
@@ -2315,7 +2316,7 @@ struct RatingView: View {
                                                 Image(systemName: "ellipsis")
                                                     .resizable()
                                                     .frame(width: 30, height: 6)
-                                                    .foregroundColor(.gray)
+                                                    .foregroundColor(Color(.blue).opacity(0.5))
                                                     .padding(10)
                                                     //.background(Circle().frame(width: 45, height: 45).foregroundColor(.white).shadow(radius: 5))
                                             }
@@ -2344,8 +2345,7 @@ struct RatingView: View {
                                                         self.rating.toggle()
                                                     }) {
                                                         Image(systemName: "chevron.left")
-                                                            .resizable()
-                                                            .frame(width: 12.5, height: 25)
+                                                            .font(Font.system(size: 32, weight: .semibold))
                                                             .foregroundColor(.gray)
                                                     }.padding(.trailing, 5)
                                                     Text(self.bio ? String(Double(self.personality).truncate(places: 1)) : String(Double(self.appearance).truncate(places: 1)))
@@ -2393,10 +2393,14 @@ struct RatingView: View {
                                                     self.showcomment.toggle()
                                                 }
                                             }) {
-                                                Image("send")
+                                                /*Image("send")
                                                     .resizable()
                                                     .frame(width: 30, height: 30)
                                                     .foregroundColor(.gray)
+                                                    .padding(10)*/
+                                                Image(systemName: "arrow.right")
+                                                    .font(Font.system(size: 32, weight: .bold))
+                                                    .foregroundColor(Color(.blue).opacity(0.5))
                                                     .padding(10)
                                             }
                                         }
@@ -4317,7 +4321,8 @@ struct ShowProfile: View {
                                         .foregroundColor(.white)
                                         .shadow(radius: 10)
                                         .minimumScaleFactor(0.02)
-                                        .padding(20)
+                                        .padding(.leading, 30)
+                                        .padding(.bottom, 20)
                                     Spacer()
                                 }
                                 
@@ -5654,8 +5659,8 @@ class observer: ObservableObject {
     var id = Auth.auth().currentUser?.uid
     init() {
         self.users = [UserData]()
+        self.ratesinfo = [UserData]()
         if id == nil || UserDefaults.standard.value(forKey: "notsignedup") as? Bool ?? true {
-            print("burh")
             return
         }
         let db = Firestore.firestore()
@@ -5830,7 +5835,6 @@ class observer: ObservableObject {
                             }
                         }
                         else {
-                            //print("deez")
                         }
                     }
                 }
@@ -5840,6 +5844,7 @@ class observer: ObservableObject {
     func signin() {
         id = Auth.auth().currentUser?.uid
         let db = Firestore.firestore()
+        self.ratesinfo = [UserData]()
         db.collection("users").getDocuments() { (querySnapshot, err) in
             if err != nil {
                 print((err?.localizedDescription)!)
@@ -6268,10 +6273,8 @@ struct Bar: View {
                             .background(Color(.blue).opacity(0.5).cornerRadius(20))
                         if !self.observer.lock[self.index] {
                             Image("lock")
-                                //.renderingMode(.template)
                                 .resizable()
                                 .frame(width: screenwidth*0.1, height: screenwidth*0.1)
-                                //.foregroundColor(Color("personality"))
                         }
                     }
                 }.padding(.leading, 10)
@@ -6340,19 +6343,13 @@ struct Bar: View {
                 self.unlockindex = self.index
                 self.homecomment.toggle()
             }) {
-                ZStack {
-                    /*RoundedRectangle(cornerRadius: 5)
-                        .frame(width: screenwidth*0.147, height: screenwidth*0.147)
-                        .foregroundColor(Color("lightgray"))*/
-                    Image(systemName: "ellipsis")//"commentbutton")
-                        //.renderingMode(.template)
-                        .resizable()
-                        .frame(width: screenwidth*0.07, height: 6)
-                        .aspectRatio(contentMode: .fit)
-                        .padding(12.5).padding(.vertical, 10)
-                        .foregroundColor(.white)
-                        .background(Color(.blue).opacity(0.5).cornerRadius(20))
-                }
+                Image(systemName: "ellipsis")
+                    .resizable()
+                    .frame(width: screenwidth*0.07, height: 6)
+                    .aspectRatio(contentMode: .fit)
+                    .padding(12.5).padding(.vertical, 10)
+                    .foregroundColor(.white)
+                    .background(Color(.blue).opacity(0.5).cornerRadius(17.5))
             }.buttonStyle(PlainButtonStyle())
                 .padding(.trailing, 10)
         }
