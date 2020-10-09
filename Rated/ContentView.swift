@@ -12,6 +12,7 @@ import FirebaseAuth
 import FirebaseStorage
 import SDWebImageSwiftUI
 import GoogleMobileAds
+import SystemConfiguration
 
 //MARK: MainView
 struct MainView: View {
@@ -62,6 +63,7 @@ struct FrontView: View {
     let screenwidth = UIScreen.main.bounds.width
     let screenheight = UIScreen.main.bounds.height
     @EnvironmentObject var observer: observer
+    @State var start = true
     @State var login = false
     @State var signup = false
     @State var phonenumber = ""
@@ -278,8 +280,16 @@ struct FrontView: View {
                     }
                 }.fixedSize(horizontal: false, vertical: true).offset(y: screenheight*0.15)
             }.offset(y: -30).frame(width: self.screenwidth, height: self.screenheight).background(LinearGradient(gradient: Gradient(colors: [Color(.white), Color("lightgray")]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all)).offset(y: self.logged ? -screenheight*1.25 : 0).animation(.spring())
+            Color("personality")
+                .frame(width: screenwidth, height: screenheight)
+                .offset(y: self.start ? -5 : -screenheight - 5)
+                .animation(.spring())
         }.background(Color("personality").edgesIgnoringSafeArea(.all)).alert(isPresented: $alert) {
             Alert(title: Text("Error"), message: Text(self.msg), dismissButton: .default(Text("OK")))
+        }.onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                self.start = false
+            }
         }
     }
 }
@@ -545,7 +555,6 @@ struct SignUpView: View {
                                     self.next -= self.screenwidth
                                     self.count += 1
                                 }
-                                self.next -= self.screenwidth
                             }) {
                                 Image(systemName: "arrow.right")
                                     .font(Font.system(size: 30, weight: .bold))
@@ -1232,7 +1241,8 @@ struct HomeView: View {
     @State var changed = false
     @State var confirm = false
     @State var confirm1 = false
-    @State var rotate = false
+    @State var connectionrefresh = false
+    @State var connectionrefresh2 = false
     
     var rewardAd: Rewarded
     let screenwidth = UIScreen.main.bounds.width
@@ -1503,9 +1513,18 @@ struct HomeView: View {
                                 }.buttonStyle(PlainButtonStyle())*/
                                 Button(action: {
                                     if self.observer.keys > 0 && !self.observer.lock[self.unlockindex] {
-                                        self.observer.lock[self.unlockindex] = true
-                                        self.observer.keys = self.observer.keys-1
-                                        Unlock(keys: self.observer.keys, lock: self.observer.lock)
+                                        var newlock = self.observer.lock
+                                        newlock[self.unlockindex] = true
+                                        let changekeys = self.observer.keys - 1
+                                        Unlock(keys: changekeys, lock: newlock) { (complete) in
+                                            if complete {
+                                                self.observer.keys = changekeys
+                                                self.observer.lock = newlock
+                                            }
+                                            else {
+                                                return
+                                            }
+                                        }
                                         let seconds = 0.5
                                         DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
                                             self.unlock = false
@@ -1859,8 +1878,15 @@ struct HomeView: View {
                             HStack(spacing: 15) {
                                 Button(action: {
                                     self.rewardAd.showAd(rewardFunction: {
-                                        self.observer.keys += 3
-                                        KeyChange(keys: self.observer.keys)
+                                        let changekeys = self.observer.keys + 3
+                                        KeyChange(keys: changekeys) { (complete) in
+                                            if complete {
+                                                self.observer.keys = changekeys
+                                            }
+                                            else {
+                                                
+                                            }
+                                        }
                                     })
                                 }) {
                                     ZStack() {
@@ -2035,17 +2061,63 @@ struct HomeView: View {
                 }
             }.frame(width: self.screenwidth, height: self.screenheight)
                 .background(Color("personality").edgesIgnoringSafeArea(.all))
-            .animation(.spring())
+                .animation(.spring()).blur(radius: !Reachability.isConnectedToNetwork() ? 10 : 0)
             
             
             //MARK: Settings
-            SettingView(settings: self.$settings)
+            SettingView(settings: self.$settings, start: self.$start)
                 .offset(x: self.settings ? 0 : -screenwidth).animation(.spring())
+            
+            
+            if !Reachability.isConnectedToNetwork() {
+                ZStack {
+                    Color("lightgray")
+                        .frame(width: screenwidth, height: screenheight)
+                        .opacity(0.1)
+                    VStack {
+                        Image("noconnection")
+                            .resizable()
+                            .frame(width: 50, height: 50)
+                        Text("No Internet Connection")
+                            .font(Font.custom("ProximaNova-Regular", size: 26))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color(.black))
+                        Button(action: {
+                            if !self.connectionrefresh {
+                                self.connectionrefresh = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                                    if self.connectionrefresh {
+                                        self.connectionrefresh = false
+                                    }
+                                }
+                            }
+                        }) {
+                            if self.connectionrefresh {
+                                WhiteLoader()
+                            }
+                            else {
+                                VStack(spacing: 5) {
+                                    Text("Refresh")
+                                        .font(Font.custom("ProximaNova-Regular", size: 16))
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(Color(.darkGray))
+                                    Image(systemName: "arrow.clockwise.circle")
+                                        .resizable()
+                                        .frame(width: 20, height: 20)
+                                        .foregroundColor(Color(.darkGray))
+                                }
+                            }
+                        }.padding(.top, 30)
+                    }.padding(20)
+                    .background(Color(.white).cornerRadius(20).shadow(radius: 15))
+                }.animation(.spring())
+            }
             Color("personality")
                 .frame(width: screenwidth, height: screenheight)
                 .offset(y: self.start ? 0 : -screenheight)
                 .animation(.spring())
-        }.edgesIgnoringSafeArea(.all).onAppear {
+            
+        }.edgesIgnoringSafeArea(.all).animation(.spring()).onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 self.start = false
             }
@@ -2088,6 +2160,7 @@ struct RatingView: View {
     @State var confirm = false
     @State var confirm1 = false
     @State var wait = false
+    @State var loading = false
     let categories = ["General", "Education", "Occupation", "Music", "Sports", "Movies", "TV-Shows", "Hobbies", "Motto", "Future"]
     var rewardAd: Rewarded
     let screenwidth = UIScreen.main.bounds.width
@@ -2113,41 +2186,48 @@ struct RatingView: View {
                     VStack {
                         Spacer().frame(height: self.screenheight/8)
                         RatingAd()
-                            .frame(width: screenwidth - 30, height: (screenwidth - 20)*1.6 - 10)
-                            .background(Color("lightgray"))
+                            .frame(width: screenwidth - 60, height: (screenwidth - 20)*1.6 - 10)
                             .cornerRadius(30)
                             .padding(5)
-                            .background(Color(.gray).cornerRadius(35))
+                            .background(Color(.white).cornerRadius(35).shadow(color: Color("lightgray"), radius: 10))
                             .scaleEffect(self.showad ? 1 : 0).animation(.easeInOut(duration: 0.5))
                             .padding(.bottom, 10)
                             .padding(.top, 20)
                         Button(action: {
-                            self.newkey = 0
-                            self.showkey = true
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                                self.newkey = -self.screenheight/2 + 57.5
-                                self.newkeyx = self.screenwidth/2 - 45
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                    self.showkey = false
-                                    self.observer.keys += 1
-                                    KeyChange(keys: self.observer.keys)
-                                    self.newkey = self.screenheight
-                                    self.newkeyx = 0
+                            let changekeys = self.observer.keys + 1
+                            KeyChange(keys: changekeys) { (complete) in
+                                if complete {
+                                    self.newkey = 0
+                                    self.showkey = true
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                        self.newkey = -self.screenheight/2 + 57.5
+                                        self.newkeyx = self.screenwidth/2 - 45
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                            self.showkey = false
+                                            self.observer.keys = changekeys
+                                            self.newkey = self.screenheight
+                                            self.newkeyx = 0
+                                        }
+                                    }
+                                    self.showad = false
+                                    self.next = true
+                                    let seconds = 0.5
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+                                        self.ad = false
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+                                            self.next = false
+                                        }
+                                    }
+                                    self.observer.socialunlock = false
+                                    self.unlocksocials = false
+                                    self.wait = false
+                                }
+                                else {
+                                    self.msg = "There was an error"
+                                    self.alert.toggle()
+                                    return
                                 }
                             }
-                            
-                            self.showad = false
-                            self.next = true
-                            let seconds = 0.5
-                            DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
-                                self.ad = false
-                                DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
-                                    self.next = false
-                                }
-                            }
-                            self.observer.socialunlock = false
-                            self.unlocksocials = false
-                            self.wait = false
                         }) {
                             Image(systemName: "arrow.right")
                                 .font(Font.system(size: 40, weight: .bold))
@@ -2169,6 +2249,9 @@ struct RatingView: View {
                                 VStack(spacing: 20) {
                                     //MARK: Image
                                     ZStack {
+                                        if self.loading {
+                                            WhiteLoader()
+                                        }
                                         ZStack {
                                             WebImage(url: URL(string: self.observer.users[self.observer.rated].ProfilePics[self.count]))
                                                 .resizable()
@@ -2190,7 +2273,7 @@ struct RatingView: View {
                                                     RoundedRectangle(cornerRadius: 1.5)
                                                         .frame(width: (screenwidth-20)/4 - 10, height: 7.5)
                                                         .foregroundColor(self.count == 3 ? .white : .clear)
-                                                }.background(Color(.lightGray).opacity(0.2)).cornerRadius(3).padding(.top, screenheight*0.025).animation(nil)
+                                                }.padding(1).background(Color(.lightGray).opacity(0.2)).cornerRadius(3).padding(.top, screenheight*0.025).animation(nil)
                                                 Spacer()
                                                 HStack {
                                                     Text(self.observer.users[self.observer.rated].Name.uppercased() + " " + self.observer.users[self.observer.rated].Age)
@@ -2524,39 +2607,49 @@ struct RatingView: View {
                                     self.alert.toggle()
                                     return
                                 }
+                                if self.comment == "" {
+                                    self.comment = "No Comment"
+                                }
                                 self.showcomment = false
                                 self.bio = false
                                 self.next.toggle()
-                                UpdateRating(user: self.observer.users[self.observer.rated], appearance: Double(self.appearance), personality: Double(self.personality), keys: self.observer.keys, comment: self.comment)
-                                self.showrating = false
-                                self.showsocials = false
-                                self.count = 0
-                                let seconds = 0.5
-                                DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
-                                    self.appearance = 5
-                                    self.personality = 5
-                                    if self.observer.users.count != self.observer.rated+1 {
-                                        self.observer.rated += 1
-                                        if self.observer.ratings == 1 {
-                                            self.ad = true
-                                            DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
-                                                self.showad.toggle()
-                                                self.observer.ratings = 0
+                                UpdateRating(user: self.observer.users[self.observer.rated], appearance: Double(self.appearance), personality: Double(self.personality), keys: self.observer.keys, comment: self.comment) { (complete) in
+                                    if complete {
+                                        self.showrating = false
+                                        self.showsocials = false
+                                        self.count = 0
+                                        let seconds = 0.5
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+                                            self.appearance = 5
+                                            self.personality = 5
+                                            if self.observer.users.count != self.observer.rated+1 {
+                                                self.observer.rated += 1
+                                                if self.observer.ratings == 1 {
+                                                    self.ad = true
+                                                    DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+                                                        self.showad.toggle()
+                                                        self.observer.ratings = 0
+                                                    }
+                                                }
+                                                else {
+                                                    DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+                                                        self.next.toggle()
+                                                        self.observer.ratings += 1
+                                                    }
+                                                }
+                                            }
+                                            else {
                                             }
                                         }
-                                        else {
-                                            DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
-                                                self.next.toggle()
-                                                self.observer.ratings += 1
-                                            }
-                                        }
+                                        self.comment = ""
+                                        self.observer.socialunlock = false
+                                        self.unlocksocials = false
                                     }
                                     else {
+                                        self.msg = "There was an err"
+                                        self.alert.toggle()
                                     }
                                 }
-                                self.comment = ""
-                                self.observer.socialunlock = false
-                                self.unlocksocials = false
                             }) {
                                 Text("Send")
                                     .font(Font.custom("ProximaNova-Regular", size: 14))
@@ -2639,32 +2732,37 @@ struct RatingView: View {
                                 let uid = Auth.auth().currentUser?.uid
                                 let reports = self.observer.users[self.observer.rated].Report + 1
                                 self.observer.users[self.observer.rated].Reports.append(uid!)
-                                db.collection("users").document(self.observer.users[self.observer.rated].id).updateData(["Report": reports, "Reports": self.observer.users[self.observer.rated].Reports])
-                                
-                                self.report.toggle()
-                                self.confirm1 = false
-                                self.confirm = false
-                                self.showcomment = false
-                                self.bio = false
-                                self.next.toggle()
-                                self.showrating = false
-                                self.showsocials = false
-                                self.count = 0
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                    self.appearance = 5
-                                    self.personality = 5
-                                    if self.observer.users.count != self.observer.rated+1 {
-                                        self.observer.rated += 1
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                            self.next.toggle()
+                                db.collection("users").document(self.observer.users[self.observer.rated].id).updateData(["Report": reports, "Reports": self.observer.users[self.observer.rated].Reports]) { (err) in
+                                    if err != nil {
+                                        self.msg = "There was an error"
+                                        self.alert.toggle()
+                                        return
+                                    }
+                                    self.report.toggle()
+                                    self.confirm1 = false
+                                    self.confirm = false
+                                    self.showcomment = false
+                                    self.bio = false
+                                    self.next.toggle()
+                                    self.showrating = false
+                                    self.showsocials = false
+                                    self.count = 0
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                        self.appearance = 5
+                                        self.personality = 5
+                                        if self.observer.users.count != self.observer.rated+1 {
+                                            self.observer.rated += 1
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                                self.next.toggle()
+                                            }
+                                        }
+                                        else {
                                         }
                                     }
-                                    else {
-                                    }
+                                    self.comment = ""
+                                    self.observer.socialunlock = false
+                                    self.unlocksocials = false
                                 }
-                                self.comment = ""
-                                self.observer.socialunlock = false
-                                self.unlocksocials = false
                             }
                             else {
                                 self.confirm1.toggle()
@@ -2801,9 +2899,18 @@ struct RatingView: View {
                                     self.showkeys = true
                                 }
                                 else {
-                                    self.observer.socialunlock = true
-                                    self.observer.keys -= 1
-                                    KeyChange(keys: self.observer.keys)
+                                    let changekeys = self.observer.keys - 1
+                                    KeyChange(keys: changekeys) { (complete) in
+                                        if complete {
+                                            self.observer.keys = changekeys
+                                            self.observer.socialunlock = true
+                                        }
+                                        else {
+                                            self.msg = "There was an error"
+                                            self.alert.toggle()
+                                            return
+                                        }
+                                    }
                                 }
                             }) {
                                 HStack(spacing: 5) {
@@ -2859,8 +2966,17 @@ struct RatingView: View {
                         HStack(spacing: 15) {
                             Button(action: {
                                 self.rewardAd.showAd(rewardFunction: {
-                                    self.observer.keys += 3
-                                    KeyChange(keys: self.observer.keys)
+                                    let changekeys = self.observer.keys + 3
+                                    KeyChange(keys: changekeys) { (complete) in
+                                        if complete {
+                                            self.observer.keys = changekeys
+                                        }
+                                        else {
+                                            self.msg = "There was an error."
+                                            self.alert.toggle()
+                                            return
+                                        }
+                                    }
                                 })
                             }) {
                                 ZStack() {
@@ -3041,11 +3157,11 @@ struct RatingView: View {
                     Text("+1")
                         .font(Font.custom("ProximaNova-Regular", size: 30))
                         .fontWeight(.semibold)
-                        .foregroundColor(Color("personality"))
+                        .foregroundColor(Color(.blue).opacity(0.5))
                     Image("key")
                         .resizable()
                         .renderingMode(.template)
-                        .foregroundColor(Color("personality"))
+                        .foregroundColor(Color(.blue).opacity(0.5))
                         .frame(width: 35, height: 35)
                 }
             }.animation(.spring()).offset(x: self.newkeyx, y: self.newkey).scaleEffect((self.newkey < 0) ? 1 : 1.9).opacity(self.showkey ? 1 : 0)
@@ -3067,6 +3183,7 @@ struct RatingView: View {
 struct SettingView: View {
     @EnvironmentObject var observer: observer
     @Binding var settings: Bool
+    @Binding var start: Bool
     @State var profile = true
     @State var social = false
     @State var photos = false
@@ -3262,17 +3379,20 @@ struct SettingView: View {
                 }.frame(width: screenwidth - 40).background(Color(.white).cornerRadius(30).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10)).cornerRadius(30)
                 HStack {
                     Button(action: {
-                        UserDefaults.standard.set(false, forKey: "ad")
-                        UserDefaults.standard.set(false, forKey: "showad")
                         let firebaseAuth = Auth.auth()
                         do {
-                          try firebaseAuth.signOut()
+                            try firebaseAuth.signOut()
+                                UserDefaults.standard.set(false, forKey: "ad")
+                                UserDefaults.standard.set(false, forKey: "showad")
+                                self.start = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                    UserDefaults.standard.set(true, forKey: "notsignedup")
+                                    UserDefaults.standard.set(false, forKey: "status")
+                                    NotificationCenter.default.post(name: NSNotification.Name("StatusChange"), object: nil)
+                                }
                         } catch let signOutError as NSError {
-                          print ("Error signing out: %@", signOutError)
+                            print ("Error signing out: %@", signOutError)
                         }
-                        UserDefaults.standard.set(true, forKey: "notsignedup")
-                        UserDefaults.standard.set(false, forKey: "status")
-                        NotificationCenter.default.post(name: NSNotification.Name("StatusChange"), object: nil)
                     }) {
                         Text("Log Out")
                             .font(Font.custom("ProximaNova-Regular", size: 24))
@@ -3293,6 +3413,9 @@ struct SettingView: View {
 struct Socials: View {
     @EnvironmentObject var observer: observer
     @Binding var social: Bool
+    @State var alert = false
+    @State var msg = ""
+    @State var loading = false
     @State var edit = false
     @State var newinsta = ""
     @State var newsnap = ""
@@ -3428,25 +3551,48 @@ struct Socials: View {
                         .padding(.bottom, self.edit ? 15 : 0)
                 }
             }.frame(width: screenwidth - 40).background(Color(.white).cornerRadius(25).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10)).padding(.bottom, screenheight*0.025)
-            if self.edit {
+            if self.loading {
+                WhiteLoader()
+            }
+            else if self.edit {
                 HStack(spacing: 20) {
                     Button(action: {
+                        self.loading.toggle()
                         let db = Firestore.firestore()
                         let uid = Auth.auth().currentUser?.uid
+                        var newsocials = self.observer.myprofile.Socials
                         if self.newinsta != "" {
-                            self.observer.myprofile.Socials[0] = self.newinsta
+                            newsocials[0] = self.newinsta
                         }
                         if self.newsnap != "" {
-                            self.observer.myprofile.Socials[1] = self.newsnap
+                            newsocials[1] = self.newsnap
                         }
                         if self.newtwitter != "" {
-                            self.observer.myprofile.Socials[2] = self.newtwitter
+                            newsocials[2] = self.newtwitter
                         }
-                        db.collection("users").document(uid!).updateData(["Socials": self.observer.myprofile.Socials])
-                        self.newinsta = ""
-                        self.newsnap = ""
-                        self.newtwitter = ""
-                        self.edit = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+                            if self.loading {
+                                self.msg = "Something Went Wrong"
+                                self.alert.toggle()
+                                self.edit.toggle()
+                                self.newinsta = ""
+                                self.newsnap = ""
+                                self.newtwitter = ""
+                                self.loading.toggle()
+                            }
+                        }
+                        db.collection("users").document(uid!).updateData(["Socials": newsocials]) { (err) in
+                            if err != nil {
+                                print((err?.localizedDescription)!)
+                                return
+                            }
+                            self.loading.toggle()
+                            self.observer.myprofile.Socials = newsocials
+                            self.newinsta = ""
+                            self.newsnap = ""
+                            self.newtwitter = ""
+                            self.edit = false
+                        }
                     }) {
                         HStack {
                             Text("Confirm")
@@ -3497,10 +3643,13 @@ struct Socials: View {
             }
             Spacer()
         }.frame(width: screenwidth, height: screenheight)
-            .background(Color("lightgray").edgesIgnoringSafeArea(.all))
+            .background(Color("lightgray").edgesIgnoringSafeArea(.all)).animation(.spring())
         .navigationBarTitle("")
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
+        .alert(isPresented: $alert) {
+            Alert(title: Text("Error"), message: Text(self.msg), dismissButton: .default(Text("OK")))
+        }
     }
 }
 
@@ -3832,6 +3981,7 @@ struct Photos: View {
             else if self.edit {
                 HStack(spacing: 20) {
                     Button(action: {
+                        var newprofilepic = self.observer.myprofile.ProfilePics
                         self.loading.toggle()
                         let storage = Storage.storage().reference()
                         let db = Firestore.firestore()
@@ -3843,33 +3993,52 @@ struct Photos: View {
                             }
                         }
                         if check {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+                                if self.loading {
+                                    withAnimation {
+                                        self.msg = "Something Went Wrong"
+                                        self.alert.toggle()
+                                        self.edit.toggle()
+                                        self.loading.toggle()
+                                        self.profilepics = [Data(), Data(), Data(), Data()]
+                                        self.newphotos = [false, false, false, false]
+                                        return
+                                    }
+                                }
+                            }
                             withAnimation {
                                 for num in 0...3 {
                                     if self.profilepics[num].count != 0 {
+                                        print("bruh")
                                         let metadata = StorageMetadata.init()
                                         metadata.contentType = "image/jpeg"
                                         let upload = storage.child("ProfilePics").child(uid! + String(num)).putData(self.profilepics[num], metadata: metadata) { (_, err) in
                                             if err != nil {
-                                                print((err?.localizedDescription)!)
+                                                self.msg = (err?.localizedDescription)!
                                                 return
                                             }
                                         }
                                         upload.observe(.success) { snapshot in
                                             storage.child("ProfilePics").child(uid! + String(num)).downloadURL { (url, err) in
-                                                if err != nil{
-                                                    print((err?.localizedDescription)!)
+                                                if err != nil {
+                                                    self.msg = (err?.localizedDescription)!
                                                     return
                                                 }
-                                                self.observer.myprofile.ProfilePics[num] = "\(url!)"
-                                                db.collection("users").document(uid!).updateData(["ProfilePics": self.observer.myprofile.ProfilePics])
-                                                print(self.observer.myprofile.ProfilePics)
-                                                //self.loading.toggle()
+                                                newprofilepic[num] = "\(url!)"
+                                                db.collection("users").document(uid!).updateData(["ProfilePics": newprofilepic]) { (err) in
+                                                    if err != nil {
+                                                        self.msg = (err?.localizedDescription)!
+                                                        return
+                                                    }
+                                                    self.observer.myprofile.ProfilePics = newprofilepic
+                                                    self.edit.toggle()
+                                                    self.loading.toggle()
+                                                }
                                             }
                                         }
                                     }
                                 }
-                                self.edit.toggle()
-                                self.loading.toggle()
+                                
                             }
                         }
                         else {
@@ -3926,7 +4095,7 @@ struct Photos: View {
             }
             Spacer()
         }.frame(width: screenwidth, height: screenheight)
-        .background(Color("lightgray").edgesIgnoringSafeArea(.all))
+            .background(Color("lightgray").edgesIgnoringSafeArea(.all)).animation(.spring())
         .navigationBarTitle("")
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
@@ -3943,6 +4112,7 @@ struct Photos: View {
 struct Bio: View {
     @EnvironmentObject var observer: observer
     @Binding var bio: Bool
+    @State var loading = false
     @State var edit = false
     let categories = ["General", "Education", "Occupation", "Music", "Sports", "Movies", "TV-Shows", "Hobbies", "Motto", "Future"]
     let colors = [Color(.black), Color(.blue), Color(.brown), Color(.black), Color(.red), Color(.black), Color(.lightGray), Color(.green), Color(.cyan), Color(.systemPink)]
@@ -4076,14 +4246,12 @@ struct Bio: View {
                                         }.frame(width: self.screenwidth - self.screenwidth*2*0.08).padding(.bottom, self.screenheight*0.012)
                                     }
                                     else if self.selected[self.categories.firstIndex(of: cat)!] {
-                                        VStack {
-                                            Text(self.des)
-                                                .font(Font.custom("ProximaNova-Regular", size: 16))
-                                                .fontWeight(.semibold)
-                                                .foregroundColor(Color(.gray))
-                                                .padding(.horizontal, self.screenwidth*0.08)
-                                                .fixedSize(horizontal: false, vertical: true)
-                                        }.frame(width: 0.84*self.screenwidth)
+                                        Text(self.des)
+                                            .font(Font.custom("ProximaNova-Regular", size: 16))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color(.gray))
+                                            .fixedSize(horizontal: false, vertical: true)
+                                            .frame(width: 0.68*self.screenwidth)
                                             .padding(.bottom, self.screenheight*0.012)
                                     }
                                 }.cornerRadius(35).background(Color(.white).cornerRadius(35).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10)).padding(.vertical, 5)
@@ -4092,9 +4260,13 @@ struct Bio: View {
                     }
                 }.padding(.vertical, 5)
                 //MARK: Edit Bio
-                if self.edit {
+                if self.loading {
+                    WhiteLoader()
+                }
+                else if self.edit {
                     HStack(spacing: screenwidth*0.053) {
                         Button(action: {
+                            self.loading.toggle()
                             var check = true
                             for bio in self.newbio {
                                 if bio.count > 200 {
@@ -4102,6 +4274,18 @@ struct Bio: View {
                                 }
                             }
                             if check {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+                                    if self.loading {
+                                        withAnimation {
+                                            self.msg = "Something Went Wrong"
+                                            self.alert.toggle()
+                                            self.newbio = self.tempbio
+                                            self.edit.toggle()
+                                            self.loading.toggle()
+                                            return
+                                        }
+                                    }
+                                }
                                 let db = Firestore.firestore()
                                 let uid = Auth.auth().currentUser?.uid
                                 for num in 0...9 {
@@ -4115,14 +4299,20 @@ struct Bio: View {
                                         newnewbio.append(bio)
                                     }
                                 }
-                                self.observer.myprofile.Bio = newnewbio
-                                db.collection("users").document(uid!).updateData(["Bio": newnewbio])
-                                for str in newnewbio {
-                                    self.newbio[(String(str.prefix(2)) as NSString).integerValue] = String(str)[2..<str.count]
-                                }
-                                withAnimation {
-                                    self.selected = [Bool](repeating: false, count: 10)
-                                    self.edit.toggle()
+                                db.collection("users").document(uid!).updateData(["Bio": newnewbio]) { (err) in
+                                    if err != nil {
+                                        print((err?.localizedDescription)!)
+                                        print("BRUHHHHHHHHHLFJDLKS IFJE JFDSKLFJKJKJDLKJF JLKF")
+                                        return
+                                    }
+                                    self.observer.myprofile.Bio = newnewbio
+                                    for str in newnewbio {
+                                        self.newbio[(String(str.prefix(2)) as NSString).integerValue] = String(str)[2..<str.count]
+                                    }
+                                    withAnimation {
+                                        self.selected = [Bool](repeating: false, count: 10)
+                                        self.edit.toggle()
+                                    }
                                 }
                             }
                             else {
@@ -4182,7 +4372,7 @@ struct Bio: View {
             }.offset(y: self.shift ? CGFloat(-32*self.index) : 0).animation(.spring())
             Spacer()
         }.frame(width: screenwidth, height: screenheight).offset(y: self.edit ? -15 : 0)
-        .background(Color("lightgray").edgesIgnoringSafeArea(.all))
+        .background(Color("lightgray").edgesIgnoringSafeArea(.all)).animation(.spring())
         .navigationBarTitle("")
         .navigationBarHidden(true)
             .navigationBarBackButtonHidden(true)
@@ -5544,6 +5734,7 @@ class observer: ObservableObject {
                                         check = false
                                     }
                                 }
+                                print(document.get("Name") as! String)
                                 var check1 = true
                                 for reports in document.get("Reports") as! [String] {
                                     if reports == self.id! {
@@ -5783,28 +5974,28 @@ func CreateUser(name: String, bdate: String, gender: String, percentage: Double,
     }
     
     for num in 0...3 {
-        if profilepics[num].count != 0 {
-            let metadata = StorageMetadata.init()
-            metadata.contentType = "image/jpeg"
-            let upload = storage.child("ProfilePics").child(uid! + String(num)).putData(profilepics[num], metadata: metadata) { (_, err) in
-                if err != nil {
+        let metadata = StorageMetadata.init()
+        metadata.contentType = "image/jpeg"
+        let upload = storage.child("ProfilePics").child(uid! + String(num)).putData(profilepics[num], metadata: metadata) { (_, err) in
+            if err != nil {
+                print((err?.localizedDescription)!)
+                print("BRUHHHHH")
+                complete(false)
+                return
+            }
+        }
+        upload.observe(.success) { snapshot in
+            storage.child("ProfilePics").child(uid! + String(num)).downloadURL { (url, err) in
+                if err != nil{
                     print((err?.localizedDescription)!)
+                    print("BRUHHHHH")
                     complete(false)
                     return
                 }
-            }
-            upload.observe(.success) { snapshot in
-                storage.child("ProfilePics").child(uid! + String(num)).downloadURL { (url, err) in
-                    if err != nil{
-                        print((err?.localizedDescription)!)
-                        complete(false)
-                        return
-                    }
-                    images.append(String(num) + "\(url!)")
-                    UserDefaults.standard.set(images, forKey: "ProfilePics")
-                    if num == 3 {
-                        complete(true)
-                    }
+                images.append(String(num) + "\(url!)")
+                UserDefaults.standard.set(images, forKey: "ProfilePics")
+                if num == 3 {
+                    complete(true)
                 }
             }
         }
@@ -5841,7 +6032,8 @@ func CheckUser(complete: @escaping (Bool)->Void) {
 
 
 //MARK: UpdateRating
-func UpdateRating(user: UserData, appearance: Double, personality: Double, keys: Int, comment: String) {
+func UpdateRating(user: UserData, appearance: Double, personality: Double, keys: Int, comment: String, complete: @escaping (Bool)->Void) {
+    var check = true
     var stroverall = ""
     var strappearance = ""
     var strpersonality = ""
@@ -5871,26 +6063,55 @@ func UpdateRating(user: UserData, appearance: Double, personality: Double, keys:
         strpersonality = String(personality.truncate(places: 1))
     }
     
-    db.collection("users").document(user.id).updateData(["OverallRating": newoverall.truncate(places: 1), "AppearanceRating": newappearance.truncate(places: 1), "PersonalityRating": newpersonality.truncate(places: 1), "Rates": FieldValue.arrayUnion([strappearance + strpersonality + stroverall + uid!]), "Comments": FieldValue.arrayUnion([comment])])
-    db.collection("users").document(uid!).updateData(["Keys": keys])
-    db.collection("users").document(user.id).updateData(["Lock": FieldValue.arrayUnion([false]), "Reports": FieldValue.arrayUnion([false])])
-    print(user.Percentage, newappearance, newpersonality, newoverall)
+    db.collection("users").document(user.id).updateData(["OverallRating": newoverall.truncate(places: 1), "AppearanceRating": newappearance.truncate(places: 1), "PersonalityRating": newpersonality.truncate(places: 1), "Rates": FieldValue.arrayUnion([strappearance + strpersonality + stroverall + uid!]), "Comments": FieldValue.arrayUnion([comment]), "Lock": FieldValue.arrayUnion([false])]) { (err) in
+        if err != nil {
+            print((err?.localizedDescription)!)
+            return
+        }
+        db.collection("users").document(uid!).updateData(["Keys": keys]) { (err) in
+            if err != nil {
+                print((err?.localizedDescription)!)
+                return
+            }
+            check = false
+            complete(true)
+        }
+    }
+    DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+        if check {
+            complete(false)
+        }
+    }
 }
 
 
 //MARK: Unlock
-func Unlock(keys: Int, lock: [Bool]) {
+func Unlock(keys: Int, lock: [Bool], complete: @escaping (Bool)-> Void) {
     let db = Firestore.firestore()
     let uid = Auth.auth().currentUser?.uid
-    db.collection("users").document(uid!).updateData(["Keys": keys, "Lock": lock])
+    db.collection("users").document(uid!).updateData(["Keys": keys, "Lock": lock]) { (err) in
+        if err != nil{
+            print((err?.localizedDescription)!)
+            complete(false)
+            return
+        }
+        complete(true)
+    }
 }
 
 
 //MARK: Key Change
-func KeyChange(keys: Int) {
+func KeyChange(keys: Int, complete: @escaping (Bool)-> Void) {
     let db = Firestore.firestore()
     let uid = Auth.auth().currentUser?.uid
-    db.collection("users").document(uid!).updateData(["Keys": keys])
+    db.collection("users").document(uid!).updateData(["Keys": keys]) { (err) in
+        if err != nil{
+            print((err?.localizedDescription)!)
+            complete(false)
+            return
+        }
+        complete(true)
+    }
 }
 
 
@@ -6177,7 +6398,7 @@ struct Bar: View {
                     .aspectRatio(contentMode: .fit)
                     .padding(screenheight*0.01).padding(.vertical, screenheight*0.011)
                     .foregroundColor(.white)
-                    .background(Color(.gray).cornerRadius(screenheight*0.022))
+                    .background(Color(.blue).opacity(0.3).cornerRadius(screenheight*0.022))
             }.buttonStyle(PlainButtonStyle())
         }
     }
@@ -6185,7 +6406,7 @@ struct Bar: View {
 
 
 //MARK: Rewarded
-final class Rewarded: NSObject, GADRewardedAdDelegate{
+final class Rewarded: NSObject, GADRewardedAdDelegate {
     var rewardedAd:GADRewardedAd = GADRewardedAd(adUnitID: "ca-app-pub-8107068593888585/2703558577") //"ca-app-pub-4206140009989967/9044631871")
     var rewardFunction: (() -> Void)? = nil
     override init() {
@@ -6316,4 +6537,29 @@ struct UserData: Identifiable {
     var Report: Double
     var Reports: [String]
     var Preferences: [String]
+}
+
+
+//MARK: Connection Check
+public class Reachability {
+
+    class func isConnectedToNetwork() -> Bool {
+        var zeroAddress = sockaddr_in(sin_len: 0, sin_family: 0, sin_port: 0, sin_addr: in_addr(s_addr: 0), sin_zero: (0, 0, 0, 0, 0, 0, 0, 0))
+        zeroAddress.sin_len = UInt8(MemoryLayout.size(ofValue: zeroAddress))
+        zeroAddress.sin_family = sa_family_t(AF_INET)
+        let defaultRouteReachability = withUnsafePointer(to: &zeroAddress) {
+            $0.withMemoryRebound(to: sockaddr.self, capacity: 1) {zeroSockAddress in
+                SCNetworkReachabilityCreateWithAddress(nil, zeroSockAddress)
+            }
+        }
+        var flags: SCNetworkReachabilityFlags = SCNetworkReachabilityFlags(rawValue: 0)
+        if SCNetworkReachabilityGetFlags(defaultRouteReachability!, &flags) == false {
+            return false
+        }
+        // Working for Cellular and WIFI
+        let isReachable = (flags.rawValue & UInt32(kSCNetworkFlagsReachable)) != 0
+        let needsConnection = (flags.rawValue & UInt32(kSCNetworkFlagsConnectionRequired)) != 0
+        let ret = (isReachable && !needsConnection)
+        return ret
+    }
 }
