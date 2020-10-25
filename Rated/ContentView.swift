@@ -1179,7 +1179,7 @@ struct SignUpView: View {
                     ImagePicker(picker: self.$picker, images: self.$profilepics, showimage: self.$showimage, num: self.$numimage)
                 }
                 
-                VStack {
+                VStack(spacing: 10) {
                     //MARK: Back Button
                     HStack(spacing: 5) {
                         
@@ -1203,10 +1203,24 @@ struct SignUpView: View {
                             .foregroundColor(Color(.darkGray))
                         Spacer()
                     }.frame(width: screenwidth).padding(.top, self.screenheight > 800 ? screenheight*0.055 : screenheight*0.02)
+                    if self.count > 2 {
+                        VStack {
+                            ZStack(alignment: .leading) {
+                                RoundedRectangle(cornerRadius: 2.5)
+                                    .frame(width: screenwidth - 60, height: 10)
+                                    .foregroundColor(Color("lightgray").opacity(0.6))
+                                Rectangle()
+                                    .frame(width: (screenwidth - 60)*(CGFloat(self.count-3)/8), height: 10)
+                                    .foregroundColor(.gray)
+                            }.cornerRadius(3.5)
+                            Spacer()
+                        }
+                    }
                     
                     Spacer()
                     
                 }.animation(.easeInOut)
+                
             }.navigationBarBackButtonHidden(true)
             .navigationBarTitle("")
             .navigationBarHidden(true)
@@ -1398,8 +1412,7 @@ struct HomeView: View {
                                         .fontWeight(.semibold)
                                         .foregroundColor(Color("personality"))*/
                                     GIFView(gifName: "giftest")
-                                        //.resizable()
-                                        //.frame(width: 30, height: 30)
+                                        .frame(width: 30, height: 30)
                                         
                                 }.frame(width: screenwidth/1.75, height: screenheight*0.0615)
                                 .background(Color(.white).cornerRadius(screenheight*0.0308))
