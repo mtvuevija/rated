@@ -1267,12 +1267,6 @@ struct HomeView: View {
     @State var refresh1 = false
     @State var refreshoffset: CGFloat = 0
     
-    @State var begin = UnitPoint(x: 0, y: -2)
-    @State var end = UnitPoint(x: 4, y: 0)
-    
-    var timer = Timer.publish(every: 1, on: .main, in: .default).autoconnect()
-    let colors = [Color("appearance"), Color.purple, Color("personality"), Color.red]
-    
     var rewardAd: Rewarded
     let screenwidth = UIScreen.main.bounds.width
     let screenheight = UIScreen.main.bounds.height
@@ -1284,16 +1278,51 @@ struct HomeView: View {
                 Spacer()
             }.background(Color(.white).edgesIgnoringSafeArea(.all)).edgesIgnoringSafeArea(.all)
             ZStack {
-                LinearGradient(gradient: Gradient(colors: colors), startPoint: begin, endPoint: end)
-                    .animation(Animation.easeInOut(duration: 4).repeatForever())
-                    /*.onReceive(timer, perform: { _ in
-                    
-                        self.begin = UnitPoint(x: 4, y: 0)
-                        self.end = UnitPoint(x: 0, y: 2)
-                        self.begin = UnitPoint(x: -4, y: 20)
-                        self.begin = UnitPoint(x: 4, y: 0)
-                    })*/.edgesIgnoringSafeArea(.all)
+                VStack(spacing: 15) {
+                    GIFView(gifName: "revbackground")
+                        .frame(width: screenwidth, height: 50)
+                        .padding(.top, self.screenheight*0.1)
+                    GIFView(gifName: "background")
+                        .frame(width: screenwidth, height: 50)
+                    Group {
+                        GIFView(gifName: "revbackground")
+                            .frame(width: screenwidth, height: 50)
+                        GIFView(gifName: "background")
+                            .frame(width: screenwidth, height: 50)
+                        GIFView(gifName: "revbackground")
+                            .frame(width: screenwidth, height: 50)
+                        GIFView(gifName: "background")
+                            .frame(width: screenwidth, height: 50)
+                        GIFView(gifName: "revbackground")
+                            .frame(width: screenwidth, height: 50)
+                    }
+                    Spacer()
+                }.opacity(0.5).blur(radius: self.unlock || self.homecomment || self.showkeys || self.showprofile ? 2.5 : 2)
                 ZStack {
+                    VStack {
+                        Button(action: {
+                            self.showkeys = true
+                        }) {
+                            HStack {
+                                Text(String(self.observer.keys))
+                                    .font(Font.custom("ProximaNova-Regular", size: 28))
+                                    .fontWeight(.semibold)
+                                    .lineLimit(1)
+                                    .foregroundColor(Color(.white))
+                                    .frame(height: screenheight*0.035)
+                                    .minimumScaleFactor(0.02)
+                                    .animation(nil)
+                                    .shadow(radius: 5)
+                                GIFView(gifName: "keynew")
+                                    .frame(width: screenheight*0.037, height: screenheight*0.037)
+                                /*Image("key")
+                                    .resizable()
+                                    .frame(width: screenheight*0.043, height: screenheight*0.043)
+                                    .foregroundColor(Color(.white))*/
+                            }.padding(2.5).background(Color(.blue).opacity(0.4).cornerRadius(10))
+                        }.padding(5).background(Color(.white).cornerRadius(12.5)).padding(.top, self.screenheight > 800 ? self.screenheight*0.045 : screenheight*0.035)
+                        Spacer()
+                    }
                     VStack(spacing: screenheight*0.0123) {
                         HStack {
                             Button(action: {
@@ -1308,24 +1337,7 @@ struct HomeView: View {
                                     .foregroundColor(Color(.white))
                             }.buttonStyle(PlainButtonStyle()).padding(.leading, screenwidth*0.05)
                             Spacer()
-                            Button(action: {
-                                self.showkeys = true
-                            }) {
-                                HStack {
-                                    Text(String(self.observer.keys))
-                                        .font(Font.custom("ProximaNova-Regular", size: 30))
-                                        .fontWeight(.semibold)
-                                        .lineLimit(1)
-                                        .foregroundColor(Color(.white))
-                                        .frame(height: screenheight*0.043)
-                                        .minimumScaleFactor(0.02)
-                                        .animation(nil)
-                                    Image("key")
-                                        .resizable()
-                                        .frame(width: screenheight*0.043, height: screenheight*0.043)
-                                        .foregroundColor(Color(.white))
-                                }
-                            }.padding(.trailing, screenwidth*0.04)
+                            //.padding(.trailing, screenwidth*0.04)
                         }.padding(.top, self.screenheight > 800 ? self.screenheight*0.05 : screenheight*0.035)
                         //MARK: Recent Ratings
                         HStack {
@@ -1392,31 +1404,41 @@ struct HomeView: View {
                         //MARK: Rate Button
                         if self.stats {
                             NavigationLink(destination: RatingView(rating1: self.$rating, rewardAd: self.rewardAd), isActive: self.$rating) {
-                                Button(action: {
-                                    if self.observer.users.count == 0 {
-                                        
-                                    }
-                                    else if self.changed {
-                                        self.observer.refreshUsers()
-                                        self.changed = false
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                VStack(spacing: 2.5) {
+                                    Button(action: {
+                                        if self.observer.users.count == 0 {
+                                            
+                                        }
+                                        else if self.changed {
+                                            self.observer.refreshUsers()
+                                            self.changed = false
+                                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                                self.rating = true
+                                            }
+                                        }
+                                        else {
                                             self.rating = true
                                         }
-                                    }
-                                    else {
-                                        self.rating = true
-                                    }
-                                }) {
+                                    }) {
+                                        ZStack {
+                                            GIFView(gifName: "rategif")
+                                                .frame(width: 50, height: 35)
+                                            Text("Rate")
+                                                .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                .fontWeight(.semibold)
+                                                .foregroundColor(Color(.white))
+                                                .frame(height: 5)
+                                                .shadow(radius: 5)
+                                        }.padding(5).padding(.horizontal, 50)
+                                            .background(Color(.blue).opacity(0.4).cornerRadius(screenheight*0.0308))
+                                    }.padding(5).background(Color(.white).cornerRadius(screenheight*0.0308 + 2.5))
+                                        .padding(.top, screenheight*0.01)
                                     /*Text("Rate")
-                                        .font(Font.custom("ProximaNova-Regular", size: 24))
+                                        .font(Font.custom("ProximaNova-Regular", size: 10))
                                         .fontWeight(.semibold)
-                                        .foregroundColor(Color("personality"))*/
-                                    GIFView(gifName: "giftest")
-                                        .frame(width: 30, height: 30)
-                                        
-                                }.frame(width: screenwidth/1.75, height: screenheight*0.0615)
-                                .background(Color(.white).cornerRadius(screenheight*0.0308))
-                                    .padding(.top, screenheight*0.01)
+                                        .foregroundColor(Color(.white))
+                                        .frame(height: 5)*/
+                                }
                             }
                         }
                         Spacer()
@@ -1997,24 +2019,23 @@ struct HomeView: View {
                                             ZStack {
                                                 Color("personality")
                                                     .cornerRadius(25)
-                                                HStack(spacing: 2.5) {
+                                                ZStack {
+                                                    GIFView(gifName: "keynew")
+                                                        .frame(width: 50, height: 70)
                                                     Text("+20")
-                                                        .font(Font.custom("ProximaNova-Regular", size: 26))
+                                                        .font(Font.custom("ProximaNova-Regular", size: 30))
                                                         .fontWeight(.semibold)
                                                         .foregroundColor(Color(.white))
-                                                    Image("key")
-                                                        .renderingMode(.template)
-                                                        .resizable()
-                                                        .frame(width: 30, height: 30)
-                                                        .foregroundColor(Color(.white))
-                                                }
-                                                VStack {
+                                                        .shadow(radius: 5)
+                                                        .padding(.top, 50)
+                                                }.offset(y: -10)
+                                                VStack(spacing: 0) {
                                                     Spacer()
                                                     Text("$0.99")
-                                                        .font(Font.custom("ProximaNova-Regular", size: 18))
+                                                        .font(Font.custom("ProximaNova-Regular", size: 14))
                                                         .fontWeight(.semibold)
                                                         .foregroundColor(Color(.white))
-                                                        .padding(.vertical, 5)
+                                                        .padding(.bottom, 5)
                                                 }
                                             }.frame(width: 110, height: 140)
                                         }
@@ -2024,24 +2045,27 @@ struct HomeView: View {
                                             ZStack {
                                                 Color("personality")
                                                     .cornerRadius(25)
-                                                HStack(spacing: 2.5) {
+                                                ZStack {
+                                                    GIFView(gifName: "keynew")
+                                                        .frame(width: 50, height: 70)
+                                                        .offset(x: -20)
+                                                    GIFView(gifName: "keynew")
+                                                        .frame(width: 50, height: 70)
+                                                        .offset(x: 20)
                                                     Text("+50")
-                                                        .font(Font.custom("ProximaNova-Regular", size: 26))
+                                                        .font(Font.custom("ProximaNova-Regular", size: 30))
                                                         .fontWeight(.semibold)
                                                         .foregroundColor(Color(.white))
-                                                    Image("key")
-                                                        .renderingMode(.template)
-                                                        .resizable()
-                                                        .frame(width: 30, height: 30)
-                                                        .foregroundColor(Color(.white))
-                                                }
+                                                        .shadow(radius: 5)
+                                                        .padding(.top, 50)
+                                                }.offset(y: -10)
                                                 VStack {
                                                     Spacer()
                                                     Text("$1.99")
-                                                        .font(Font.custom("ProximaNova-Regular", size: 18))
+                                                        .font(Font.custom("ProximaNova-Regular", size: 14))
                                                         .fontWeight(.semibold)
                                                         .foregroundColor(Color(.white))
-                                                        .padding(.vertical, 5)
+                                                        .padding(.bottom, 5)
                                                 }
                                             }.frame(width: 110, height: 140)
                                         }
@@ -2061,7 +2085,6 @@ struct HomeView: View {
                                                         .resizable()
                                                         .frame(width: 30, height: 30)
                                                         .foregroundColor(Color(.white))
-                                                        //.shadow(color: .white, radius: 5)
                                                 }
                                                 VStack {
                                                     Spacer()
@@ -2130,7 +2153,7 @@ struct HomeView: View {
                     ShowProfile(index: self.$unlockindex, showprofile: self.$showprofile)
                         .offset(y: self.showprofile ? 0 : self.screenheight).animation(.spring())
                 }
-            }.frame(width: self.screenwidth, height: self.screenheight)
+            }.background(Color("personality").edgesIgnoringSafeArea(.all)).frame(width: self.screenwidth, height: self.screenheight)
                 .animation(.spring()).blur(radius: !Reachability.isConnectedToNetwork() ? 10 : 0)
             
             
@@ -2190,8 +2213,6 @@ struct HomeView: View {
         }.edgesIgnoringSafeArea(.all).animation(.spring()).onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 self.start = false
-                self.end = UnitPoint(x: 2, y: -4)
-                self.begin = UnitPoint(x: 0, y: 20)
                 
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
@@ -6955,20 +6976,16 @@ extension UIImage {
         var images = [CGImage]()
         var delays = [Int]()
 
-        // Fill arrays
         for index in 0..<count {
-            // Add image
             if let image = CGImageSourceCreateImageAtIndex(source, index, nil) {
                 images.append(image)
             }
 
-            // At it's delay in cs
             let delaySeconds = UIImage.delayForImageAtIndex(Int(index),
                 source: source)
             delays.append(Int(delaySeconds * 1000.0)) // Seconds to ms
         }
 
-        // Calculate full duration
         let duration: Int = {
             var sum = 0
 
@@ -6979,7 +6996,6 @@ extension UIImage {
             return sum
             }()
 
-        // Get frames
         let gcd = gcdForArray(delays)
         var frames = [UIImage]()
 
@@ -6994,7 +7010,6 @@ extension UIImage {
             }
         }
 
-        // Heyhey
         let animation = UIImage.animatedImage(with: frames,
             duration: Double(duration) / 1000.0)
 
