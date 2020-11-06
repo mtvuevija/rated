@@ -1266,6 +1266,8 @@ struct HomeView: View {
     @State var refresh = false
     @State var refresh1 = false
     @State var refreshoffset: CGFloat = 0
+    @State var connectionstatus = true
+    @State var refreshing: Int = 0
     
     var rewardAd: Rewarded
     let screenwidth = UIScreen.main.bounds.width
@@ -1278,7 +1280,7 @@ struct HomeView: View {
                 Spacer()
             }.background(Color(.white).edgesIgnoringSafeArea(.all)).edgesIgnoringSafeArea(.all)
             ZStack {
-                VStack(spacing: 15) {
+                /*VStack(spacing: 15) {
                     GIFView(gifName: "revbackground")
                         .frame(width: screenwidth, height: 50)
                         .padding(.top, self.screenheight*0.1)
@@ -1297,47 +1299,46 @@ struct HomeView: View {
                             .frame(width: screenwidth, height: 50)
                     }
                     Spacer()
-                }.opacity(0.5).blur(radius: self.unlock || self.homecomment || self.showkeys || self.showprofile ? 2.5 : 2)
+                }.opacity(0.5).blur(radius: self.unlock || self.homecomment || self.showkeys || self.showprofile ? 2.5 : 2)*/
                 ZStack {
-                    VStack {
-                        Button(action: {
-                            self.showkeys = true
-                        }) {
-                            HStack {
-                                Text(String(self.observer.keys))
-                                    .font(Font.custom("ProximaNova-Regular", size: 28))
-                                    .fontWeight(.semibold)
-                                    .lineLimit(1)
-                                    .foregroundColor(Color(.white))
-                                    .frame(height: screenheight*0.035)
-                                    .minimumScaleFactor(0.02)
-                                    .animation(nil)
-                                    .shadow(radius: 5)
-                                GIFView(gifName: "keynew")
-                                    .frame(width: screenheight*0.037, height: screenheight*0.037)
-                                /*Image("key")
-                                    .resizable()
-                                    .frame(width: screenheight*0.043, height: screenheight*0.043)
-                                    .foregroundColor(Color(.white))*/
-                            }.padding(2.5).background(Color(.blue).opacity(0.4).cornerRadius(10))
-                        }.padding(5).background(Color(.white).cornerRadius(12.5)).padding(.top, self.screenheight > 800 ? self.screenheight*0.045 : screenheight*0.035)
-                        Spacer()
-                    }
-                    VStack(spacing: screenheight*0.0123) {
+                    VStack(spacing: screenheight*0.009) {
                         HStack {
                             Button(action: {
                                 withAnimation {
                                     self.settings.toggle()
                                 }
                             }) {
-                                Image("settings")
-                                    .renderingMode(.template)
-                                    .resizable()
-                                    .frame(width: screenheight*0.043, height: screenheight*0.043)
-                                    .foregroundColor(Color(.white))
+                                HStack(spacing: 2.5) {
+                                    Image(systemName: "chevron.left")
+                                        .font(Font.system(size: 18, weight: .heavy))
+                                        .foregroundColor(Color(.darkGray))
+                                    Image("settings-1")
+                                        //.renderingMode(.template)
+                                        .resizable()
+                                        .frame(width: screenheight*0.047, height: screenheight*0.047)
+                                        //.foregroundColor(Color(.darkGray))
+                                }
                             }.buttonStyle(PlainButtonStyle()).padding(.leading, screenwidth*0.05)
                             Spacer()
-                            //.padding(.trailing, screenwidth*0.04)
+                            Button(action: {
+                                self.showkeys = true
+                            }) {
+                                HStack(spacing: 2.5) {
+                                    Text(String(self.observer.keys))
+                                        .font(Font.custom("ProximaNova-Regular", size: 32))
+                                        .fontWeight(.semibold)
+                                        .lineLimit(1)
+                                        .foregroundColor(Color(.blue).opacity(0.4))
+                                        .frame(height: screenheight*0.035)
+                                        .minimumScaleFactor(0.02)
+                                        .animation(nil)
+                                        .shadow(radius: 5)
+                                    Image("key")
+                                        .resizable()
+                                        .frame(width: screenheight*0.044, height: screenheight*0.044)
+                                        .foregroundColor(Color(.blue).opacity(0.4))
+                                }//.padding(2.5).background(Color(.blue).opacity(0.4).cornerRadius(10))
+                            }/*.padding(5).background(Color(.white).cornerRadius(12.5).shadow(color: Color("lightgray"), radius: 5))*/.padding(.trailing, screenwidth*0.05)
                         }.padding(.top, self.screenheight > 800 ? self.screenheight*0.05 : screenheight*0.035)
                         //MARK: Recent Ratings
                         HStack {
@@ -1345,7 +1346,7 @@ struct HomeView: View {
                                 .font(Font.custom("ProximaNova-Regular", size: 30))
                                 .fontWeight(.semibold)
                                 .lineLimit(1)
-                                .foregroundColor(Color(.white))
+                                .foregroundColor(Color(.darkGray))
                                 .frame(height: screenheight*0.05)
                                 .minimumScaleFactor(0.02)
                                 .padding(.leading, 25)
@@ -1420,24 +1421,13 @@ struct HomeView: View {
                                             self.rating = true
                                         }
                                     }) {
-                                        ZStack {
+                                        HStack(spacing: 0) {
                                             GIFView(gifName: "rategif")
-                                                .frame(width: 50, height: 35)
-                                            Text("Rate")
-                                                .font(Font.custom("ProximaNova-Regular", size: 16))
-                                                .fontWeight(.semibold)
-                                                .foregroundColor(Color(.white))
-                                                .frame(height: 5)
-                                                .shadow(radius: 5)
-                                        }.padding(5).padding(.horizontal, 50)
-                                            .background(Color(.blue).opacity(0.4).cornerRadius(screenheight*0.0308))
-                                    }.padding(5).background(Color(.white).cornerRadius(screenheight*0.0308 + 2.5))
+                                                .frame(width: 80, height: 45)
+                                        }.frame(width: screenwidth/2).padding(2.5)
+                                            .background(Color(.blue).opacity(0.4).cornerRadius(screenheight*0.02))
+                                    }.padding(5).background(Color(.white).cornerRadius(screenheight*0.02 + 2.5))
                                         .padding(.top, screenheight*0.01)
-                                    /*Text("Rate")
-                                        .font(Font.custom("ProximaNova-Regular", size: 10))
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(Color(.white))
-                                        .frame(height: 5)*/
                                 }
                             }
                         }
@@ -1557,12 +1547,12 @@ struct HomeView: View {
                                                 }
                                             }) {
                                                 Text("Save")
-                                                    .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                    .font(Font.custom("ProximaNova-Regular", size: 22))
                                                     .fontWeight(.semibold)
-                                                    .foregroundColor(.black)
-                                                    .frame(width: screenwidth/3.5, height: screenheight*0.05)
-                                                    .background(Color(.white).cornerRadius(screenheight*0.025).shadow(color: Color("lightgray").opacity(0.6), radius: 5))
-                                            }.padding(.top, screenheight*0.01)
+                                                    .foregroundColor(.white)
+                                                    .frame(width: screenwidth/3.5 - 20, height: screenheight*0.05 - 10)
+                                                    .background(Color(.blue).opacity(0.4).cornerRadius(screenheight*0.015))
+                                            }.padding(5).background(Color(.white).cornerRadius(screenheight*0.015 + 2.5).shadow(color: Color(.lightGray).opacity(0.5), radius: 5)).padding(.top, screenheight*0.01)
                                         }
                                     }
                                     Spacer()
@@ -2020,8 +2010,13 @@ struct HomeView: View {
                                                 Color("personality")
                                                     .cornerRadius(25)
                                                 ZStack {
-                                                    GIFView(gifName: "keynew")
-                                                        .frame(width: 50, height: 70)
+                                                    //GIFView(gifName: "keynew")
+                                                        //.frame(width: 50, height: 70)
+                                                    Image("key")
+                                                        .resizable()
+                                                        .renderingMode(.template)
+                                                        .frame(width: 50, height: 50)
+                                                        .foregroundColor(.white)
                                                     Text("+20")
                                                         .font(Font.custom("ProximaNova-Regular", size: 30))
                                                         .fontWeight(.semibold)
@@ -2046,12 +2041,18 @@ struct HomeView: View {
                                                 Color("personality")
                                                     .cornerRadius(25)
                                                 ZStack {
-                                                    GIFView(gifName: "keynew")
-                                                        .frame(width: 50, height: 70)
-                                                        .offset(x: -20)
-                                                    GIFView(gifName: "keynew")
-                                                        .frame(width: 50, height: 70)
-                                                        .offset(x: 20)
+                                                    Image("key")
+                                                        .resizable()
+                                                        .renderingMode(.template)
+                                                        .frame(width: 40, height: 40)
+                                                        .foregroundColor(.white)
+                                                        .offset(x: -15)
+                                                    Image("key")
+                                                        .resizable()
+                                                        .renderingMode(.template)
+                                                        .frame(width: 40, height: 40)
+                                                        .foregroundColor(.white)
+                                                        .offset(x: 15)
                                                     Text("+50")
                                                         .font(Font.custom("ProximaNova-Regular", size: 30))
                                                         .fontWeight(.semibold)
@@ -2075,24 +2076,38 @@ struct HomeView: View {
                                             ZStack {
                                                 Color("personality")
                                                     .cornerRadius(25)
-                                                HStack(spacing: 2.5) {
+                                                ZStack {
+                                                    Image("key")
+                                                        .resizable()
+                                                        .renderingMode(.template)
+                                                        .frame(width: 35, height: 35)
+                                                        .foregroundColor(.white)
+                                                        .offset(x: -22.5)
+                                                    Image("key")
+                                                        .resizable()
+                                                        .renderingMode(.template)
+                                                        .frame(width: 35, height: 35)
+                                                        .foregroundColor(.white)
+                                                    Image("key")
+                                                        .resizable()
+                                                        .renderingMode(.template)
+                                                        .frame(width: 35, height: 35)
+                                                        .foregroundColor(.white)
+                                                        .offset(x: 22.5)
                                                     Text("+150")
-                                                        .font(Font.custom("ProximaNova-Regular", size: 26))
+                                                        .font(Font.custom("ProximaNova-Regular", size: 30))
                                                         .fontWeight(.semibold)
                                                         .foregroundColor(Color(.white))
-                                                    Image("key")
-                                                        .renderingMode(.template)
-                                                        .resizable()
-                                                        .frame(width: 30, height: 30)
-                                                        .foregroundColor(Color(.white))
-                                                }
+                                                        .shadow(radius: 5)
+                                                        .padding(.top, 50)
+                                                }.offset(y: -10)
                                                 VStack {
                                                     Spacer()
                                                     Text("$4.99")
-                                                        .font(Font.custom("ProximaNova-Regular", size: 18))
+                                                        .font(Font.custom("ProximaNova-Regular", size: 14))
                                                         .fontWeight(.semibold)
                                                         .foregroundColor(Color(.white))
-                                                        .padding(.vertical, 5)
+                                                        .padding(.bottom, 5)
                                                 }
                                             }.frame(width: 110, height: 140)
                                         }
@@ -2153,7 +2168,7 @@ struct HomeView: View {
                     ShowProfile(index: self.$unlockindex, showprofile: self.$showprofile)
                         .offset(y: self.showprofile ? 0 : self.screenheight).animation(.spring())
                 }
-            }.background(Color("personality").edgesIgnoringSafeArea(.all)).frame(width: self.screenwidth, height: self.screenheight)
+            }.background(Color("lightgray").edgesIgnoringSafeArea(.all)).frame(width: self.screenwidth, height: self.screenheight)
                 .animation(.spring()).blur(radius: !Reachability.isConnectedToNetwork() ? 10 : 0)
             
             
@@ -2161,7 +2176,7 @@ struct HomeView: View {
             SettingView(settings: self.$settings, start: self.$start)
                 .offset(x: self.settings ? 0 : -screenwidth).animation(.spring())
             
-            if !Reachability.isConnectedToNetwork() {
+            /*if !Reachability.isConnectedToNetwork() {
                 ZStack {
                     Color("lightgray")
                         .frame(width: screenwidth, height: screenheight)
@@ -2203,17 +2218,59 @@ struct HomeView: View {
                     }.padding(20)
                     .background(Color(.white).cornerRadius(20).shadow(radius: 15))
                 }.animation(.spring())
-            }
+            }*/
             
-            Color("personality")
-                .frame(width: screenwidth, height: screenheight)
-                .offset(y: self.start ? 0 : -screenheight)
-                .animation(.spring())
+            ZStack {
+                Color("personality")
+                    .frame(width: screenwidth, height: screenheight)
+                VStack(spacing: 15) {
+                    if !self.connectionstatus {
+                        Text("Connection Error")
+                            .font(Font.custom("ProximaNova-Regular", size: 28))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color(.white))
+                        
+                    }
+                    GIFView(gifName: "rategif")
+                        .frame(width: 150, height: 75)
+                    if !self.connectionstatus {
+                        Text("Reconnecting")
+                            .font(Font.custom("ProximaNova-Regular", size: 16))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color(.white))
+                        HStack {
+                            Circle()
+                                .frame(width: 10, height: 10)
+                                .foregroundColor(Color(.white).opacity(self.refreshing == 0 ? 1 : 0.5))
+                            Circle()
+                                .frame(width: 10, height: 10)
+                                .foregroundColor(Color(.white).opacity(self.refreshing == 1 ? 1 : 0.5))
+                            Circle()
+                                .frame(width: 10, height: 10)
+                                .foregroundColor(Color(.white).opacity(self.refreshing == 2 ? 1 : 0.5))
+                        }
+                    }
+                }.onAppear {
+                    Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
+                        if self.refreshing != 2 {
+                            self.refreshing += 1
+                        }
+                        else {
+                            self.refreshing = 0
+                        }
+                    }
+                }
+                
+            }.offset(y: (self.start || !self.connectionstatus) ? 0 : -screenheight)
+            .animation(.spring())
+            
             
         }.edgesIgnoringSafeArea(.all).animation(.spring()).onAppear {
+            Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { _ in
+                self.connectionstatus = Reachability.isConnectedToNetwork()
+            }
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                 self.start = false
-                
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                 self.recentratings = true
@@ -3441,11 +3498,16 @@ struct SettingView: View {
                     Button(action: {
                         self.more.toggle()
                     }) {
-                        Image(systemName: "chevron.right")
-                            .font(Font.system(size: 24, weight: .bold))
-                            .foregroundColor(.gray)
-                            .padding(.trailing, 15)
-                    }
+                        HStack(spacing: 5) {
+                            Image("settings-1")
+                                .renderingMode(.template)
+                                .resizable()
+                                .frame(width: 35, height: 35)
+                            Image(systemName: "chevron.right")
+                                .font(Font.system(size: 24, weight: .bold))
+                                .padding(.trailing, 15)
+                        }
+                    }.buttonStyle(PlainButtonStyle())
                 }
             }.frame(width: screenwidth - 40).padding(.vertical, 15).background(Color(.white).cornerRadius(30).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10)).opacity(0.7).padding(.bottom, 40)
         }.frame(width: screenwidth, height: screenheight).background(LinearGradient(gradient: Gradient(colors: [Color("lightgray"), Color(.white)]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all))
@@ -4860,7 +4922,7 @@ struct OverallMeter: View {
                 RatingMeter()
             }.frame(width: screenheight*0.17, height: screenheight*0.085)
                 .padding(.bottom, 5)
-            Text(String(self.observer.userrates.count) + " Ratings")
+            Text(self.observer.userrates.count == 1 ? String(self.observer.userrates.count) + " Rating" : String(self.observer.userrates.count) + " Ratings")
                 .font(Font.custom("ProximaNova-Regular", size: 12))
                 .fontWeight(.semibold)
                 .foregroundColor(.black)
