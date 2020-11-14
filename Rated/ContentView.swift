@@ -326,8 +326,21 @@ struct SignUpView: View {
     @State var extraversion = [false, false, false, true, false, false, false]
     @State var agreeableness = [false, false, false, true, false, false, false]
     @State var neuroticism = [false, false, false, true, false, false, false]
+    
+    //Bio
+    @State var edit = false
+    @State var editselect: Int = 0
+    
     @State var education = false
     @State var educationdata = [String]()
+    
+    @State var occupation = false
+    @State var occupationdata = [String]()
+    @State var occupationdata1 = [String]()
+    
+    @State var sports = ["Basketball", "Hockey", "Football", "Soccer", "Baseball", "Bowling", "Swimming", "Cross-Country"]
+    @State var sportsselect = [Bool](repeating: false, count: 8)
+    
     
     //Image Picker
     @State var numimage: Int = 0
@@ -1458,46 +1471,53 @@ struct SignUpView: View {
                                     .font(Font.system(size: 36, weight: .bold))
                                     .foregroundColor(Color(.blue).opacity(0.5))
                             }
-                            
                         }.frame(width: screenwidth, height: screenheight)
                         //MARK: Education
-                        VStack {
+                        VStack(spacing: 0) {
                             Spacer()
+                            Image("Education")
+                                .resizable()
+                                .frame(width: 50, height: 50)
                             VStack(spacing: 20) {
                                 Text("Education")
                                     .font(Font.custom("ProximaNova-Regular", size: 30))
                                     .fontWeight(.semibold)
                                     .foregroundColor(Color(.darkGray))
-                                    .padding(.bottom, 20)
-                                    //.padding(.top, 120)
+                                    .padding(.bottom, 10)
                                 
                                 ForEach(educationdata, id: \.self) { data in
                                     HStack {
-                                        VStack(alignment: .leading, spacing: 5) {
-                                            Text(data.prefix(data.count - 4))
-                                                .font(Font.custom("ProximaNova-Regular", size: 24))
-                                                .fontWeight(.semibold)
-                                                .foregroundColor(Color(.darkGray))
-                                            Text(data.suffix(4))
-                                                .font(Font.custom("ProximaNova-Regular", size: 18))
-                                                .fontWeight(.semibold)
-                                                .foregroundColor(Color(.lightGray))
-                                        }.padding(.trailing, 10)
                                         Image("education-2")
                                             .renderingMode(.template)
                                             .resizable()
                                             .frame(width: 30, height: 30)
-                                            .foregroundColor(Color(.darkGray))
+                                            .foregroundColor(Color("purp"))
+                                            .padding(.trailing, 10)
+                                        VStack(alignment: .leading, spacing: 5) {
+                                            Text(data.prefix(data.count - 4))
+                                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                .fontWeight(.semibold)
+                                                .foregroundColor(Color("purp"))
+                                            Text(data.suffix(4))
+                                                .font(Font.custom("ProximaNova-Regular", size: 18))
+                                                .fontWeight(.semibold)
+                                                .foregroundColor(Color("purp").opacity(0.5))
+                                        }
                                         Spacer()
                                         Rectangle()
-                                            .frame(width: 2, height: 70)
-                                            .foregroundColor(Color(.darkGray))
+                                            .frame(width: 5, height: 70)
+                                            .foregroundColor(Color("purp"))
                                         Image(systemName: "line.horizontal.3")
                                             .font(Font.system(size: 20, weight: .heavy))
                                             .foregroundColor(Color(.darkGray))
                                             .padding(.leading, 10)
-                                            //.padding(.horizontal, 5)
-                                    }.padding(.horizontal, 20).frame(width: self.screenwidth - 80, height: 70).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 2.5).foregroundColor(Color(.darkGray)))
+                                            .onTapGesture {
+                                                self.editselect = self.educationdata.firstIndex(of: data)!
+                                                self.edit = true
+                                                self.education.toggle()
+                                                self.picker = true
+                                            }
+                                    }.padding(.horizontal, 20).frame(width: self.screenwidth - 80, height: 70).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color("purp")))
                                 }
                                 
                                 if self.educationdata.count != 0 && self.educationdata.count != 5 {
@@ -1508,7 +1528,8 @@ struct SignUpView: View {
                                 
                                 if self.educationdata.count != 5 {
                                     Button(action: {
-                                        self.education.toggle()
+                                        self.education = true
+                                        self.picker.toggle()
                                     }) {
                                         HStack {
                                             Text("Add School")
@@ -1524,43 +1545,197 @@ struct SignUpView: View {
                                             Image(systemName: "chevron.right")
                                                 .font(Font.system(size: 20, weight: .heavy))
                                                 .foregroundColor(Color(.darkGray))
-                                        }.padding(.horizontal, 20).frame(width: screenwidth - 80, height: 70).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 2.5).foregroundColor(Color(.darkGray)))
+                                        }.padding(.horizontal, 20).frame(width: screenwidth - 80, height: 70).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                                     }
                                 }
                                 
                                 Spacer()
                                 
-                                HStack {
-                                    if self.educationdata.count > 0 {
-                                        Button(action: {
-                                            
-                                        }) {
-                                            Text("Next")
-                                                .font(Font.custom("ProximaNova-Regular", size: 14))
-                                                .fontWeight(.semibold)
-                                                .foregroundColor(Color(.white))
-                                                .padding(10).padding(.horizontal, 20)
-                                                .background(Color(.darkGray).cornerRadius(20))
-                                                .padding(.bottom, 50)
-                                                .opacity(0.7)
-                                        }
-                                    }
-                                    else {
-                                        Button(action: {
-                                            
-                                        }) {
-                                            Text("Skip")
-                                                .font(Font.custom("ProximaNova-Regular", size: 14))
-                                                .fontWeight(.semibold)
-                                                .foregroundColor(Color(.darkGray))
-                                                .padding(10).padding(.horizontal, 20)
-                                                .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color(.darkGray)))
-                                                .padding(.bottom, 50)
-                                                .opacity(0.4)
-                                        }
+                                if self.educationdata.count > 0 {
+                                    Button(action: {
+                                        self.next -= self.screenwidth
+                                        self.count += 1
+                                    }) {
+                                        Text("Next")
+                                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color(.white))
+                                            .padding(10).padding(.horizontal, 20)
+                                            .background(Color(.darkGray).cornerRadius(20))
+                                            .padding(.bottom, 50)
+                                            .opacity(0.7)
                                     }
                                 }
-                            }.frame(width: screenwidth, height: screenheight/1.25)
+                                else {
+                                    Button(action: {
+                                        self.next -= self.screenwidth
+                                        self.count += 1
+                                    }) {
+                                        Text("Skip")
+                                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color(.darkGray))
+                                            .padding(10).padding(.horizontal, 20)
+                                            .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color(.darkGray)))
+                                            .padding(.bottom, 50)
+                                            .opacity(0.4)
+                                    }
+                                }
+                            }.frame(width: screenwidth, height: screenheight/1.27)
+                        }.frame(width: screenwidth, height: screenheight)
+                        
+                        //MARK: Occupation
+                        VStack {
+                            Spacer()
+                            Image("Occupation")
+                                .resizable()
+                                .frame(width: 50, height: 50)
+                            VStack(spacing: 20) {
+                                Text("Occupation")
+                                    .font(Font.custom("ProximaNova-Regular", size: 30))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color(.darkGray))
+                                    .padding(.bottom, 10)
+                                
+                                if self.occupationdata.count > 0 {
+                                    ForEach(1...self.occupationdata.count, id: \.self) { data in
+                                        HStack {
+                                            Image("occupation-1")
+                                                .renderingMode(.template)
+                                                .resizable()
+                                                .frame(width: 30, height: 30)
+                                                .foregroundColor(Color("purp"))
+                                                .padding(.trailing, 10)
+                                            VStack(alignment: .leading, spacing: 5) {
+                                                Text(self.occupationdata[data-1])
+                                                    .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                    .fontWeight(.semibold)
+                                                    .foregroundColor(Color("purp"))
+                                                Text(self.occupationdata1[data-1])//String(data[data.index(of: "$")]..<data.count))
+                                                    .font(Font.custom("ProximaNova-Regular", size: 18))
+                                                    .fontWeight(.semibold)
+                                                    .foregroundColor(Color("purp").opacity(0.5))
+                                            }
+                                            Spacer()
+                                            Rectangle()
+                                                .frame(width: 5, height: 70)
+                                                .foregroundColor(Color("purp"))
+                                            Image(systemName: "line.horizontal.3")
+                                                .font(Font.system(size: 20, weight: .heavy))
+                                                .foregroundColor(Color(.darkGray))
+                                                .padding(.leading, 10)
+                                                .onTapGesture {
+                                                    self.editselect = data - 1
+                                                    self.edit = true
+                                                    self.occupation.toggle()
+                                                    self.picker = true
+                                                }
+                                        }.padding(.horizontal, 20).frame(width: self.screenwidth - 80, height: 70).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color("purp")))
+                                    }
+                                }
+                                
+                                
+                                if self.occupationdata.count != 0 && self.occupationdata.count != 5 {
+                                    RoundedRectangle(cornerRadius: 2)
+                                        .frame(width: screenwidth - 40, height: 5)
+                                        .foregroundColor(Color(.darkGray))
+                                }
+                                
+                                if self.occupationdata.count != 5 {
+                                    Button(action: {
+                                        self.occupation = true
+                                        self.picker.toggle()
+                                    }) {
+                                        HStack {
+                                            Text("Add Occupation")
+                                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                .fontWeight(.semibold)
+                                                .foregroundColor(Color(.darkGray))
+                                            Image("occupation-1")
+                                                .renderingMode(.template)
+                                                .resizable()
+                                                .frame(width: 30, height: 30)
+                                                .foregroundColor(Color(.darkGray))
+                                            Spacer()
+                                            Image(systemName: "chevron.right")
+                                                .font(Font.system(size: 20, weight: .heavy))
+                                                .foregroundColor(Color(.darkGray))
+                                        }.padding(.horizontal, 20).frame(width: screenwidth - 80, height: 70).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                                    }
+                                }
+                                
+                                Spacer()
+                                
+                                if self.occupationdata.count > 0 {
+                                    Button(action: {
+                                        self.next -= self.screenwidth
+                                        self.count += 1
+                                    }) {
+                                        Text("Next")
+                                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color(.white))
+                                            .padding(10).padding(.horizontal, 20)
+                                            .background(Color(.darkGray).cornerRadius(20))
+                                            .padding(.bottom, 50)
+                                            .opacity(0.7)
+                                    }
+                                }
+                                else {
+                                    Button(action: {
+                                        self.next -= self.screenwidth
+                                        self.count += 1
+                                    }) {
+                                        Text("Skip")
+                                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color(.darkGray))
+                                            .padding(10).padding(.horizontal, 20)
+                                            .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color(.darkGray)))
+                                            .padding(.bottom, 50)
+                                            .opacity(0.4)
+                                    }
+                                }
+                            }.frame(width: screenwidth, height: screenheight/1.28)
+                        }.frame(width: screenwidth, height: screenheight)
+                        
+                        //MARK: Sports
+                        VStack {
+                            Spacer()
+                            Image("Sports")
+                                .resizable()
+                                .frame(width: 50, height: 50)
+                            VStack {
+                                Text("Sports")
+                                    .font(Font.custom("ProximaNova-Regular", size: 30))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color(.darkGray))
+                                    .padding(.bottom, 10)
+                                VStack {
+                                    ScrollView(showsIndicators: false) {
+                                        ForEach(1...self.sportsselect.count, id: \.self) { ind in
+                                            VStack(spacing: 0) {
+                                                Button(action:  {
+                                                    //self.sportsselect[ind-1] = !self.sportsselect[ind-1]
+                                                }) {
+                                                    HStack {
+                                                        Image(self.sports[ind-1])
+                                                            .renderingMode(.template)
+                                                            .resizable()
+                                                            .frame(width: 20, height: 20)
+                                                            .foregroundColor(.black)//self.sportsselect[ind-1] ? Color(.white) : Color(.darkGray))
+                                                        Text(self.sports[ind-1])
+                                                            .font(Font.custom("ProximaNova-Regular", size: 18))
+                                                            .fontWeight(.semibold)
+                                                            .foregroundColor(.black)//self.sportsselect[ind-1] ? Color(.white) : Color(.darkGray))
+                                                            .fixedSize(horizontal: false, vertical: true)
+                                                    }.padding(10).frame(width: 200, height: 40)
+                                                }//.background(self.sportsselect[ind-1] ? Color(.darkGray) : Color(.clear)).cornerRadius(10)
+                                            }
+                                        }
+                                    }.frame(width: 175, height: 250).padding(10)
+                                }.background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2.5).foregroundColor(Color(.darkGray)))
+                            }.frame(height: screenheight/1.27)
                         }.frame(width: screenwidth, height: screenheight)
                     }
                     
@@ -1810,10 +1985,22 @@ struct SignUpView: View {
                         }
                     }.frame(width: screenwidth, height: screenheight)
                     
-                }.animation(.spring()).offset(x: screenwidth*5.5 + next).sheet(isPresented: self.$picker) {
-                    ImagePicker(picker: self.$picker, images: self.$profilepics, showimage: self.$showimage, num: self.$numimage)
-                }.sheet(isPresented: self.$education) {
-                    EducationView(education: self.$education, educationdata: self.$educationdata)
+                }.animation(.spring()).offset(x: screenwidth*6.5 + next).sheet(isPresented: self.$picker) {
+                    if self.edit && self.education {
+                        EducationView(education: self.$education, educationdata: self.$educationdata, edit: self.$edit, picker: self.$picker, select: self.editselect)
+                    }
+                    else if self.education {
+                        EducationView(education: self.$education, educationdata: self.$educationdata, edit: self.$edit, picker: self.$picker)
+                    }
+                    else if self.edit && self.occupation {
+                        OccupationView(occupation: self.$occupation, occupationdata: self.$occupationdata, occupationdata1: self.$occupationdata1, edit: self.$edit, picker: self.$picker, select: self.editselect)
+                    }
+                    else if self.occupation {
+                        OccupationView(occupation: self.$occupation, occupationdata: self.$occupationdata, occupationdata1: self.$occupationdata1, edit: self.$edit, picker: self.$picker)
+                    }
+                    else {
+                        ImagePicker(picker: self.$picker, images: self.$profilepics, showimage: self.$showimage, num: self.$numimage)
+                    }
                 }
                 
                 VStack(spacing: 10) {
@@ -1875,28 +2062,315 @@ struct SignUpView: View {
 struct EducationView: View {
     @Binding var education: Bool
     @Binding var educationdata: [String]
+    @Binding var edit: Bool
+    @Binding var picker: Bool
     @State var school = ""
+    @State var year = [Bool](repeating: false, count: 100)
+    @State var yearfin = ""
+    @State var select: Int = -1
+    let screenwidth = UIScreen.main.bounds.width
+    let screenheight = UIScreen.main.bounds.height
     var body: some View {
-        VStack {
-            Text("Education")
-                .font(Font.custom("ProximaNova-Regular", size: 30))
+        VStack(spacing: 20) {
+            HStack {
+                Text("Add School")
+                    .font(Font.custom("ProximaNova-Regular", size: 30))
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color(.darkGray))
+                Image("education-2")
+                    .renderingMode(.template)
+                    .resizable()
+                    .frame(width: 35, height: 35)
+                    .foregroundColor(Color(.darkGray))
+            }.padding(.vertical, 30)
+            Text("School Name")
+                .font(Font.custom("ProximaNova-Regular", size: 22))
                 .fontWeight(.semibold)
                 .foregroundColor(Color(.darkGray))
             HStack {
-                TextField("School", text: self.$school)
-                Button(action: {
-                    self.educationdata.append(self.school)
-                    self.education.toggle()
-                }) {
-                    Text("Confirm")
-                        .font(Font.custom("ProximaNova-Regular", size: 20))
-                        .fontWeight(.semibold)
+                Spacer()
+                ZStack {
+                    if self.school.count < 1 {
+                        Text("School Name")
+                            .font(Font.custom("ProximaNova-Regular", size: 24))
+                            .foregroundColor(.black)
+                            .opacity(0.5)
+                    }
+                    TextField("", text: self.$school)
+                        .font(Font.custom("ProximaNova-Regular", size: 24).weight(.semibold))
                         .foregroundColor(Color(.darkGray))
+                        .padding(10)
+                        .frame(width: screenwidth - 80, height: 50)
+                        .multilineTextAlignment(.center)
+                }.padding(5).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                Spacer()
+            }
+            if self.yearfin.count > 0 {
+                Text(yearfin)
+                    .font(Font.custom("ProximaNova-Regular", size: 20))
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color(.darkGray))
+                    .padding(10)
+                    .background(RoundedRectangle(cornerRadius: 10).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                    .scaleEffect((self.yearfin.count > 0 && self.school.count > 0) ? 1 : 0)
+            }
+            VStack {
+                Text("Select Year")
+                    .font(Font.custom("ProximaNova-Regular", size: 24))
+                    .foregroundColor(Color(.darkGray))
+                VStack {
+                    ScrollView(showsIndicators: false) {
+                        ForEach((0...99).reversed(), id: \.self) { yr in
+                            VStack {
+                                Button(action: {
+                                    self.year = [Bool](repeating: false, count: 100)
+                                    self.year[yr] = true
+                                    self.yearfin = String(yr + 1940)
+                                }) {
+                                    Text(String(yr + 1940))
+                                        .font(Font.custom("ProximaNova-Regular", size: 18))
+                                        .fontWeight(.semibold)
+                                        .foregroundColor(self.year[yr] ? Color(.white) : Color(.darkGray).opacity(0.6))
+                                        .fixedSize(horizontal: true, vertical: false)
+                                        .padding(5).padding(.horizontal, 20)
+                                }
+                            }.background(self.year[yr] ? Color(.darkGray) : Color(.clear)).cornerRadius(10)
+                        }
+                    }.padding(10)
+                }.frame(width: 150, height: 250).background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2.5).foregroundColor(Color(.darkGray)))
+            }.scaleEffect(self.school.count > 0 ? 1 : 0)
+            HStack {
+                if self.select != -1  {
+                    Button(action: {
+                        self.education.toggle()
+                        self.edit = false
+                        self.educationdata.remove(at: self.select)
+                        self.picker = false
+                    }) {
+                        Text("Remove")
+                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color("personality"))
+                            .frame(width: 60)
+                            .padding(10).padding(.horizontal, 10)
+                            .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color("personality")))
+                            .padding(.bottom, 50)
+                            .opacity(0.7)
+                    }
+                }
+                VStack {
+                    if self.school.count > 0 && self.yearfin.count > 0 {
+                        Button(action: {
+                            if self.select != -1 {
+                                self.educationdata[self.select] = self.school + self.yearfin
+                            }
+                            else {
+                                self.educationdata.append(self.school + self.yearfin)
+                            }
+                            self.education.toggle()
+                            self.edit = false
+                            self.picker = false
+                        }) {
+                            Text("Confirm")
+                                .font(Font.custom("ProximaNova-Regular", size: 14))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.white))
+                                .frame(width: 60)
+                                .padding(10).padding(.horizontal, 10)
+                                .background(Color(.darkGray).cornerRadius(20))
+                                .padding(.bottom, 50)
+                                .opacity(0.7)
+                        }
+                    }
+                    else {
+                        Button(action: {
+                            self.education.toggle()
+                            self.picker = false
+                            self.edit = false
+                        }) {
+                            Text("Cancel")
+                                .font(Font.custom("ProximaNova-Regular", size: 14))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.darkGray))
+                                .frame(width: 60)
+                                .padding(10).padding(.horizontal, 10)
+                                .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color(.darkGray)))
+                                .padding(.bottom, 50)
+                                .opacity(0.4)
+                        }
+                    }
+                }
+            }.offset(y: self.school.count > 0 ? 0 : -275)
+            Spacer()
+        }.edgesIgnoringSafeArea(.all)
+            .background(Color(.white).edgesIgnoringSafeArea(.all)).animation(.spring())
+            .onAppear {
+                if self.select != -1 {
+                    let info = self.educationdata[self.select]
+                    self.school = String(info.prefix(info.count-4))
+                    self.yearfin = String(info.suffix(4))
+                    let index = Int(self.yearfin)! - 1940
+                    self.year[index] = true
+                }
+            }.onDisappear {
+                self.edit = false
+                self.education = false
+            }
+    }
+}
+
+
+//MARK: OccupationView
+struct OccupationView: View {
+    @Binding var occupation: Bool
+    @Binding var occupationdata: [String]
+    @Binding var occupationdata1: [String]
+    @Binding var edit: Bool
+    @Binding var picker: Bool
+    @State var title = ""
+    @State var company = ""
+    @State var select: Int = -1
+    let screenwidth = UIScreen.main.bounds.width
+    let screenheight = UIScreen.main.bounds.height
+    var body: some View {
+        VStack(spacing: 20) {
+            HStack {
+                Text("Add Occupation")
+                    .font(Font.custom("ProximaNova-Regular", size: 30))
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color(.darkGray))
+                Image("occupation-1")
+                    .renderingMode(.template)
+                    .resizable()
+                    .frame(width: 35, height: 35)
+                    .foregroundColor(Color(.darkGray))
+            }.padding(.vertical, 30)
+            VStack {
+                Text("Job Title")
+                    .font(Font.custom("ProximaNova-Regular", size: 22))
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color(.darkGray))
+                HStack {
+                    Spacer()
+                    ZStack {
+                        if self.title.count < 1 {
+                            Text("Job Title")
+                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                .foregroundColor(.black)
+                                .opacity(0.5)
+                        }
+                        TextField("", text: self.$title)
+                            .font(Font.custom("ProximaNova-Regular", size: 24).weight(.semibold))
+                            .foregroundColor(Color(.darkGray))
+                            .padding(10)
+                            .frame(width: screenwidth - 80, height: 50)
+                            .multilineTextAlignment(.center)
+                    }.padding(5).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                    Spacer()
                 }
             }
-                
+            VStack {
+                Text("Company Name")
+                    .font(Font.custom("ProximaNova-Regular", size: 22))
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color(.darkGray))
+                HStack {
+                    Spacer()
+                    ZStack {
+                        if self.company.count < 1 {
+                            Text("Company (optional)")
+                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                .foregroundColor(.black)
+                                .opacity(0.5)
+                        }
+                        TextField("", text: self.$company)
+                            .font(Font.custom("ProximaNova-Regular", size: 24).weight(.semibold))
+                            .foregroundColor(Color(.darkGray))
+                            .padding(10)
+                            .frame(width: screenwidth - 80, height: 50)
+                            .multilineTextAlignment(.center)
+                    }.padding(5).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                    Spacer()
+                }
+            }.scaleEffect(self.title.count > 0 ? 1 : 0)
+            HStack {
+                if self.select != -1  {
+                    Button(action: {
+                        self.occupation.toggle()
+                        self.edit = false
+                        self.occupationdata.remove(at: self.select)
+                        self.occupationdata1.remove(at: self.select)
+                        self.picker = false
+                    }) {
+                        Text("Remove")
+                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color("personality"))
+                            .frame(width: 60)
+                            .padding(10).padding(.horizontal, 10)
+                            .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color("personality")))
+                            .padding(.bottom, 50)
+                            .opacity(0.7)
+                    }
+                }
+                VStack {
+                    if self.title.count > 0 {
+                        Button(action: {
+                            if self.select != -1 {
+                                self.occupationdata[self.select] = self.title
+                                self.occupationdata1[self.select] = self.company
+                            }
+                            else {
+                                self.occupationdata.append(self.title)
+                                self.occupationdata1.append(self.company)
+                            }
+                            self.occupation.toggle()
+                            self.edit = false
+                            self.picker = false
+                        }) {
+                            Text("Confirm")
+                                .font(Font.custom("ProximaNova-Regular", size: 14))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.white))
+                                .frame(width: 60)
+                                .padding(10).padding(.horizontal, 10)
+                                .background(Color(.darkGray).cornerRadius(20))
+                                .padding(.bottom, 50)
+                                .opacity(0.7)
+                        }
+                    }
+                    else {
+                        Button(action: {
+                            self.occupation.toggle()
+                            self.edit = false
+                            self.picker = false
+                        }) {
+                            Text("Cancel")
+                                .font(Font.custom("ProximaNova-Regular", size: 14))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.darkGray))
+                                .frame(width: 60)
+                                .padding(10).padding(.horizontal, 10)
+                                .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color(.darkGray)))
+                                .padding(.bottom, 50)
+                                .opacity(0.4)
+                        }
+                    }
+                }
+            }.offset(y: self.title.count > 0 ? 0 : -100)
+            Spacer()
         }.edgesIgnoringSafeArea(.all)
-            .background(Color(.white))
+        .background(Color(.white).edgesIgnoringSafeArea(.all)).animation(.spring())
+            .onAppear {
+                if self.select != -1 {
+                    self.title = String(self.occupationdata[self.select])
+                    self.company = String(self.occupationdata1[self.select])
+                }
+            }
+        .onDisappear {
+            self.edit = false
+            self.occupation = false
+        }
     }
 }
 
@@ -7939,3 +8413,28 @@ extension UIImage {
     }
 
 }
+
+
+/*extension StringProtocol {
+    func index<S: StringProtocol>(of string: S, options: String.CompareOptions = []) -> Index? {
+        range(of: string, options: options)?.lowerBound
+    }
+    func endIndex<S: StringProtocol>(of string: S, options: String.CompareOptions = []) -> Index? {
+        range(of: string, options: options)?.upperBound
+    }
+    func indices<S: StringProtocol>(of string: S, options: String.CompareOptions = []) -> [Index] {
+        ranges(of: string, options: options).map(\.lowerBound)
+    }
+    func ranges<S: StringProtocol>(of string: S, options: String.CompareOptions = []) -> [Range<Index>] {
+        var result: [Range<Index>] = []
+        var startIndex = self.startIndex
+        while startIndex < endIndex,
+            let range = self[startIndex...]
+                .range(of: string, options: options) {
+                result.append(range)
+                startIndex = range.lowerBound < range.upperBound ? range.upperBound :
+                    index(range.lowerBound, offsetBy: 1, limitedBy: endIndex) ?? endIndex
+        }
+        return result
+    }
+}*/
