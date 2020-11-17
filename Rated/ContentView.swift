@@ -338,9 +338,19 @@ struct SignUpView: View {
     @State var occupationdata = [String]()
     @State var occupationdata1 = [String]()
     
-    @State var sports = ["Basketball", "Hockey", "Football", "Soccer", "Baseball", "Bowling", "Swimming", "Cross-Country"]
+    @State var newsports = [String]()
+    @State var newsportsselect = [Bool]()
+    @State var sports = ["Basketball", "Hockey", "Football", "Soccer", "Baseball", "Bowling", "Swimming", "Track"]
     @State var sportsselect = [Bool](repeating: false, count: 8)
+    @State var numsports: Int = 0
+    @State var newitem = ""
     
+    @State var hobbies = false
+    @State var hobbiesdata = [String]()
+    
+    @State var mnt = false
+    @State var mntdata = [String]()
+    @State var mntgenres = [String]()
     
     //Image Picker
     @State var numimage: Int = 0
@@ -1472,6 +1482,8 @@ struct SignUpView: View {
                                     .foregroundColor(Color(.blue).opacity(0.5))
                             }
                         }.frame(width: screenwidth, height: screenheight)
+                        
+                        
                         //MARK: Education
                         VStack(spacing: 0) {
                             Spacer()
@@ -1581,7 +1593,7 @@ struct SignUpView: View {
                                             .opacity(0.4)
                                     }
                                 }
-                            }.frame(width: screenwidth, height: screenheight/1.27)
+                            }.frame(width: screenwidth, height: screenheight/1.3)
                         }.frame(width: screenwidth, height: screenheight)
                         
                         //MARK: Occupation
@@ -1696,7 +1708,7 @@ struct SignUpView: View {
                                             .opacity(0.4)
                                     }
                                 }
-                            }.frame(width: screenwidth, height: screenheight/1.28)
+                            }.frame(width: screenwidth, height: screenheight/1.3)
                         }.frame(width: screenwidth, height: screenheight)
                         
                         //MARK: Sports
@@ -1705,37 +1717,357 @@ struct SignUpView: View {
                             Image("Sports")
                                 .resizable()
                                 .frame(width: 50, height: 50)
-                            VStack {
+                            VStack(spacing: 15) {
                                 Text("Sports")
                                     .font(Font.custom("ProximaNova-Regular", size: 30))
                                     .fontWeight(.semibold)
                                     .foregroundColor(Color(.darkGray))
-                                    .padding(.bottom, 10)
+                                    //.padding(.bottom, 10)
+                                HStack(spacing: 15) {
+                                    if self.newsports.count < 5 {
+                                        ZStack {
+                                            if self.newitem.count < 1 {
+                                                Text("Other")
+                                                    .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                    .foregroundColor(.black)
+                                                    .opacity(0.5)
+                                            }
+                                            TextField("", text: self.$newitem)
+                                                .font(Font.custom("ProximaNova-Regular", size: 24).weight(.semibold))
+                                                .foregroundColor(Color(.darkGray))
+                                                .padding(10)
+                                                .frame(width: screenwidth - 180, height: 50)
+                                                .multilineTextAlignment(.center)
+                                        }.padding(5).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                                    }
+                                    Button(action: {
+                                        self.newsports.insert(self.newitem, at: 0)
+                                        self.newsportsselect.insert(true, at: 0)
+                                        self.newitem = ""
+                                    }) {
+                                        Text("Add")
+                                            .font(Font.custom("ProximaNova-Regular", size: 24))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color("purp"))
+                                            .opacity(self.newitem.count > 0 ? 1 : 0.3)
+                                    }
+                                }
                                 VStack {
-                                    ScrollView(showsIndicators: false) {
-                                        ForEach(1...self.sportsselect.count, id: \.self) { ind in
-                                            VStack(spacing: 0) {
-                                                Button(action:  {
-                                                    //self.sportsselect[ind-1] = !self.sportsselect[ind-1]
-                                                }) {
+                                    if self.newsports.count > 0 {
+                                        ScrollView(showsIndicators: false) {
+                                            ForEach(0...(self.newsportsselect.count-1), id: \.self) { ind in
+                                                VStack(spacing: 0) {
                                                     HStack {
-                                                        Image(self.sports[ind-1])
+                                                        Text(self.newsports[ind])
+                                                            .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                            .fontWeight(.semibold)
+                                                            .foregroundColor(self.newsportsselect[ind] ? Color(.white) : Color(.darkGray))
+                                                            .fixedSize(horizontal: true, vertical: false)
+                                                            .animation(nil)
+                                                    }.padding(10).frame(width: 225, height: 50)
+                                                }.background(self.newsportsselect[ind] ? Color(.darkGray) : Color(.white)).cornerRadius(10).padding(.vertical, 2.5)
+                                                    .onTapGesture {
+                                                    if self.newsportsselect[ind] {
+                                                        self.numsports -= 1
+                                                    }
+                                                    else {
+                                                        self.numsports += 1
+                                                    }
+                                                    self.newsportsselect[ind] = !self.newsportsselect[ind]
+                                                }
+                                            }
+                                        }.frame(height: self.newsports.count > 1 ? 100 : 60).padding(.top, 10)
+                                        RoundedRectangle(cornerRadius: 2)
+                                            .frame(width: 260, height: 5)
+                                            .foregroundColor(Color(.darkGray))
+                                            .padding(.horizontal, 10)
+                                    }
+                                    VStack(spacing: 0) {
+                                        ScrollView {
+                                            VStack(spacing: 5) {
+                                                ForEach(0...(self.sportsselect.count-1), id: \.self) { ind in
+                                                    HStack {
+                                                        Image((self.sports[ind]).lowercased())
                                                             .renderingMode(.template)
                                                             .resizable()
-                                                            .frame(width: 20, height: 20)
-                                                            .foregroundColor(.black)//self.sportsselect[ind-1] ? Color(.white) : Color(.darkGray))
-                                                        Text(self.sports[ind-1])
-                                                            .font(Font.custom("ProximaNova-Regular", size: 18))
+                                                            .frame(width: 30, height: 30)
+                                                            .foregroundColor(self.sportsselect[ind] ? Color(.white) : Color(.darkGray))
+                                                            .padding(.leading, 10)
+                                                        Spacer()
+                                                        Text(self.sports[ind])
+                                                            .font(Font.custom("ProximaNova-Regular", size: 24))
                                                             .fontWeight(.semibold)
-                                                            .foregroundColor(.black)//self.sportsselect[ind-1] ? Color(.white) : Color(.darkGray))
-                                                            .fixedSize(horizontal: false, vertical: true)
-                                                    }.padding(10).frame(width: 200, height: 40)
-                                                }//.background(self.sportsselect[ind-1] ? Color(.darkGray) : Color(.clear)).cornerRadius(10)
+                                                            .foregroundColor(self.sportsselect[ind] ? Color(.white) : Color(.darkGray))
+                                                            .fixedSize(horizontal: true, vertical: false)
+                                                            .padding(.trailing, 10)
+                                                    }.padding(10).frame(width: 225, height: 50)
+                                                        .background(self.sportsselect[ind] ? Color(.darkGray) : Color(.white)).cornerRadius(10)
+                                                    .onTapGesture {
+                                                        if self.sportsselect[ind] {
+                                                            self.numsports -= 1
+                                                        }
+                                                        else {
+                                                            self.numsports += 1
+                                                        }
+                                                        self.sportsselect[ind] = !self.sportsselect[ind]
+                                                    }
+                                                }
                                             }
+                                        }.frame(width: 250, height: self.newsports.count > 0 ? 240 : 320).padding(10)
+                                    }
+                                }.background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                                Spacer()
+                                
+                                if self.numsports > 0 {
+                                    Button(action: {
+                                        self.next -= self.screenwidth
+                                        self.count += 1
+                                        self.newitem = ""
+                                    }) {
+                                        Text("Next")
+                                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color(.white))
+                                            .padding(10).padding(.horizontal, 20)
+                                            .background(Color(.darkGray).cornerRadius(20))
+                                            .padding(.bottom, 50)
+                                            .opacity(0.7)
+                                    }
+                                }
+                                else {
+                                    Button(action: {
+                                        self.next -= self.screenwidth
+                                        self.count += 1
+                                        self.newitem = ""
+                                    }) {
+                                        Text("Skip")
+                                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color(.darkGray))
+                                            .padding(10).padding(.horizontal, 20)
+                                            .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color(.darkGray)))
+                                            .padding(.bottom, 50)
+                                            .opacity(0.4)
+                                    }
+                                }
+                            }.frame(height: screenheight/1.29)
+                        }.frame(width: screenwidth, height: screenheight)
+                        
+                        //MARK: Hobbies
+                        VStack {
+                            Spacer()
+                            Image("Hobbies")
+                                .resizable()
+                                .frame(width: 50, height: 50)
+                            VStack {
+                                Text("Hobbies")
+                                    .font(Font.custom("ProximaNova-Regular", size: 30))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color(.darkGray))
+                                    .padding(.bottom, 10)
+                                if self.hobbiesdata.count < 5 {
+                                    HStack(spacing: 15) {
+                                        ZStack {
+                                            if self.newitem.count < 1 {
+                                                Text("Hobby")
+                                                    .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                    .foregroundColor(.black)
+                                                    .opacity(0.5)
+                                            }
+                                            TextField("", text: self.$newitem)
+                                                .font(Font.custom("ProximaNova-Regular", size: 24).weight(.semibold))
+                                                .foregroundColor(Color(.darkGray))
+                                                .padding(10)
+                                                .frame(width: screenwidth - 180, height: 50)
+                                                .multilineTextAlignment(.center)
+                                        }.padding(5).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                                        Button(action: {
+                                            self.hobbiesdata.insert(self.newitem, at: 0)
+                                            self.newitem = ""
+                                        }) {
+                                            Text("Add")
+                                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                .fontWeight(.semibold)
+                                                .foregroundColor(Color("purp"))
+                                                .opacity(self.newitem.count > 0 ? 1 : 0.3)
                                         }
-                                    }.frame(width: 175, height: 250).padding(10)
-                                }.background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2.5).foregroundColor(Color(.darkGray)))
-                            }.frame(height: screenheight/1.27)
+                                    }
+                                }
+                                ForEach(hobbiesdata, id: \.self) { hobbie in
+                                    HStack {
+                                        Image("hobbies-1")
+                                            .renderingMode(.template)
+                                            .resizable()
+                                            .frame(width: 30, height: 30)
+                                            .foregroundColor(Color("purp"))
+                                            .padding(.trailing, 10)
+                                        VStack(alignment: .leading, spacing: 5) {
+                                            Text(hobbie)
+                                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                .fontWeight(.semibold)
+                                                .foregroundColor(Color("purp"))
+                                        }
+                                        Spacer()
+                                        Rectangle()
+                                            .frame(width: 5, height: 70)
+                                            .foregroundColor(Color("purp"))
+                                        Image(systemName: "line.horizontal.3")
+                                            .font(Font.system(size: 20, weight: .heavy))
+                                            .foregroundColor(Color(.darkGray))
+                                            .padding(.leading, 10)
+                                            .onTapGesture {
+                                                
+                                            }
+                                    }.padding(.vertical, 5).padding(.horizontal, 20).frame(width: self.screenwidth - 80, height: 70).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color("purp")))
+                                }
+                                Spacer()
+                                if self.hobbiesdata.count > 0 {
+                                    Button(action: {
+                                        self.next -= self.screenwidth
+                                        self.count += 1
+                                    }) {
+                                        Text("Next")
+                                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color(.white))
+                                            .padding(10).padding(.horizontal, 20)
+                                            .background(Color(.darkGray).cornerRadius(20))
+                                            .padding(.bottom, 50)
+                                            .opacity(0.7)
+                                    }
+                                }
+                                else {
+                                    Button(action: {
+                                        self.next -= self.screenwidth
+                                        self.count += 1
+                                    }) {
+                                        Text("Skip")
+                                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color(.darkGray))
+                                            .padding(10).padding(.horizontal, 20)
+                                            .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color(.darkGray)))
+                                            .padding(.bottom, 50)
+                                            .opacity(0.4)
+                                    }
+                                }
+                            }.frame(height: screenheight/1.3)
+                        }.frame(width: screenwidth, height: screenheight)
+                        
+                        //MARK: Movies/TV
+                        VStack {
+                            Spacer()
+                            Image("Movies")
+                                .resizable()
+                                .frame(width: 50, height: 50)
+                            VStack {
+                                Text("Movies")
+                                    .font(Font.custom("ProximaNova-Regular", size: 30))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color(.darkGray))
+                                    .padding(.bottom, 10)
+                                if self.mntdata.count > 0 {
+                                    VStack {
+                                        ForEach(0...self.mntdata.count-1, id: \.self) { data in
+                                            HStack {
+                                                Image(self.mntgenres[data])
+                                                    .renderingMode(.template)
+                                                    .resizable()
+                                                    .frame(width: 30, height: 30)
+                                                    .foregroundColor(Color("purp"))
+                                                    .padding(.trailing, 10)
+                                                VStack(alignment: .leading, spacing: 5) {
+                                                    Text(self.mntdata[data])
+                                                        .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                        .fontWeight(.semibold)
+                                                        .foregroundColor(Color("purp"))
+                                                    Text(self.mntgenres[data])
+                                                        .font(Font.custom("ProximaNova-Regular", size: 18))
+                                                        .fontWeight(.semibold)
+                                                        .foregroundColor(Color("purp").opacity(0.5))
+                                                }
+                                                Spacer()
+                                                Rectangle()
+                                                    .frame(width: 5, height: 70)
+                                                    .foregroundColor(Color("purp"))
+                                                Image(systemName: "line.horizontal.3")
+                                                    .font(Font.system(size: 20, weight: .heavy))
+                                                    .foregroundColor(Color(.darkGray))
+                                                    .padding(.leading, 10)
+                                                    .onTapGesture {
+                                                        self.editselect = data - 1
+                                                        self.edit = true
+                                                        self.mnt.toggle()
+                                                        self.picker = true
+                                                    }
+                                            }.padding(.horizontal, 20).frame(width: self.screenwidth - 80, height: 70).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color("purp")))
+                                        }
+                                    }.padding(.vertical, 10)
+                                }
+                                
+                                
+                                if self.mntdata.count != 0 && self.mntdata.count != 5 {
+                                    RoundedRectangle(cornerRadius: 2)
+                                        .frame(width: screenwidth - 40, height: 5)
+                                        .foregroundColor(Color(.darkGray))
+                                }
+                                
+                                if self.mntdata.count != 5 {
+                                    Button(action: {
+                                        self.mnt = true
+                                        self.picker.toggle()
+                                    }) {
+                                        HStack {
+                                            Text("Add Movie/Show")
+                                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                .fontWeight(.semibold)
+                                                .foregroundColor(Color(.darkGray))
+                                            Image("movieandtv")
+                                                .renderingMode(.template)
+                                                .resizable()
+                                                .frame(width: 30, height: 30)
+                                                .foregroundColor(Color(.darkGray))
+                                            Spacer()
+                                            Image(systemName: "chevron.right")
+                                                .font(Font.system(size: 20, weight: .heavy))
+                                                .foregroundColor(Color(.darkGray))
+                                        }.padding(.horizontal, 20).frame(width: screenwidth - 80, height: 70).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                                    }
+                                }
+                                
+                                Spacer()
+                                
+                                if self.mntdata.count > 0 {
+                                    Button(action: {
+                                        self.next -= self.screenwidth
+                                        self.count += 1
+                                    }) {
+                                        Text("Next")
+                                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color(.white))
+                                            .padding(10).padding(.horizontal, 20)
+                                            .background(Color(.darkGray).cornerRadius(20))
+                                            .padding(.bottom, 50)
+                                            .opacity(0.7)
+                                    }
+                                }
+                                else {
+                                    Button(action: {
+                                        self.next -= self.screenwidth
+                                        self.count += 1
+                                    }) {
+                                        Text("Skip")
+                                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color(.darkGray))
+                                            .padding(10).padding(.horizontal, 20)
+                                            .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color(.darkGray)))
+                                            .padding(.bottom, 50)
+                                            .opacity(0.4)
+                                    }
+                                }
+                            }.frame(height: screenheight/1.3)
                         }.frame(width: screenwidth, height: screenheight)
                     }
                     
@@ -1985,7 +2317,7 @@ struct SignUpView: View {
                         }
                     }.frame(width: screenwidth, height: screenheight)
                     
-                }.animation(.spring()).offset(x: screenwidth*6.5 + next).sheet(isPresented: self.$picker) {
+                }.animation(.spring()).offset(x: screenwidth*7.5 + next).sheet(isPresented: self.$picker) {
                     if self.edit && self.education {
                         EducationView(education: self.$education, educationdata: self.$educationdata, edit: self.$edit, picker: self.$picker, select: self.editselect)
                     }
@@ -1997,6 +2329,9 @@ struct SignUpView: View {
                     }
                     else if self.occupation {
                         OccupationView(occupation: self.$occupation, occupationdata: self.$occupationdata, occupationdata1: self.$occupationdata1, edit: self.$edit, picker: self.$picker)
+                    }
+                    else if self.mnt {
+                        MoviesAndTVView(mnt: self.$mnt, mntdata: self.$mntdata, mntgenres: self.$mntgenres, edit: self.$edit, picker: self.$picker)
                     }
                     else {
                         ImagePicker(picker: self.$picker, images: self.$profilepics, showimage: self.$showimage, num: self.$numimage)
@@ -2219,6 +2554,135 @@ struct EducationView: View {
     }
 }
 
+/*
+//MARK: HobbiesView
+struct HobbiesView: View {
+    @Binding var hobbies: Bool
+    @Binding var hobbiesdata: [String]
+    @Binding var edit: Bool
+    @Binding var picker: Bool
+    @State var hobby = ""
+    @State var select: Int = -1
+    let screenwidth = UIScreen.main.bounds.width
+    let screenheight = UIScreen.main.bounds.height
+    var body: some View {
+        VStack(spacing: 20) {
+            HStack {
+                Text("Add Hobbies")
+                    .font(Font.custom("ProximaNova-Regular", size: 30))
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color(.darkGray))
+                Image("hobby-1")
+                    .renderingMode(.template)
+                    .resizable()
+                    .frame(width: 35, height: 35)
+                    .foregroundColor(Color(.darkGray))
+            }.padding(.vertical, 30)
+            VStack {
+                Text("Hobbies")
+                    .font(Font.custom("ProximaNova-Regular", size: 22))
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color(.darkGray))
+                HStack {
+                    Spacer()
+                    ZStack {
+                        if self.hobby.count < 1 {
+                            Text("Hobby")
+                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                .foregroundColor(.black)
+                                .opacity(0.5)
+                        }
+                        TextField("", text: self.$hobby)
+                            .font(Font.custom("ProximaNova-Regular", size: 24).weight(.semibold))
+                            .foregroundColor(Color(.darkGray))
+                            .padding(10)
+                            .frame(width: screenwidth - 80, height: 50)
+                            .multilineTextAlignment(.center)
+                    }.padding(5).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                    Spacer()
+                }
+            }
+            HStack {
+                if self.select != -1  {
+                    Button(action: {
+                        self.occupation.toggle()
+                        self.edit = false
+                        self.occupationdata.remove(at: self.select)
+                        self.occupationdata1.remove(at: self.select)
+                        self.picker = false
+                    }) {
+                        Text("Remove")
+                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color("personality"))
+                            .frame(width: 60)
+                            .padding(10).padding(.horizontal, 10)
+                            .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color("personality")))
+                            .padding(.bottom, 50)
+                            .opacity(0.7)
+                    }
+                }
+                VStack {
+                    if self.hobby.count > 0 {
+                        Button(action: {
+                            if self.select != -1 {
+                                self.occupationdata[self.select] = self.title
+                                self.occupationdata1[self.select] = self.company
+                            }
+                            else {
+                                self.occupationdata.append(self.title)
+                                self.occupationdata1.append(self.company)
+                            }
+                            self.occupation.toggle()
+                            self.edit = false
+                            self.picker = false
+                        }) {
+                            Text("Confirm")
+                                .font(Font.custom("ProximaNova-Regular", size: 14))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.white))
+                                .frame(width: 60)
+                                .padding(10).padding(.horizontal, 10)
+                                .background(Color(.darkGray).cornerRadius(20))
+                                .padding(.bottom, 50)
+                                .opacity(0.7)
+                        }
+                    }
+                    else {
+                        Button(action: {
+                            self.occupation.toggle()
+                            self.edit = false
+                            self.picker = false
+                        }) {
+                            Text("Cancel")
+                                .font(Font.custom("ProximaNova-Regular", size: 14))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.darkGray))
+                                .frame(width: 60)
+                                .padding(10).padding(.horizontal, 10)
+                                .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color(.darkGray)))
+                                .padding(.bottom, 50)
+                                .opacity(0.4)
+                        }
+                    }
+                }
+            }.offset(y: self.title.count > 0 ? 0 : -100)
+            Spacer()
+        }.edgesIgnoringSafeArea(.all)
+        .background(Color(.white).edgesIgnoringSafeArea(.all)).animation(.spring())
+            .onAppear {
+                if self.select != -1 {
+                    self.title = String(self.occupationdata[self.select])
+                    self.company = String(self.occupationdata1[self.select])
+                }
+            }
+        .onDisappear {
+            self.edit = false
+            self.occupation = false
+        }
+    }
+}*/
+
 
 //MARK: OccupationView
 struct OccupationView: View {
@@ -2313,48 +2777,46 @@ struct OccupationView: View {
                             .opacity(0.7)
                     }
                 }
-                VStack {
-                    if self.title.count > 0 {
-                        Button(action: {
-                            if self.select != -1 {
-                                self.occupationdata[self.select] = self.title
-                                self.occupationdata1[self.select] = self.company
-                            }
-                            else {
-                                self.occupationdata.append(self.title)
-                                self.occupationdata1.append(self.company)
-                            }
-                            self.occupation.toggle()
-                            self.edit = false
-                            self.picker = false
-                        }) {
-                            Text("Confirm")
-                                .font(Font.custom("ProximaNova-Regular", size: 14))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color(.white))
-                                .frame(width: 60)
-                                .padding(10).padding(.horizontal, 10)
-                                .background(Color(.darkGray).cornerRadius(20))
-                                .padding(.bottom, 50)
-                                .opacity(0.7)
+                if self.title.count > 0 {
+                    Button(action: {
+                        if self.select != -1 {
+                            self.occupationdata[self.select] = self.title
+                            self.occupationdata1[self.select] = self.company
                         }
+                        else {
+                            self.occupationdata.append(self.title)
+                            self.occupationdata1.append(self.company)
+                        }
+                        self.occupation.toggle()
+                        self.edit = false
+                        self.picker = false
+                    }) {
+                        Text("Confirm")
+                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color(.white))
+                            .frame(width: 60)
+                            .padding(10).padding(.horizontal, 10)
+                            .background(Color(.darkGray).cornerRadius(20))
+                            .padding(.bottom, 50)
+                            .opacity(0.7)
                     }
-                    else {
-                        Button(action: {
-                            self.occupation.toggle()
-                            self.edit = false
-                            self.picker = false
-                        }) {
-                            Text("Cancel")
-                                .font(Font.custom("ProximaNova-Regular", size: 14))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color(.darkGray))
-                                .frame(width: 60)
-                                .padding(10).padding(.horizontal, 10)
-                                .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color(.darkGray)))
-                                .padding(.bottom, 50)
-                                .opacity(0.4)
-                        }
+                }
+                else {
+                    Button(action: {
+                        self.occupation.toggle()
+                        self.edit = false
+                        self.picker = false
+                    }) {
+                        Text("Cancel")
+                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 60)
+                            .padding(10).padding(.horizontal, 10)
+                            .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color(.darkGray)))
+                            .padding(.bottom, 50)
+                            .opacity(0.4)
                     }
                 }
             }.offset(y: self.title.count > 0 ? 0 : -100)
@@ -2370,6 +2832,137 @@ struct OccupationView: View {
         .onDisappear {
             self.edit = false
             self.occupation = false
+        }
+    }
+}
+
+
+//MARK: MoviesAndTVView
+struct MoviesAndTVView: View {
+    @Binding var mnt: Bool
+    @Binding var mntdata: [String]
+    @Binding var mntgenres: [String]
+    @Binding var edit: Bool
+    @Binding var picker: Bool
+    @State var title = ""
+    @State var genre = ""
+    @State var select: Int = -1
+    let screenwidth = UIScreen.main.bounds.width
+    let screenheight = UIScreen.main.bounds.height
+    var body: some View {
+        VStack {
+             HStack {
+                Spacer()
+                Text("Add Movie/Show")
+                    .font(Font.custom("ProximaNova-Regular", size: 26))
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color(.darkGray))
+                Image("movieandtv")
+                    .renderingMode(.template)
+                    .resizable()
+                    .frame(width: 35, height: 35)
+                    .foregroundColor(Color(.darkGray))
+                Spacer()
+             }.padding(.vertical, 30)
+            VStack {
+                Text("Title")
+                    .font(Font.custom("ProximaNova-Regular", size: 22))
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color(.darkGray))
+                HStack {
+                    Spacer()
+                    ZStack {
+                        if self.title.count < 1 {
+                            Text("Title")
+                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                .foregroundColor(.black)
+                                .opacity(0.5)
+                        }
+                        TextField("", text: self.$title)
+                            .font(Font.custom("ProximaNova-Regular", size: 24).weight(.semibold))
+                            .foregroundColor(Color(.darkGray))
+                            .padding(10)
+                            .frame(width: screenwidth - 80, height: 50)
+                            .multilineTextAlignment(.center)
+                    }.padding(5).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                    Spacer()
+                }
+                HStack {
+                    if self.select != -1  {
+                        Button(action: {
+                            self.mnt = false
+                            self.edit = false
+                            self.mntdata.remove(at: self.select)
+                            self.mntgenres.remove(at: self.select)
+                            self.picker = false
+                        }) {
+                            Text("Remove")
+                                .font(Font.custom("ProximaNova-Regular", size: 14))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color("personality"))
+                                .frame(width: 60)
+                                .padding(10).padding(.horizontal, 10)
+                                .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color("personality")))
+                                //.padding(.bottom, 50)
+                                .opacity(0.7)
+                        }
+                    }
+                    if self.title.count > 0 {
+                        Button(action: {
+                            if self.select != -1 {
+                                self.mntdata[self.select] = self.title
+                                self.mntgenres[self.select] = self.genre
+                            }
+                            else {
+                                self.mntdata.append(self.title)
+                                self.mntgenres.append(self.genre)
+                            }
+                            self.mnt = false
+                            self.edit = false
+                            self.picker = false
+                        }) {
+                            Text("Confirm")
+                                .font(Font.custom("ProximaNova-Regular", size: 14))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.white))
+                                .frame(width: 60)
+                                .padding(10).padding(.horizontal, 10)
+                                .background(Color(.darkGray).cornerRadius(20))
+                                //.padding(.bottom, 50)
+                                .opacity(0.7)
+                        }
+                    }
+                    else {
+                        Button(action: {
+                            self.mnt = false
+                            self.edit = false
+                            self.picker = false
+                        }) {
+                            Text("Cancel")
+                                .font(Font.custom("ProximaNova-Regular", size: 14))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.darkGray))
+                                .frame(width: 60)
+                                .padding(10).padding(.horizontal, 10)
+                                .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color(.darkGray)))
+                                //.padding(.bottom, 50)
+                                .opacity(0.4)
+                        }
+                    }
+                }//.offset(y: self.title.count > 0 ? 0 : -100)
+            }
+            Spacer()
+        }.edgesIgnoringSafeArea(.all)
+        .background(Color(.white).edgesIgnoringSafeArea(.all)).animation(.spring())
+            .onAppear {
+                if self.select != -1 {
+                    self.title = String(self.mntdata[self.select])
+                    self.genre = String(self.mntgenres[self.select])
+                }
+            }
+        .onDisappear {
+            self.edit = false
+            self.mnt = false
         }
     }
 }
