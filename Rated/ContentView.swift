@@ -352,6 +352,10 @@ struct SignUpView: View {
     @State var mntdata = [String]()
     @State var mntgenres = [String]()
     
+    @State var music = false
+    @State var musicdata = [String]()
+    @State var musicgenres = [String]()
+    
     //Image Picker
     @State var numimage: Int = 0
     @State var showimage = [false, false, false, false]
@@ -1503,22 +1507,23 @@ struct SignUpView: View {
                                             .renderingMode(.template)
                                             .resizable()
                                             .frame(width: 30, height: 30)
-                                            .foregroundColor(Color("purp"))
+                                            .foregroundColor(Color(.darkGray))
                                             .padding(.trailing, 10)
                                         VStack(alignment: .leading, spacing: 5) {
                                             Text(data.prefix(data.count - 4))
                                                 .font(Font.custom("ProximaNova-Regular", size: 24))
                                                 .fontWeight(.semibold)
-                                                .foregroundColor(Color("purp"))
+                                                .foregroundColor(Color(.darkGray))
                                             Text(data.suffix(4))
                                                 .font(Font.custom("ProximaNova-Regular", size: 18))
                                                 .fontWeight(.semibold)
-                                                .foregroundColor(Color("purp").opacity(0.5))
+                                                .foregroundColor(Color(.darkGray).opacity(0.5))
                                         }
                                         Spacer()
                                         Rectangle()
-                                            .frame(width: 5, height: 70)
-                                            .foregroundColor(Color("purp"))
+                                            .frame(width: 2.5, height: 70)
+                                            .foregroundColor(Color(.gray))
+                                            .opacity(0.5)
                                         Image(systemName: "line.horizontal.3")
                                             .font(Font.system(size: 20, weight: .heavy))
                                             .foregroundColor(Color(.darkGray))
@@ -1529,7 +1534,7 @@ struct SignUpView: View {
                                                 self.education.toggle()
                                                 self.picker = true
                                             }
-                                    }.padding(.horizontal, 20).frame(width: self.screenwidth - 80, height: 70).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color("purp")))
+                                    }.padding(.horizontal, 20).frame(width: self.screenwidth - 80, height: 70).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10)) //RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color("purp")))
                                 }
                                 
                                 if self.educationdata.count != 0 && self.educationdata.count != 5 {
@@ -1557,7 +1562,7 @@ struct SignUpView: View {
                                             Image(systemName: "chevron.right")
                                                 .font(Font.system(size: 20, weight: .heavy))
                                                 .foregroundColor(Color(.darkGray))
-                                        }.padding(.horizontal, 20).frame(width: screenwidth - 80, height: 70).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                                        }.padding(.horizontal, 20).frame(width: screenwidth - 80, height: 70).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                                     }
                                 }
                                 
@@ -1616,22 +1621,23 @@ struct SignUpView: View {
                                                 .renderingMode(.template)
                                                 .resizable()
                                                 .frame(width: 30, height: 30)
-                                                .foregroundColor(Color("purp"))
+                                                .foregroundColor(Color(.darkGray))
                                                 .padding(.trailing, 10)
                                             VStack(alignment: .leading, spacing: 5) {
                                                 Text(self.occupationdata[data-1])
                                                     .font(Font.custom("ProximaNova-Regular", size: 24))
                                                     .fontWeight(.semibold)
-                                                    .foregroundColor(Color("purp"))
+                                                    .foregroundColor(Color(.darkGray))
                                                 Text(self.occupationdata1[data-1])//String(data[data.index(of: "$")]..<data.count))
                                                     .font(Font.custom("ProximaNova-Regular", size: 18))
                                                     .fontWeight(.semibold)
-                                                    .foregroundColor(Color("purp").opacity(0.5))
+                                                    .foregroundColor(Color(.darkGray).opacity(0.5))
                                             }
                                             Spacer()
                                             Rectangle()
-                                                .frame(width: 5, height: 70)
-                                                .foregroundColor(Color("purp"))
+                                                .frame(width: 2.5, height: 70)
+                                                .foregroundColor(Color(.gray))
+                                                .opacity(0.5)
                                             Image(systemName: "line.horizontal.3")
                                                 .font(Font.system(size: 20, weight: .heavy))
                                                 .foregroundColor(Color(.darkGray))
@@ -1642,7 +1648,7 @@ struct SignUpView: View {
                                                     self.occupation.toggle()
                                                     self.picker = true
                                                 }
-                                        }.padding(.horizontal, 20).frame(width: self.screenwidth - 80, height: 70).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color("purp")))
+                                        }.padding(.horizontal, 20).frame(width: self.screenwidth - 80, height: 70).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color("purp")))
                                     }
                                 }
                                 
@@ -1672,7 +1678,7 @@ struct SignUpView: View {
                                             Image(systemName: "chevron.right")
                                                 .font(Font.system(size: 20, weight: .heavy))
                                                 .foregroundColor(Color(.darkGray))
-                                        }.padding(.horizontal, 20).frame(width: screenwidth - 80, height: 70).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                                        }.padding(.horizontal, 20).frame(width: screenwidth - 80, height: 70).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                                     }
                                 }
                                 
@@ -1729,6 +1735,7 @@ struct SignUpView: View {
                                             if self.newitem.count < 1 {
                                                 Text("Other")
                                                     .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                    .fontWeight(.semibold)
                                                     .foregroundColor(.black)
                                                     .opacity(0.5)
                                             }
@@ -1736,14 +1743,15 @@ struct SignUpView: View {
                                                 .font(Font.custom("ProximaNova-Regular", size: 24).weight(.semibold))
                                                 .foregroundColor(Color(.darkGray))
                                                 .padding(10)
-                                                .frame(width: screenwidth - 180, height: 50)
+                                                .frame(width: screenwidth - 180, height: 40)
                                                 .multilineTextAlignment(.center)
-                                        }.padding(5).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                                        }.padding(5).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                                     }
                                     Button(action: {
                                         self.newsports.insert(self.newitem, at: 0)
                                         self.newsportsselect.insert(true, at: 0)
                                         self.newitem = ""
+                                        self.numsports += 1
                                     }) {
                                         Text("Add")
                                             .font(Font.custom("ProximaNova-Regular", size: 24))
@@ -1752,7 +1760,7 @@ struct SignUpView: View {
                                             .opacity(self.newitem.count > 0 ? 1 : 0.3)
                                     }
                                 }
-                                VStack {
+                                VStack(spacing: 0) {
                                     if self.newsports.count > 0 {
                                         ScrollView(showsIndicators: false) {
                                             ForEach(0...(self.newsportsselect.count-1), id: \.self) { ind in
@@ -1765,7 +1773,7 @@ struct SignUpView: View {
                                                             .fixedSize(horizontal: true, vertical: false)
                                                             .animation(nil)
                                                     }.padding(10).frame(width: 225, height: 50)
-                                                }.background(self.newsportsselect[ind] ? Color(.darkGray) : Color(.white)).cornerRadius(10).padding(.vertical, 2.5)
+                                                }.background(self.newsportsselect[ind] ? Color(.darkGray) : Color(.white).opacity(0)).cornerRadius(10).padding(.vertical, 2.5)
                                                     .onTapGesture {
                                                     if self.newsportsselect[ind] {
                                                         self.numsports -= 1
@@ -1776,14 +1784,14 @@ struct SignUpView: View {
                                                     self.newsportsselect[ind] = !self.newsportsselect[ind]
                                                 }
                                             }
-                                        }.frame(height: self.newsports.count > 1 ? 100 : 60).padding(.top, 10)
+                                        }.frame(height: self.newsports.count > 1 ? 100 : 60).padding(.vertical, 10)
                                         RoundedRectangle(cornerRadius: 2)
                                             .frame(width: 260, height: 5)
                                             .foregroundColor(Color(.darkGray))
                                             .padding(.horizontal, 10)
                                     }
                                     VStack(spacing: 0) {
-                                        ScrollView {
+                                        ScrollView(showsIndicators: false) {
                                             VStack(spacing: 5) {
                                                 ForEach(0...(self.sportsselect.count-1), id: \.self) { ind in
                                                     HStack {
@@ -1801,7 +1809,7 @@ struct SignUpView: View {
                                                             .fixedSize(horizontal: true, vertical: false)
                                                             .padding(.trailing, 10)
                                                     }.padding(10).frame(width: 225, height: 50)
-                                                        .background(self.sportsselect[ind] ? Color(.darkGray) : Color(.white)).cornerRadius(10)
+                                                        .background(self.sportsselect[ind] ? Color(.darkGray) : Color(.white).opacity(0)).cornerRadius(10)
                                                     .onTapGesture {
                                                         if self.sportsselect[ind] {
                                                             self.numsports -= 1
@@ -1815,7 +1823,7 @@ struct SignUpView: View {
                                             }
                                         }.frame(width: 250, height: self.newsports.count > 0 ? 240 : 320).padding(10)
                                     }
-                                }.background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                                }.background(Color(.white).cornerRadius(20).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                                 Spacer()
                                 
                                 if self.numsports > 0 {
@@ -1871,6 +1879,7 @@ struct SignUpView: View {
                                             if self.newitem.count < 1 {
                                                 Text("Hobby")
                                                     .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                    .fontWeight(.semibold)
                                                     .foregroundColor(.black)
                                                     .opacity(0.5)
                                             }
@@ -1878,9 +1887,9 @@ struct SignUpView: View {
                                                 .font(Font.custom("ProximaNova-Regular", size: 24).weight(.semibold))
                                                 .foregroundColor(Color(.darkGray))
                                                 .padding(10)
-                                                .frame(width: screenwidth - 180, height: 50)
+                                                .frame(width: screenwidth - 180, height: 40)
                                                 .multilineTextAlignment(.center)
-                                        }.padding(5).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                                        }.padding(5).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                                         Button(action: {
                                             self.hobbiesdata.insert(self.newitem, at: 0)
                                             self.newitem = ""
@@ -1899,18 +1908,19 @@ struct SignUpView: View {
                                             .renderingMode(.template)
                                             .resizable()
                                             .frame(width: 30, height: 30)
-                                            .foregroundColor(Color("purp"))
+                                            .foregroundColor(Color(.darkGray))
                                             .padding(.trailing, 10)
                                         VStack(alignment: .leading, spacing: 5) {
                                             Text(hobbie)
                                                 .font(Font.custom("ProximaNova-Regular", size: 24))
                                                 .fontWeight(.semibold)
-                                                .foregroundColor(Color("purp"))
+                                                .foregroundColor(Color(.darkGray))
                                         }
                                         Spacer()
                                         Rectangle()
-                                            .frame(width: 5, height: 70)
-                                            .foregroundColor(Color("purp"))
+                                            .frame(width: 2.5, height: 70)
+                                            .foregroundColor(Color(.gray))
+                                            .opacity(0.5)
                                         Image(systemName: "line.horizontal.3")
                                             .font(Font.system(size: 20, weight: .heavy))
                                             .foregroundColor(Color(.darkGray))
@@ -1918,7 +1928,7 @@ struct SignUpView: View {
                                             .onTapGesture {
                                                 
                                             }
-                                    }.padding(.vertical, 5).padding(.horizontal, 20).frame(width: self.screenwidth - 80, height: 70).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color("purp")))
+                                    }.padding(.vertical, 5).padding(.horizontal, 20).frame(width: self.screenwidth - 80, height: 70).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color("purp")))
                                 }
                                 Spacer()
                                 if self.hobbiesdata.count > 0 {
@@ -1960,8 +1970,8 @@ struct SignUpView: View {
                             Image("Movies")
                                 .resizable()
                                 .frame(width: 50, height: 50)
-                            VStack {
-                                Text("Movies")
+                            VStack(spacing: 15) {
+                                Text("Movies and TV")
                                     .font(Font.custom("ProximaNova-Regular", size: 30))
                                     .fontWeight(.semibold)
                                     .foregroundColor(Color(.darkGray))
@@ -1974,33 +1984,34 @@ struct SignUpView: View {
                                                     .renderingMode(.template)
                                                     .resizable()
                                                     .frame(width: 30, height: 30)
-                                                    .foregroundColor(Color("purp"))
+                                                    .foregroundColor(Color(.darkGray))
                                                     .padding(.trailing, 10)
                                                 VStack(alignment: .leading, spacing: 5) {
                                                     Text(self.mntdata[data])
                                                         .font(Font.custom("ProximaNova-Regular", size: 24))
                                                         .fontWeight(.semibold)
-                                                        .foregroundColor(Color("purp"))
+                                                        .foregroundColor(Color(.darkGray))
                                                     Text(self.mntgenres[data])
                                                         .font(Font.custom("ProximaNova-Regular", size: 18))
                                                         .fontWeight(.semibold)
-                                                        .foregroundColor(Color("purp").opacity(0.5))
+                                                        .foregroundColor(Color(.darkGray).opacity(0.5))
                                                 }
                                                 Spacer()
                                                 Rectangle()
-                                                    .frame(width: 5, height: 70)
-                                                    .foregroundColor(Color("purp"))
+                                                    .frame(width: 2.5, height: 70)
+                                                    .foregroundColor(Color(.gray))
+                                                    .opacity(0.5)
                                                 Image(systemName: "line.horizontal.3")
                                                     .font(Font.system(size: 20, weight: .heavy))
                                                     .foregroundColor(Color(.darkGray))
                                                     .padding(.leading, 10)
                                                     .onTapGesture {
-                                                        self.editselect = data - 1
+                                                        self.editselect = data
                                                         self.edit = true
                                                         self.mnt.toggle()
                                                         self.picker = true
                                                     }
-                                            }.padding(.horizontal, 20).frame(width: self.screenwidth - 80, height: 70).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color("purp")))
+                                            }.padding(.horizontal, 20).frame(width: self.screenwidth - 80, height: 70).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color("purp")))
                                         }
                                     }.padding(.vertical, 10)
                                 }
@@ -2031,13 +2042,131 @@ struct SignUpView: View {
                                             Image(systemName: "chevron.right")
                                                 .font(Font.system(size: 20, weight: .heavy))
                                                 .foregroundColor(Color(.darkGray))
-                                        }.padding(.horizontal, 20).frame(width: screenwidth - 80, height: 70).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                                        }.padding(.horizontal, 20).frame(width: screenwidth - 80, height: 70).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                                     }
                                 }
                                 
                                 Spacer()
                                 
                                 if self.mntdata.count > 0 {
+                                    Button(action: {
+                                        self.next -= self.screenwidth
+                                        self.count += 1
+                                    }) {
+                                        Text("Next")
+                                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color(.white))
+                                            .padding(10).padding(.horizontal, 20)
+                                            .background(Color(.darkGray).cornerRadius(20))
+                                            .padding(.bottom, 50)
+                                            .opacity(0.7)
+                                    }
+                                }
+                                else {
+                                    Button(action: {
+                                        self.next -= self.screenwidth
+                                        self.count += 1
+                                    }) {
+                                        Text("Skip")
+                                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color(.darkGray))
+                                            .padding(10).padding(.horizontal, 20)
+                                            .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color(.darkGray)))
+                                            .padding(.bottom, 50)
+                                            .opacity(0.4)
+                                    }
+                                }
+                            }.frame(height: screenheight/1.3)
+                        }.frame(width: screenwidth, height: screenheight)
+                        
+                        
+                        //MARK: Music
+                        VStack {
+                            Spacer()
+                            Image("Music")
+                                .resizable()
+                                .frame(width: 50, height: 50)
+                            VStack(spacing: 15) {
+                                Text("Music")
+                                    .font(Font.custom("ProximaNova-Regular", size: 30))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color(.darkGray))
+                                    .padding(.bottom, 10)
+                                if self.musicdata.count > 0 {
+                                    VStack {
+                                        ForEach(0...self.musicdata.count-1, id: \.self) { data in
+                                            HStack {
+                                                Image(self.musicgenres[data])
+                                                    .renderingMode(.template)
+                                                    .resizable()
+                                                    .frame(width: 30, height: 30)
+                                                    .foregroundColor(Color(.darkGray))
+                                                    .padding(.trailing, 10)
+                                                VStack(alignment: .leading, spacing: 5) {
+                                                    Text(self.musicdata[data])
+                                                        .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                        .fontWeight(.semibold)
+                                                        .foregroundColor(Color(.darkGray))
+                                                    Text(self.musicgenres[data])
+                                                        .font(Font.custom("ProximaNova-Regular", size: 18))
+                                                        .fontWeight(.semibold)
+                                                        .foregroundColor(Color(.darkGray).opacity(0.5))
+                                                }
+                                                Spacer()
+                                                Rectangle()
+                                                    .frame(width: 2.5, height: 70)
+                                                    .foregroundColor(Color(.gray))
+                                                    .opacity(0.5)
+                                                Image(systemName: "line.horizontal.3")
+                                                    .font(Font.system(size: 20, weight: .heavy))
+                                                    .foregroundColor(Color(.darkGray))
+                                                    .padding(.leading, 10)
+                                                    .onTapGesture {
+                                                        self.editselect = data
+                                                        self.edit = true
+                                                        self.music.toggle()
+                                                        self.picker = true
+                                                    }
+                                            }.padding(.horizontal, 20).frame(width: self.screenwidth - 80, height: 70).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color("purp")))
+                                        }
+                                    }.padding(.vertical, 10)
+                                }
+                                
+                                
+                                if self.musicdata.count != 0 && self.musicdata.count != 5 {
+                                    RoundedRectangle(cornerRadius: 2)
+                                        .frame(width: screenwidth - 40, height: 5)
+                                        .foregroundColor(Color(.darkGray))
+                                }
+                                
+                                if self.musicdata.count != 5 {
+                                    Button(action: {
+                                        self.music = true
+                                        self.picker.toggle()
+                                    }) {
+                                        HStack {
+                                            Text("Add Song")
+                                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                .fontWeight(.semibold)
+                                                .foregroundColor(Color(.darkGray))
+                                            Image("song")
+                                                .renderingMode(.template)
+                                                .resizable()
+                                                .frame(width: 30, height: 30)
+                                                .foregroundColor(Color(.darkGray))
+                                            Spacer()
+                                            Image(systemName: "chevron.right")
+                                                .font(Font.system(size: 20, weight: .heavy))
+                                                .foregroundColor(Color(.darkGray))
+                                        }.padding(.horizontal, 20).frame(width: screenwidth - 80, height: 70).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
+                                    }
+                                }
+                                
+                                Spacer()
+                                
+                                if self.musicdata.count > 0 {
                                     Button(action: {
                                         self.next -= self.screenwidth
                                         self.count += 1
@@ -2317,7 +2446,7 @@ struct SignUpView: View {
                         }
                     }.frame(width: screenwidth, height: screenheight)
                     
-                }.animation(.spring()).offset(x: screenwidth*7.5 + next).sheet(isPresented: self.$picker) {
+                }.animation(.spring()).offset(x: screenwidth*8 + next).sheet(isPresented: self.$picker) {
                     if self.edit && self.education {
                         EducationView(education: self.$education, educationdata: self.$educationdata, edit: self.$edit, picker: self.$picker, select: self.editselect)
                     }
@@ -2330,8 +2459,17 @@ struct SignUpView: View {
                     else if self.occupation {
                         OccupationView(occupation: self.$occupation, occupationdata: self.$occupationdata, occupationdata1: self.$occupationdata1, edit: self.$edit, picker: self.$picker)
                     }
+                    else if self.edit && self.mnt {
+                        MoviesAndTVView(mnt: self.$mnt, mntdata: self.$mntdata, mntgenres: self.$mntgenres, edit: self.$edit, picker: self.$picker, select: self.editselect)
+                    }
                     else if self.mnt {
                         MoviesAndTVView(mnt: self.$mnt, mntdata: self.$mntdata, mntgenres: self.$mntgenres, edit: self.$edit, picker: self.$picker)
+                    }
+                    else if self.edit && self.music {
+                        MusicView(music: self.$music, musicdata: self.$musicdata, musicgenres: self.$musicgenres, edit: self.$edit, picker: self.$picker, select: self.editselect)
+                    }
+                    else if self.music {
+                        MusicView(music: self.$music, musicdata: self.$musicdata, musicgenres: self.$musicgenres, edit: self.$edit, picker: self.$picker)
                     }
                     else {
                         ImagePicker(picker: self.$picker, images: self.$profilepics, showimage: self.$showimage, num: self.$numimage)
@@ -2393,7 +2531,7 @@ struct SignUpView: View {
 }
 
 
-//MARK: Education
+//MARK: EducationView
 struct EducationView: View {
     @Binding var education: Bool
     @Binding var educationdata: [String]
@@ -2428,6 +2566,7 @@ struct EducationView: View {
                     if self.school.count < 1 {
                         Text("School Name")
                             .font(Font.custom("ProximaNova-Regular", size: 24))
+                            .fontWeight(.semibold)
                             .foregroundColor(.black)
                             .opacity(0.5)
                     }
@@ -2437,22 +2576,23 @@ struct EducationView: View {
                         .padding(10)
                         .frame(width: screenwidth - 80, height: 50)
                         .multilineTextAlignment(.center)
-                }.padding(5).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                }.padding(5).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                 Spacer()
-            }
-            if self.yearfin.count > 0 {
-                Text(yearfin)
-                    .font(Font.custom("ProximaNova-Regular", size: 20))
-                    .fontWeight(.semibold)
-                    .foregroundColor(Color(.darkGray))
-                    .padding(10)
-                    .background(RoundedRectangle(cornerRadius: 10).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
-                    .scaleEffect((self.yearfin.count > 0 && self.school.count > 0) ? 1 : 0)
             }
             VStack {
                 Text("Select Year")
-                    .font(Font.custom("ProximaNova-Regular", size: 24))
+                    .font(Font.custom("ProximaNova-Regular", size: 22))
+                    .fontWeight(.semibold)
                     .foregroundColor(Color(.darkGray))
+                if self.yearfin.count > 0 {
+                    Text(yearfin)
+                        .font(Font.custom("ProximaNova-Regular", size: 20))
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color(.darkGray))
+                        .padding(10)
+                        .background(Color(.white).cornerRadius(10).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10)).padding(.top, 10)
+                        .scaleEffect((self.yearfin.count > 0 && self.school.count > 0) ? 1 : 0)
+                }
                 VStack {
                     ScrollView(showsIndicators: false) {
                         ForEach((0...99).reversed(), id: \.self) { yr in
@@ -2472,7 +2612,7 @@ struct EducationView: View {
                             }.background(self.year[yr] ? Color(.darkGray) : Color(.clear)).cornerRadius(10)
                         }
                     }.padding(10)
-                }.frame(width: 150, height: 250).background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2.5).foregroundColor(Color(.darkGray)))
+                }.frame(width: 150, height: 250).background(Color(.white).cornerRadius(20).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
             }.scaleEffect(self.school.count > 0 ? 1 : 0)
             HStack {
                 if self.select != -1  {
@@ -2538,7 +2678,7 @@ struct EducationView: View {
             }.offset(y: self.school.count > 0 ? 0 : -275)
             Spacer()
         }.edgesIgnoringSafeArea(.all)
-            .background(Color(.white).edgesIgnoringSafeArea(.all)).animation(.spring())
+            .background(LinearGradient(gradient: Gradient(colors: [Color(.white), Color("lightgray")]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all)).animation(.spring())
             .onAppear {
                 if self.select != -1 {
                     let info = self.educationdata[self.select]
@@ -2720,6 +2860,7 @@ struct OccupationView: View {
                         if self.title.count < 1 {
                             Text("Job Title")
                                 .font(Font.custom("ProximaNova-Regular", size: 24))
+                                .fontWeight(.semibold)
                                 .foregroundColor(.black)
                                 .opacity(0.5)
                         }
@@ -2729,7 +2870,7 @@ struct OccupationView: View {
                             .padding(10)
                             .frame(width: screenwidth - 80, height: 50)
                             .multilineTextAlignment(.center)
-                    }.padding(5).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                    }.padding(5).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                     Spacer()
                 }
             }
@@ -2744,6 +2885,7 @@ struct OccupationView: View {
                         if self.company.count < 1 {
                             Text("Company (optional)")
                                 .font(Font.custom("ProximaNova-Regular", size: 24))
+                                .fontWeight(.semibold)
                                 .foregroundColor(.black)
                                 .opacity(0.5)
                         }
@@ -2753,7 +2895,7 @@ struct OccupationView: View {
                             .padding(10)
                             .frame(width: screenwidth - 80, height: 50)
                             .multilineTextAlignment(.center)
-                    }.padding(5).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                    }.padding(5).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                     Spacer()
                 }
             }.scaleEffect(self.title.count > 0 ? 1 : 0)
@@ -2822,7 +2964,7 @@ struct OccupationView: View {
             }.offset(y: self.title.count > 0 ? 0 : -100)
             Spacer()
         }.edgesIgnoringSafeArea(.all)
-        .background(Color(.white).edgesIgnoringSafeArea(.all)).animation(.spring())
+            .background(LinearGradient(gradient: Gradient(colors: [Color(.white), Color("lightgray")]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all)).animation(.spring())
             .onAppear {
                 if self.select != -1 {
                     self.title = String(self.occupationdata[self.select])
@@ -2847,6 +2989,8 @@ struct MoviesAndTVView: View {
     @State var title = ""
     @State var genre = ""
     @State var select: Int = -1
+    let genres = ["Action", "Anime", "Comedy", "Drama", "Fantasy", "Horror", "Mystery", "Romance", "Thriller", "Western"]
+    @State var genresselect = [Bool](repeating: false, count: 10)
     let screenwidth = UIScreen.main.bounds.width
     let screenheight = UIScreen.main.bounds.height
     var body: some View {
@@ -2875,6 +3019,7 @@ struct MoviesAndTVView: View {
                         if self.title.count < 1 {
                             Text("Title")
                                 .font(Font.custom("ProximaNova-Regular", size: 24))
+                                .fontWeight(.semibold)
                                 .foregroundColor(.black)
                                 .opacity(0.5)
                         }
@@ -2884,9 +3029,41 @@ struct MoviesAndTVView: View {
                             .padding(10)
                             .frame(width: screenwidth - 80, height: 50)
                             .multilineTextAlignment(.center)
-                    }.padding(5).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                    }.padding(5).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                     Spacer()
                 }
+                VStack {
+                    Text("Select Genre")
+                        .font(Font.custom("ProximaNova-Regular", size: 22))
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color(.darkGray))
+                    VStack {
+                        ScrollView(showsIndicators: false) {
+                            ForEach(0...self.genres.count-1, id: \.self) { gen in
+                                VStack {
+                                    Button(action: {
+                                        self.genresselect = [Bool](repeating: false, count: 10)
+                                        self.genresselect[gen] = true
+                                        self.genre = self.genres[gen]
+                                    }) {
+                                        HStack {
+                                            Image(self.genres[gen])
+                                                .renderingMode(.template)
+                                                .resizable()
+                                                .frame(width: 30, height: 30)
+                                                .foregroundColor(self.genresselect[gen] ? Color(.white) : Color(.darkGray).opacity(0.8))
+                                            Text(self.genres[gen])
+                                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                .fontWeight(.semibold)
+                                                .foregroundColor(self.genresselect[gen] ? Color(.white) : Color(.darkGray).opacity(0.8))
+                                                .fixedSize(horizontal: true, vertical: false)
+                                        }.padding(5).frame(width: 180)//.padding(.horizontal, 20)
+                                    }
+                                }.background(self.genresselect[gen] ? Color(.darkGray) : Color(.clear)).cornerRadius(10)
+                            }
+                        }.padding(10)
+                    }.frame(width: 200, height: 300).background(Color(.white).cornerRadius(20).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                }.scaleEffect(self.title.count > 0 ? 1 : 0)
                 HStack {
                     if self.select != -1  {
                         Button(action: {
@@ -2907,7 +3084,7 @@ struct MoviesAndTVView: View {
                                 .opacity(0.7)
                         }
                     }
-                    if self.title.count > 0 {
+                    if self.title.count > 0 && self.genre.count > 0{
                         Button(action: {
                             if self.select != -1 {
                                 self.mntdata[self.select] = self.title
@@ -2949,15 +3126,16 @@ struct MoviesAndTVView: View {
                                 .opacity(0.4)
                         }
                     }
-                }//.offset(y: self.title.count > 0 ? 0 : -100)
+                }.offset(y: self.title.count > 0 ? 10 : -325)
             }
             Spacer()
         }.edgesIgnoringSafeArea(.all)
-        .background(Color(.white).edgesIgnoringSafeArea(.all)).animation(.spring())
+            .background(LinearGradient(gradient: Gradient(colors: [Color(.white), Color("lightgray")]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all)).animation(.spring())
             .onAppear {
                 if self.select != -1 {
                     self.title = String(self.mntdata[self.select])
                     self.genre = String(self.mntgenres[self.select])
+                    self.genresselect[self.genres.firstIndex(of: self.genre)!] = true
                 }
             }
         .onDisappear {
@@ -2966,6 +3144,174 @@ struct MoviesAndTVView: View {
         }
     }
 }
+
+
+//MARK: MusicView
+struct MusicView: View {
+    @Binding var music: Bool
+    @Binding var musicdata: [String]
+    @Binding var musicgenres: [String]
+    @Binding var edit: Bool
+    @Binding var picker: Bool
+    @State var title = ""
+    @State var genre = ""
+    @State var select: Int = -1
+    let genres = ["Action", "Anime", "Comedy", "Drama", "Fantasy", "Horror", "Mystery", "Romance", "Thriller", "Western"]
+    @State var genresselect = [Bool](repeating: false, count: 10)
+    let screenwidth = UIScreen.main.bounds.width
+    let screenheight = UIScreen.main.bounds.height
+    var body: some View {
+        VStack {
+             HStack {
+                Spacer()
+                Text("Add Song")
+                    .font(Font.custom("ProximaNova-Regular", size: 26))
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color(.darkGray))
+                Image("song")
+                    .renderingMode(.template)
+                    .resizable()
+                    .frame(width: 35, height: 35)
+                    .foregroundColor(Color(.darkGray))
+                Spacer()
+             }.padding(.vertical, 30)
+            VStack {
+                Text("Title")
+                    .font(Font.custom("ProximaNova-Regular", size: 22))
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color(.darkGray))
+                HStack {
+                    Spacer()
+                    ZStack {
+                        if self.title.count < 1 {
+                            Text("Title")
+                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                .fontWeight(.semibold)
+                                .foregroundColor(.black)
+                                .opacity(0.5)
+                        }
+                        TextField("", text: self.$title)
+                            .font(Font.custom("ProximaNova-Regular", size: 24).weight(.semibold))
+                            .foregroundColor(Color(.darkGray))
+                            .padding(10)
+                            .frame(width: screenwidth - 80, height: 50)
+                            .multilineTextAlignment(.center)
+                    }.padding(5).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                    Spacer()
+                }
+                VStack {
+                    Text("Select Genre")
+                        .font(Font.custom("ProximaNova-Regular", size: 22))
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color(.darkGray))
+                    VStack {
+                        ScrollView(showsIndicators: false) {
+                            ForEach(0...self.genres.count-1, id: \.self) { gen in
+                                VStack {
+                                    Button(action: {
+                                        self.genresselect = [Bool](repeating: false, count: 10)
+                                        self.genresselect[gen] = true
+                                        self.genre = self.genres[gen]
+                                    }) {
+                                        HStack {
+                                            Image(self.genres[gen])
+                                                .renderingMode(.template)
+                                                .resizable()
+                                                .frame(width: 30, height: 30)
+                                                .foregroundColor(self.genresselect[gen] ? Color(.white) : Color(.darkGray).opacity(0.8))
+                                            Text(self.genres[gen])
+                                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                .fontWeight(.semibold)
+                                                .foregroundColor(self.genresselect[gen] ? Color(.white) : Color(.darkGray).opacity(0.8))
+                                                .fixedSize(horizontal: true, vertical: false)
+                                        }.padding(5).frame(width: 180)//.padding(.horizontal, 20)
+                                    }
+                                }.background(self.genresselect[gen] ? Color(.darkGray) : Color(.clear)).cornerRadius(10)
+                            }
+                        }.padding(10)
+                    }.frame(width: 200, height: 300).background(Color(.white).cornerRadius(20).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                }.scaleEffect(self.title.count > 0 ? 1 : 0)
+                HStack {
+                    if self.select != -1  {
+                        Button(action: {
+                            self.music = false
+                            self.edit = false
+                            self.musicdata.remove(at: self.select)
+                            self.musicgenres.remove(at: self.select)
+                            self.picker = false
+                        }) {
+                            Text("Remove")
+                                .font(Font.custom("ProximaNova-Regular", size: 14))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color("personality"))
+                                .frame(width: 60)
+                                .padding(10).padding(.horizontal, 10)
+                                .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color("personality")))
+                                //.padding(.bottom, 50)
+                                .opacity(0.7)
+                        }
+                    }
+                    if self.title.count > 0 && self.genre.count > 0{
+                        Button(action: {
+                            if self.select != -1 {
+                                self.musicdata[self.select] = self.title
+                                self.musicgenres[self.select] = self.genre
+                            }
+                            else {
+                                self.musicdata.append(self.title)
+                                self.musicgenres.append(self.genre)
+                            }
+                            self.music = false
+                            self.edit = false
+                            self.picker = false
+                        }) {
+                            Text("Confirm")
+                                .font(Font.custom("ProximaNova-Regular", size: 14))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.white))
+                                .frame(width: 60)
+                                .padding(10).padding(.horizontal, 10)
+                                .background(Color(.darkGray).cornerRadius(20))
+                                //.padding(.bottom, 50)
+                                .opacity(0.7)
+                        }
+                    }
+                    else {
+                        Button(action: {
+                            self.music = false
+                            self.edit = false
+                            self.picker = false
+                        }) {
+                            Text("Cancel")
+                                .font(Font.custom("ProximaNova-Regular", size: 14))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.darkGray))
+                                .frame(width: 60)
+                                .padding(10).padding(.horizontal, 10)
+                                .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color(.darkGray)))
+                                //.padding(.bottom, 50)
+                                .opacity(0.4)
+                        }
+                    }
+                }.offset(y: self.title.count > 0 ? 10 : -325)
+            }
+            Spacer()
+        }.edgesIgnoringSafeArea(.all)
+            .background(LinearGradient(gradient: Gradient(colors: [Color(.white), Color("lightgray")]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all)).animation(.spring())
+            .onAppear {
+                if self.select != -1 {
+                    self.title = String(self.musicdata[self.select])
+                    self.genre = String(self.musicgenres[self.select])
+                    self.genresselect[self.genres.firstIndex(of: self.genre)!] = true
+                }
+            }
+        .onDisappear {
+            self.edit = false
+            self.music = false
+        }
+    }
+}
+
 
 
 //MARK: HomeView
