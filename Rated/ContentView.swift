@@ -356,6 +356,10 @@ struct SignUpView: View {
     @State var musicdata = [String]()
     @State var musicgenres = [String]()
     
+    @State var starsign = ""
+    @State var starsigns = ["Aquarius", "Aries", "Capricorn", "Cancer", "Gemini", "Leo", "Libra", "Pisces", "Sagittarius", "Scorpio", "Taurus", "Virgo"]
+    @State var starsignsselect = [Bool](repeating: false, count: 12)
+    
     //Image Picker
     @State var numimage: Int = 0
     @State var showimage = [false, false, false, false]
@@ -2198,6 +2202,45 @@ struct SignUpView: View {
                                 }
                             }.frame(height: screenheight/1.3)
                         }.frame(width: screenwidth, height: screenheight)
+                        
+                        //MARK: Star Sign
+                        VStack {
+                            Spacer()
+                            Image("Astrology")
+                                .resizable()
+                                .frame(width: 50, height: 50)
+                            VStack(spacing: 15) {
+                                Text("Star Sign")
+                                    .font(Font.custom("ProximaNova-Regular", size: 30))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color(.darkGray))
+                                    .padding(.bottom, 10)
+                                ScrollView {
+                                    ForEach(0...self.starsigns.count-1, id: \.self) { ind in
+                                        VStack {
+                                            Button(action: {
+                                                self.starsignsselect = [Bool](repeating: false, count: 12)
+                                                self.starsignsselect[ind] = true
+                                                self.starsign = self.starsigns[ind]
+                                            }) {
+                                                HStack {
+                                                    Image(self.starsigns[ind])
+                                                        .renderingMode(.template)
+                                                        .resizable()
+                                                        .frame(width: 35, height: 35)
+                                                        .foregroundColor(self.starsignsselect[ind] ? Color(.white) : Color(.darkGray).opacity(0.8))
+                                                    Text(self.starsigns[ind])
+                                                        .font(Font.custom("ProximaNova-Regular", size: 28))
+                                                        .fontWeight(.semibold)
+                                                        .foregroundColor(self.starsignsselect[ind] ? Color(.white) : Color(.darkGray).opacity(0.8))
+                                                        .fixedSize(horizontal: true, vertical: false)
+                                                }.padding(5).frame(width: 220)
+                                            }
+                                        }.background(self.starsignsselect[ind] ? Color(.darkGray) : Color(.clear)).cornerRadius(10)
+                                    }
+                                }.frame(height: 450)
+                            }.frame(height: screenheight/1.3)
+                        }.frame(width: screenwidth, height: screenheight)
                     }
                     
                     /*MARK: Prompts Select 9
@@ -2446,7 +2489,7 @@ struct SignUpView: View {
                         }
                     }.frame(width: screenwidth, height: screenheight)
                     
-                }.animation(.spring()).offset(x: screenwidth*8 + next).sheet(isPresented: self.$picker) {
+                }.animation(.spring()).offset(x: screenwidth*8.5 + next).sheet(isPresented: self.$picker) {
                     if self.edit && self.education {
                         EducationView(education: self.$education, educationdata: self.$educationdata, edit: self.$edit, picker: self.$picker, select: self.editselect)
                     }
@@ -2567,7 +2610,7 @@ struct EducationView: View {
                         Text("School Name")
                             .font(Font.custom("ProximaNova-Regular", size: 24))
                             .fontWeight(.semibold)
-                            .foregroundColor(.black)
+                            .foregroundColor(.gray)
                             .opacity(0.5)
                     }
                     TextField("", text: self.$school)
@@ -2633,46 +2676,43 @@ struct EducationView: View {
                             .opacity(0.7)
                     }
                 }
-                VStack {
+                Button(action: {
                     if self.school.count > 0 && self.yearfin.count > 0 {
-                        Button(action: {
-                            if self.select != -1 {
-                                self.educationdata[self.select] = self.school + self.yearfin
-                            }
-                            else {
-                                self.educationdata.append(self.school + self.yearfin)
-                            }
-                            self.education.toggle()
-                            self.edit = false
-                            self.picker = false
-                        }) {
-                            Text("Confirm")
-                                .font(Font.custom("ProximaNova-Regular", size: 14))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color(.white))
-                                .frame(width: 60)
-                                .padding(10).padding(.horizontal, 10)
-                                .background(Color(.darkGray).cornerRadius(20))
-                                .padding(.bottom, 50)
-                                .opacity(0.7)
+                        if self.select != -1 {
+                            self.educationdata[self.select] = self.school + self.yearfin
                         }
+                        else {
+                            self.educationdata.append(self.school + self.yearfin)
+                        }
+                        self.education.toggle()
+                        self.edit = false
+                        self.picker = false
                     }
                     else {
-                        Button(action: {
-                            self.education.toggle()
-                            self.picker = false
-                            self.edit = false
-                        }) {
-                            Text("Cancel")
-                                .font(Font.custom("ProximaNova-Regular", size: 14))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color(.darkGray))
-                                .frame(width: 60)
-                                .padding(10).padding(.horizontal, 10)
-                                .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color(.darkGray)))
-                                .padding(.bottom, 50)
-                                .opacity(0.4)
-                        }
+                        self.education.toggle()
+                        self.picker = false
+                        self.edit = false
+                    }
+                }) {
+                    if self.school.count > 0 && self.yearfin.count > 0 {
+                        Text("Confirm")
+                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color(.white))
+                            .frame(width: 60)
+                            .padding(10).padding(.horizontal, 10)
+                            .background(Color(.darkGray).cornerRadius(20))
+                            .opacity(0.7)
+                    }
+                    else {
+                        Text("Cancel")
+                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 60)
+                            .padding(10).padding(.horizontal, 10)
+                            .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color(.darkGray)))
+                            .opacity(0.4)
                     }
                 }
             }.offset(y: self.school.count > 0 ? 0 : -275)
@@ -2861,7 +2901,7 @@ struct OccupationView: View {
                             Text("Job Title")
                                 .font(Font.custom("ProximaNova-Regular", size: 24))
                                 .fontWeight(.semibold)
-                                .foregroundColor(.black)
+                                .foregroundColor(.gray)
                                 .opacity(0.5)
                         }
                         TextField("", text: self.$title)
@@ -2886,7 +2926,7 @@ struct OccupationView: View {
                             Text("Company (optional)")
                                 .font(Font.custom("ProximaNova-Regular", size: 24))
                                 .fontWeight(.semibold)
-                                .foregroundColor(.black)
+                                .foregroundColor(.gray)
                                 .opacity(0.5)
                         }
                         TextField("", text: self.$company)
@@ -2919,8 +2959,8 @@ struct OccupationView: View {
                             .opacity(0.7)
                     }
                 }
-                if self.title.count > 0 {
-                    Button(action: {
+                Button(action: {
+                    if self.title.count > 0 {
                         if self.select != -1 {
                             self.occupationdata[self.select] = self.title
                             self.occupationdata1[self.select] = self.company
@@ -2932,7 +2972,15 @@ struct OccupationView: View {
                         self.occupation.toggle()
                         self.edit = false
                         self.picker = false
-                    }) {
+                    }
+                    else {
+                        self.occupation.toggle()
+                        self.edit = false
+                        self.picker = false
+                    }
+                    
+                }) {
+                    if self.title.count > 0 {
                         Text("Confirm")
                             .font(Font.custom("ProximaNova-Regular", size: 14))
                             .fontWeight(.semibold)
@@ -2940,16 +2988,9 @@ struct OccupationView: View {
                             .frame(width: 60)
                             .padding(10).padding(.horizontal, 10)
                             .background(Color(.darkGray).cornerRadius(20))
-                            .padding(.bottom, 50)
                             .opacity(0.7)
                     }
-                }
-                else {
-                    Button(action: {
-                        self.occupation.toggle()
-                        self.edit = false
-                        self.picker = false
-                    }) {
+                    else {
                         Text("Cancel")
                             .font(Font.custom("ProximaNova-Regular", size: 14))
                             .fontWeight(.semibold)
@@ -2957,7 +2998,6 @@ struct OccupationView: View {
                             .frame(width: 60)
                             .padding(10).padding(.horizontal, 10)
                             .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color(.darkGray)))
-                            .padding(.bottom, 50)
                             .opacity(0.4)
                     }
                 }
@@ -3009,7 +3049,7 @@ struct MoviesAndTVView: View {
                 Spacer()
              }.padding(.vertical, 30)
             VStack {
-                Text("Title")
+                Text("Movie/Show Title")
                     .font(Font.custom("ProximaNova-Regular", size: 22))
                     .fontWeight(.semibold)
                     .foregroundColor(Color(.darkGray))
@@ -3017,10 +3057,10 @@ struct MoviesAndTVView: View {
                     Spacer()
                     ZStack {
                         if self.title.count < 1 {
-                            Text("Title")
+                            Text("Movie/Show Title")
                                 .font(Font.custom("ProximaNova-Regular", size: 24))
                                 .fontWeight(.semibold)
-                                .foregroundColor(.black)
+                                .foregroundColor(.gray)
                                 .opacity(0.5)
                         }
                         TextField("", text: self.$title)
@@ -3051,11 +3091,11 @@ struct MoviesAndTVView: View {
                                                 .renderingMode(.template)
                                                 .resizable()
                                                 .frame(width: 30, height: 30)
-                                                .foregroundColor(self.genresselect[gen] ? Color(.white) : Color(.darkGray).opacity(0.8))
+                                                .foregroundColor(self.genresselect[gen] ? Color(.white) : Color(.darkGray).opacity(0.6))
                                             Text(self.genres[gen])
                                                 .font(Font.custom("ProximaNova-Regular", size: 24))
                                                 .fontWeight(.semibold)
-                                                .foregroundColor(self.genresselect[gen] ? Color(.white) : Color(.darkGray).opacity(0.8))
+                                                .foregroundColor(self.genresselect[gen] ? Color(.white) : Color(.darkGray).opacity(0.6))
                                                 .fixedSize(horizontal: true, vertical: false)
                                         }.padding(5).frame(width: 180)//.padding(.horizontal, 20)
                                     }
@@ -3084,8 +3124,8 @@ struct MoviesAndTVView: View {
                                 .opacity(0.7)
                         }
                     }
-                    if self.title.count > 0 && self.genre.count > 0{
-                        Button(action: {
+                    Button(action: {
+                        if self.title.count > 0 && self.genre.count > 0 {
                             if self.select != -1 {
                                 self.mntdata[self.select] = self.title
                                 self.mntgenres[self.select] = self.genre
@@ -3097,7 +3137,14 @@ struct MoviesAndTVView: View {
                             self.mnt = false
                             self.edit = false
                             self.picker = false
-                        }) {
+                        }
+                        else {
+                            self.mnt = false
+                            self.edit = false
+                            self.picker = false
+                        }
+                    }) {
+                        if self.title.count > 0 && self.genre.count > 0 {
                             Text("Confirm")
                                 .font(Font.custom("ProximaNova-Regular", size: 14))
                                 .fontWeight(.semibold)
@@ -3105,16 +3152,9 @@ struct MoviesAndTVView: View {
                                 .frame(width: 60)
                                 .padding(10).padding(.horizontal, 10)
                                 .background(Color(.darkGray).cornerRadius(20))
-                                //.padding(.bottom, 50)
                                 .opacity(0.7)
                         }
-                    }
-                    else {
-                        Button(action: {
-                            self.mnt = false
-                            self.edit = false
-                            self.picker = false
-                        }) {
+                        else {
                             Text("Cancel")
                                 .font(Font.custom("ProximaNova-Regular", size: 14))
                                 .fontWeight(.semibold)
@@ -3122,7 +3162,6 @@ struct MoviesAndTVView: View {
                                 .frame(width: 60)
                                 .padding(10).padding(.horizontal, 10)
                                 .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color(.darkGray)))
-                                //.padding(.bottom, 50)
                                 .opacity(0.4)
                         }
                     }
@@ -3156,8 +3195,8 @@ struct MusicView: View {
     @State var title = ""
     @State var genre = ""
     @State var select: Int = -1
-    let genres = ["Action", "Anime", "Comedy", "Drama", "Fantasy", "Horror", "Mystery", "Romance", "Thriller", "Western"]
-    @State var genresselect = [Bool](repeating: false, count: 10)
+    let genres = ["Classical", "Country", "EDM", "Hip-Hop", "Indie", "Jazz", "K-Pop", "Metal", "Oldies", "Pop", "Rap", "R&B", "Rock", "Techno"]
+    @State var genresselect = [Bool](repeating: false, count: 14)
     let screenwidth = UIScreen.main.bounds.width
     let screenheight = UIScreen.main.bounds.height
     var body: some View {
@@ -3176,7 +3215,7 @@ struct MusicView: View {
                 Spacer()
              }.padding(.vertical, 30)
             VStack {
-                Text("Title")
+                Text("Song Title")
                     .font(Font.custom("ProximaNova-Regular", size: 22))
                     .fontWeight(.semibold)
                     .foregroundColor(Color(.darkGray))
@@ -3184,10 +3223,10 @@ struct MusicView: View {
                     Spacer()
                     ZStack {
                         if self.title.count < 1 {
-                            Text("Title")
+                            Text("Song Title")
                                 .font(Font.custom("ProximaNova-Regular", size: 24))
                                 .fontWeight(.semibold)
-                                .foregroundColor(.black)
+                                .foregroundColor(.gray)
                                 .opacity(0.5)
                         }
                         TextField("", text: self.$title)
@@ -3209,7 +3248,7 @@ struct MusicView: View {
                             ForEach(0...self.genres.count-1, id: \.self) { gen in
                                 VStack {
                                     Button(action: {
-                                        self.genresselect = [Bool](repeating: false, count: 10)
+                                        self.genresselect = [Bool](repeating: false, count: 14)
                                         self.genresselect[gen] = true
                                         self.genre = self.genres[gen]
                                     }) {
@@ -3251,8 +3290,8 @@ struct MusicView: View {
                                 .opacity(0.7)
                         }
                     }
-                    if self.title.count > 0 && self.genre.count > 0{
-                        Button(action: {
+                    Button(action: {
+                        if self.title.count > 0 && self.genre.count > 0 {
                             if self.select != -1 {
                                 self.musicdata[self.select] = self.title
                                 self.musicgenres[self.select] = self.genre
@@ -3264,7 +3303,14 @@ struct MusicView: View {
                             self.music = false
                             self.edit = false
                             self.picker = false
-                        }) {
+                        }
+                        else {
+                            self.music = false
+                            self.edit = false
+                            self.picker = false
+                        }
+                    }) {
+                        if self.title.count > 0 && self.genre.count > 0 {
                             Text("Confirm")
                                 .font(Font.custom("ProximaNova-Regular", size: 14))
                                 .fontWeight(.semibold)
@@ -3272,9 +3318,21 @@ struct MusicView: View {
                                 .frame(width: 60)
                                 .padding(10).padding(.horizontal, 10)
                                 .background(Color(.darkGray).cornerRadius(20))
-                                //.padding(.bottom, 50)
                                 .opacity(0.7)
                         }
+                        else {
+                            Text("Cancel")
+                                .font(Font.custom("ProximaNova-Regular", size: 14))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.darkGray))
+                                .frame(width: 60)
+                                .padding(10).padding(.horizontal, 10)
+                                .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color(.darkGray)))
+                                .opacity(0.4)
+                        }
+                    }
+                    /*if self.title.count > 0 && self.genre.count > 0 {
+                        
                     }
                     else {
                         Button(action: {
@@ -3292,7 +3350,7 @@ struct MusicView: View {
                                 //.padding(.bottom, 50)
                                 .opacity(0.4)
                         }
-                    }
+                    }*/
                 }.offset(y: self.title.count > 0 ? 10 : -325)
             }
             Spacer()
