@@ -1510,16 +1510,16 @@ struct SignUpView: View {
                                         Image("education-2")
                                             .renderingMode(.template)
                                             .resizable()
-                                            .frame(width: 30, height: 30)
+                                            .frame(width: 25, height: 25)
                                             .foregroundColor(Color(.darkGray))
                                             .padding(.trailing, 10)
                                         VStack(alignment: .leading, spacing: 5) {
                                             Text(data.prefix(data.count - 4))
-                                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                .font(Font.custom("ProximaNova-Regular", size: 18))
                                                 .fontWeight(.semibold)
                                                 .foregroundColor(Color(.darkGray))
                                             Text(data.suffix(4))
-                                                .font(Font.custom("ProximaNova-Regular", size: 18))
+                                                .font(Font.custom("ProximaNova-Regular", size: 14))
                                                 .fontWeight(.semibold)
                                                 .foregroundColor(Color(.darkGray).opacity(0.5))
                                         }
@@ -1554,17 +1554,17 @@ struct SignUpView: View {
                                     }) {
                                         HStack {
                                             Text("Add School")
-                                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                .font(Font.custom("ProximaNova-Regular", size: 18))
                                                 .fontWeight(.semibold)
                                                 .foregroundColor(Color(.darkGray))
                                             Image("education-2")
                                                 .renderingMode(.template)
                                                 .resizable()
-                                                .frame(width: 30, height: 30)
+                                                .frame(width: 25, height: 25)
                                                 .foregroundColor(Color(.darkGray))
                                             Spacer()
                                             Image(systemName: "chevron.right")
-                                                .font(Font.system(size: 20, weight: .heavy))
+                                                .font(Font.system(size: 18, weight: .heavy))
                                                 .foregroundColor(Color(.darkGray))
                                         }.padding(.horizontal, 20).frame(width: screenwidth - 80, height: 70).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                                     }
@@ -1624,16 +1624,16 @@ struct SignUpView: View {
                                             Image("occupation-1")
                                                 .renderingMode(.template)
                                                 .resizable()
-                                                .frame(width: 30, height: 30)
+                                                .frame(width: 25, height: 25)
                                                 .foregroundColor(Color(.darkGray))
                                                 .padding(.trailing, 10)
                                             VStack(alignment: .leading, spacing: 5) {
                                                 Text(self.occupationdata[data-1])
-                                                    .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                    .font(Font.custom("ProximaNova-Regular", size: 18))
                                                     .fontWeight(.semibold)
                                                     .foregroundColor(Color(.darkGray))
-                                                Text(self.occupationdata1[data-1])//String(data[data.index(of: "$")]..<data.count))
-                                                    .font(Font.custom("ProximaNova-Regular", size: 18))
+                                                Text(self.occupationdata1[data-1])
+                                                    .font(Font.custom("ProximaNova-Regular", size: 14))
                                                     .fontWeight(.semibold)
                                                     .foregroundColor(Color(.darkGray).opacity(0.5))
                                             }
@@ -1670,17 +1670,17 @@ struct SignUpView: View {
                                     }) {
                                         HStack {
                                             Text("Add Occupation")
-                                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                .font(Font.custom("ProximaNova-Regular", size: 18))
                                                 .fontWeight(.semibold)
                                                 .foregroundColor(Color(.darkGray))
                                             Image("occupation-1")
                                                 .renderingMode(.template)
                                                 .resizable()
-                                                .frame(width: 30, height: 30)
+                                                .frame(width: 25, height: 25)
                                                 .foregroundColor(Color(.darkGray))
                                             Spacer()
                                             Image(systemName: "chevron.right")
-                                                .font(Font.system(size: 20, weight: .heavy))
+                                                .font(Font.system(size: 18, weight: .heavy))
                                                 .foregroundColor(Color(.darkGray))
                                         }.padding(.horizontal, 20).frame(width: screenwidth - 80, height: 70).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                                     }
@@ -1738,13 +1738,13 @@ struct SignUpView: View {
                                         ZStack {
                                             if self.newitem.count < 1 {
                                                 Text("Other")
-                                                    .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                    .font(Font.custom("ProximaNova-Regular", size: 16))
                                                     .fontWeight(.semibold)
                                                     .foregroundColor(.black)
                                                     .opacity(0.5)
                                             }
                                             TextField("", text: self.$newitem)
-                                                .font(Font.custom("ProximaNova-Regular", size: 24).weight(.semibold))
+                                                .font(Font.custom("ProximaNova-Regular", size: 20).weight(.semibold))
                                                 .foregroundColor(Color(.darkGray))
                                                 .padding(10)
                                                 .frame(width: screenwidth - 180, height: 40)
@@ -1752,14 +1752,16 @@ struct SignUpView: View {
                                         }.padding(5).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                                     }
                                     Button(action: {
-                                        self.newsports.insert(self.newitem, at: 0)
-                                        self.newsportsselect.insert(true, at: 0)
-                                        self.newitem = ""
-                                        self.numsports += 1
+                                        if self.newitem.count > 0 {
+                                            self.newsports.insert(self.newitem, at: 0)
+                                            self.newsportsselect.insert(true, at: 0)
+                                            self.newitem = ""
+                                            self.numsports += 1
+                                        }
+                                        
                                     }) {
-                                        Text("Add")
-                                            .font(Font.custom("ProximaNova-Regular", size: 24))
-                                            .fontWeight(.semibold)
+                                        Image(systemName: "plus")
+                                            .font(Font.system(size: self.newitem.count > 0 ? 20 : 14, weight: .heavy))
                                             .foregroundColor(Color("purp"))
                                             .opacity(self.newitem.count > 0 ? 1 : 0.3)
                                     }
@@ -1771,13 +1773,13 @@ struct SignUpView: View {
                                                 VStack(spacing: 0) {
                                                     HStack {
                                                         Text(self.newsports[ind])
-                                                            .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                            .font(Font.custom("ProximaNova-Regular", size: 16))
                                                             .fontWeight(.semibold)
                                                             .foregroundColor(self.newsportsselect[ind] ? Color(.white) : Color(.darkGray))
                                                             .fixedSize(horizontal: true, vertical: false)
                                                             .animation(nil)
                                                     }.padding(10).frame(width: 225, height: 50)
-                                                }.background(self.newsportsselect[ind] ? Color(.darkGray) : Color(.white).opacity(0)).cornerRadius(10).padding(.vertical, 2.5)
+                                                }.background(Color(self.newsportsselect[ind] ? .darkGray : .white).cornerRadius(10).shadow(color: Color(.black).opacity(self.newsportsselect[ind] ? 0 : 0.1), radius: 15, x: 10, y: 10)).padding(.vertical, 2.5).padding(.horizontal, 30)
                                                     .onTapGesture {
                                                     if self.newsportsselect[ind] {
                                                         self.numsports -= 1
@@ -1802,18 +1804,17 @@ struct SignUpView: View {
                                                         Image((self.sports[ind]).lowercased())
                                                             .renderingMode(.template)
                                                             .resizable()
-                                                            .frame(width: 30, height: 30)
+                                                            .frame(width: 20, height: 20)
                                                             .foregroundColor(self.sportsselect[ind] ? Color(.white) : Color(.darkGray))
                                                             .padding(.leading, 10)
-                                                        Spacer()
                                                         Text(self.sports[ind])
-                                                            .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                            .font(Font.custom("ProximaNova-Regular", size: 16))
                                                             .fontWeight(.semibold)
                                                             .foregroundColor(self.sportsselect[ind] ? Color(.white) : Color(.darkGray))
                                                             .fixedSize(horizontal: true, vertical: false)
                                                             .padding(.trailing, 10)
                                                     }.padding(10).frame(width: 225, height: 50)
-                                                        .background(self.sportsselect[ind] ? Color(.darkGray) : Color(.white).opacity(0)).cornerRadius(10)
+                                                        .background(Color(self.sportsselect[ind] ? .darkGray : .white).cornerRadius(10).shadow(color: Color(.black).opacity(self.sportsselect[ind] ? 0 : 0.1), radius: 15, x: 10, y: 10))
                                                     .onTapGesture {
                                                         if self.sportsselect[ind] {
                                                             self.numsports -= 1
@@ -1824,10 +1825,10 @@ struct SignUpView: View {
                                                         self.sportsselect[ind] = !self.sportsselect[ind]
                                                     }
                                                 }
-                                            }
-                                        }.frame(width: 250, height: self.newsports.count > 0 ? 240 : 320).padding(10)
+                                            }.padding(.horizontal, 30).padding(.bottom, 15)
+                                        }.frame(width: 250, height: self.newsports.count > 0 ? 280 : 320).padding(10)
                                     }
-                                }.background(Color(.white).cornerRadius(20).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                                }//.background(Color(.white).cornerRadius(20).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                                 Spacer()
                                 
                                 if self.numsports > 0 {
@@ -1882,25 +1883,27 @@ struct SignUpView: View {
                                         ZStack {
                                             if self.newitem.count < 1 {
                                                 Text("Hobby")
-                                                    .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                    .font(Font.custom("ProximaNova-Regular", size: 16))
                                                     .fontWeight(.semibold)
                                                     .foregroundColor(.black)
                                                     .opacity(0.5)
                                             }
                                             TextField("", text: self.$newitem)
-                                                .font(Font.custom("ProximaNova-Regular", size: 24).weight(.semibold))
+                                                .font(Font.custom("ProximaNova-Regular", size: 20).weight(.semibold))
                                                 .foregroundColor(Color(.darkGray))
                                                 .padding(10)
                                                 .frame(width: screenwidth - 180, height: 40)
                                                 .multilineTextAlignment(.center)
                                         }.padding(5).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                                         Button(action: {
-                                            self.hobbiesdata.insert(self.newitem, at: 0)
-                                            self.newitem = ""
+                                            if self.newitem.count > 0 {
+                                                self.hobbiesdata.insert(self.newitem, at: 0)
+                                                self.newitem = ""
+                                            }
+                                            
                                         }) {
-                                            Text("Add")
-                                                .font(Font.custom("ProximaNova-Regular", size: 24))
-                                                .fontWeight(.semibold)
+                                            Image(systemName: "plus")
+                                                .font(Font.system(size: self.newitem.count > 0 ? 20 : 14, weight: .heavy))
                                                 .foregroundColor(Color("purp"))
                                                 .opacity(self.newitem.count > 0 ? 1 : 0.3)
                                         }
@@ -1911,12 +1914,12 @@ struct SignUpView: View {
                                         Image("hobbies-1")
                                             .renderingMode(.template)
                                             .resizable()
-                                            .frame(width: 30, height: 30)
+                                            .frame(width: 25, height: 25)
                                             .foregroundColor(Color(.darkGray))
                                             .padding(.trailing, 10)
                                         VStack(alignment: .leading, spacing: 5) {
                                             Text(hobbie)
-                                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                .font(Font.custom("ProximaNova-Regular", size: 20))
                                                 .fontWeight(.semibold)
                                                 .foregroundColor(Color(.darkGray))
                                         }
@@ -1987,16 +1990,16 @@ struct SignUpView: View {
                                                 Image(self.mntgenres[data])
                                                     .renderingMode(.template)
                                                     .resizable()
-                                                    .frame(width: 30, height: 30)
+                                                    .frame(width: 25, height: 25)
                                                     .foregroundColor(Color(.darkGray))
                                                     .padding(.trailing, 10)
                                                 VStack(alignment: .leading, spacing: 5) {
                                                     Text(self.mntdata[data])
-                                                        .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                        .font(Font.custom("ProximaNova-Regular", size: 18))
                                                         .fontWeight(.semibold)
                                                         .foregroundColor(Color(.darkGray))
                                                     Text(self.mntgenres[data])
-                                                        .font(Font.custom("ProximaNova-Regular", size: 18))
+                                                        .font(Font.custom("ProximaNova-Regular", size: 14))
                                                         .fontWeight(.semibold)
                                                         .foregroundColor(Color(.darkGray).opacity(0.5))
                                                 }
@@ -2015,7 +2018,7 @@ struct SignUpView: View {
                                                         self.mnt.toggle()
                                                         self.picker = true
                                                     }
-                                            }.padding(.horizontal, 20).frame(width: self.screenwidth - 80, height: 70).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color("purp")))
+                                            }.padding(.horizontal, 20).frame(width: self.screenwidth - 80, height: 70).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
                                         }
                                     }.padding(.vertical, 10)
                                 }
@@ -2034,17 +2037,17 @@ struct SignUpView: View {
                                     }) {
                                         HStack {
                                             Text("Add Movie/Show")
-                                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                .font(Font.custom("ProximaNova-Regular", size: 18))
                                                 .fontWeight(.semibold)
                                                 .foregroundColor(Color(.darkGray))
                                             Image("movieandtv")
                                                 .renderingMode(.template)
                                                 .resizable()
-                                                .frame(width: 30, height: 30)
+                                                .frame(width: 25, height: 25)
                                                 .foregroundColor(Color(.darkGray))
                                             Spacer()
                                             Image(systemName: "chevron.right")
-                                                .font(Font.system(size: 20, weight: .heavy))
+                                                .font(Font.system(size: 18, weight: .heavy))
                                                 .foregroundColor(Color(.darkGray))
                                         }.padding(.horizontal, 20).frame(width: screenwidth - 80, height: 70).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                                     }
@@ -2105,16 +2108,16 @@ struct SignUpView: View {
                                                 Image(self.musicgenres[data])
                                                     .renderingMode(.template)
                                                     .resizable()
-                                                    .frame(width: 30, height: 30)
+                                                    .frame(width: 25, height: 25)
                                                     .foregroundColor(Color(.darkGray))
                                                     .padding(.trailing, 10)
                                                 VStack(alignment: .leading, spacing: 5) {
                                                     Text(self.musicdata[data])
-                                                        .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                        .font(Font.custom("ProximaNova-Regular", size: 18))
                                                         .fontWeight(.semibold)
                                                         .foregroundColor(Color(.darkGray))
                                                     Text(self.musicgenres[data])
-                                                        .font(Font.custom("ProximaNova-Regular", size: 18))
+                                                        .font(Font.custom("ProximaNova-Regular", size: 14))
                                                         .fontWeight(.semibold)
                                                         .foregroundColor(Color(.darkGray).opacity(0.5))
                                                 }
@@ -2152,17 +2155,17 @@ struct SignUpView: View {
                                     }) {
                                         HStack {
                                             Text("Add Song")
-                                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                .font(Font.custom("ProximaNova-Regular", size: 18))
                                                 .fontWeight(.semibold)
                                                 .foregroundColor(Color(.darkGray))
                                             Image("song")
                                                 .renderingMode(.template)
                                                 .resizable()
-                                                .frame(width: 30, height: 30)
+                                                .frame(width: 25, height: 25)
                                                 .foregroundColor(Color(.darkGray))
                                             Spacer()
                                             Image(systemName: "chevron.right")
-                                                .font(Font.system(size: 20, weight: .heavy))
+                                                .font(Font.system(size: 18, weight: .heavy))
                                                 .foregroundColor(Color(.darkGray))
                                         }.padding(.horizontal, 20).frame(width: screenwidth - 80, height: 70).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
                                     }
@@ -2211,34 +2214,62 @@ struct SignUpView: View {
                                 .frame(width: 50, height: 50)
                             VStack(spacing: 15) {
                                 Text("Star Sign")
-                                    .font(Font.custom("ProximaNova-Regular", size: 30))
+                                    .font(Font.custom("ProximaNova-Regular", size: 34))
                                     .fontWeight(.semibold)
                                     .foregroundColor(Color(.darkGray))
                                     .padding(.bottom, 10)
                                 ScrollView {
-                                    ForEach(0...self.starsigns.count-1, id: \.self) { ind in
-                                        VStack {
-                                            Button(action: {
-                                                self.starsignsselect = [Bool](repeating: false, count: 12)
-                                                self.starsignsselect[ind] = true
-                                                self.starsign = self.starsigns[ind]
-                                            }) {
-                                                HStack {
-                                                    Image(self.starsigns[ind])
-                                                        .renderingMode(.template)
-                                                        .resizable()
-                                                        .frame(width: 35, height: 35)
-                                                        .foregroundColor(self.starsignsselect[ind] ? Color(.white) : Color(.darkGray).opacity(0.8))
-                                                    Text(self.starsigns[ind])
-                                                        .font(Font.custom("ProximaNova-Regular", size: 28))
-                                                        .fontWeight(.semibold)
-                                                        .foregroundColor(self.starsignsselect[ind] ? Color(.white) : Color(.darkGray).opacity(0.8))
-                                                        .fixedSize(horizontal: true, vertical: false)
-                                                }.padding(5).frame(width: 220)
+                                    VStack {
+                                        ForEach(0...self.starsigns.count-1, id: \.self) { ind in
+                                            VStack(spacing: 5) {
+                                                Button(action: {
+                                                    self.starsignsselect = [Bool](repeating: false, count: 12)
+                                                    self.starsignsselect[ind] = true
+                                                    self.starsign = self.starsigns[ind]
+                                                }) {
+                                                    HStack {
+                                                        Image(self.starsigns[ind])
+                                                            .renderingMode(.template)
+                                                            .resizable()
+                                                            .frame(width: 20, height: 20)
+                                                            .foregroundColor(self.starsignsselect[ind] ? Color(.white) : Color(.darkGray).opacity(0.8))
+                                                        Text(self.starsigns[ind])
+                                                            .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                            .fontWeight(.semibold)
+                                                            .foregroundColor(self.starsignsselect[ind] ? Color(.white) : Color(.darkGray).opacity(0.8))
+                                                            .fixedSize(horizontal: true, vertical: false)
+                                                    }.padding(20).frame(width: 280)
+                                                }.background(Color(self.starsignsselect[ind] ? .darkGray : .white).cornerRadius(10).shadow(color: Color(.black).opacity(self.starsignsselect[ind] ? 0 : 0.1), radius: 15, x: 10, y: 10))
                                             }
-                                        }.background(self.starsignsselect[ind] ? Color(.darkGray) : Color(.clear)).cornerRadius(10)
-                                    }
+                                        }
+                                    }.padding(.vertical, 25).padding(.horizontal, 40)
                                 }.frame(height: 450)
+                                
+                                Spacer()
+                                
+                                Button(action: {
+                                    self.next -= self.screenwidth
+                                    self.count += 1
+                                }) {
+                                    if self.starsign.count > 0 {
+                                        Text("Next")
+                                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color(.white))
+                                            .padding(10).padding(.horizontal, 20)
+                                            .background(Color(.darkGray).cornerRadius(20))
+                                            .opacity(0.7)
+                                    }
+                                    else {
+                                        Text("Skip")
+                                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color(.darkGray))
+                                            .padding(10).padding(.horizontal, 20)
+                                            .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color(.darkGray)))
+                                            .opacity(0.4)
+                                    }
+                                }.padding(.bottom, 50)
                             }.frame(height: screenheight/1.3)
                         }.frame(width: screenwidth, height: screenheight)
                     }
@@ -2550,7 +2581,7 @@ struct SignUpView: View {
                                     .frame(width: screenwidth - 60, height: 10)
                                     .foregroundColor(Color("lightgray").opacity(0.6))
                                 Rectangle()
-                                    .frame(width: (screenwidth - 60)*(CGFloat(self.count-3)/8), height: 10)
+                                    .frame(width: (screenwidth - 60)*(CGFloat(self.count-3)/15), height: 10)
                                     .foregroundColor(.gray)
                             }.cornerRadius(3.5)
                             Spacer()
@@ -2608,13 +2639,13 @@ struct EducationView: View {
                 ZStack {
                     if self.school.count < 1 {
                         Text("School Name")
-                            .font(Font.custom("ProximaNova-Regular", size: 24))
+                            .font(Font.custom("ProximaNova-Regular", size: 16))
                             .fontWeight(.semibold)
                             .foregroundColor(.gray)
                             .opacity(0.5)
                     }
                     TextField("", text: self.$school)
-                        .font(Font.custom("ProximaNova-Regular", size: 24).weight(.semibold))
+                        .font(Font.custom("ProximaNova-Regular", size: 20).weight(.semibold))
                         .foregroundColor(Color(.darkGray))
                         .padding(10)
                         .frame(width: screenwidth - 80, height: 50)
@@ -2629,7 +2660,7 @@ struct EducationView: View {
                     .foregroundColor(Color(.darkGray))
                 if self.yearfin.count > 0 {
                     Text(yearfin)
-                        .font(Font.custom("ProximaNova-Regular", size: 20))
+                        .font(Font.custom("ProximaNova-Regular", size: 16))
                         .fontWeight(.semibold)
                         .foregroundColor(Color(.darkGray))
                         .padding(10)
@@ -2899,13 +2930,13 @@ struct OccupationView: View {
                     ZStack {
                         if self.title.count < 1 {
                             Text("Job Title")
-                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                .font(Font.custom("ProximaNova-Regular", size: 16))
                                 .fontWeight(.semibold)
                                 .foregroundColor(.gray)
                                 .opacity(0.5)
                         }
                         TextField("", text: self.$title)
-                            .font(Font.custom("ProximaNova-Regular", size: 24).weight(.semibold))
+                            .font(Font.custom("ProximaNova-Regular", size: 20).weight(.semibold))
                             .foregroundColor(Color(.darkGray))
                             .padding(10)
                             .frame(width: screenwidth - 80, height: 50)
@@ -2924,13 +2955,13 @@ struct OccupationView: View {
                     ZStack {
                         if self.company.count < 1 {
                             Text("Company (optional)")
-                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                .font(Font.custom("ProximaNova-Regular", size: 16))
                                 .fontWeight(.semibold)
                                 .foregroundColor(.gray)
                                 .opacity(0.5)
                         }
                         TextField("", text: self.$company)
-                            .font(Font.custom("ProximaNova-Regular", size: 24).weight(.semibold))
+                            .font(Font.custom("ProximaNova-Regular", size: 20).weight(.semibold))
                             .foregroundColor(Color(.darkGray))
                             .padding(10)
                             .frame(width: screenwidth - 80, height: 50)
@@ -3058,13 +3089,13 @@ struct MoviesAndTVView: View {
                     ZStack {
                         if self.title.count < 1 {
                             Text("Movie/Show Title")
-                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                .font(Font.custom("ProximaNova-Regular", size: 16))
                                 .fontWeight(.semibold)
                                 .foregroundColor(.gray)
                                 .opacity(0.5)
                         }
                         TextField("", text: self.$title)
-                            .font(Font.custom("ProximaNova-Regular", size: 24).weight(.semibold))
+                            .font(Font.custom("ProximaNova-Regular", size: 20).weight(.semibold))
                             .foregroundColor(Color(.darkGray))
                             .padding(10)
                             .frame(width: screenwidth - 80, height: 50)
@@ -3079,30 +3110,32 @@ struct MoviesAndTVView: View {
                         .foregroundColor(Color(.darkGray))
                     VStack {
                         ScrollView(showsIndicators: false) {
-                            ForEach(0...self.genres.count-1, id: \.self) { gen in
-                                VStack {
-                                    Button(action: {
-                                        self.genresselect = [Bool](repeating: false, count: 10)
-                                        self.genresselect[gen] = true
-                                        self.genre = self.genres[gen]
-                                    }) {
-                                        HStack {
-                                            Image(self.genres[gen])
-                                                .renderingMode(.template)
-                                                .resizable()
-                                                .frame(width: 30, height: 30)
-                                                .foregroundColor(self.genresselect[gen] ? Color(.white) : Color(.darkGray).opacity(0.6))
-                                            Text(self.genres[gen])
-                                                .font(Font.custom("ProximaNova-Regular", size: 24))
-                                                .fontWeight(.semibold)
-                                                .foregroundColor(self.genresselect[gen] ? Color(.white) : Color(.darkGray).opacity(0.6))
-                                                .fixedSize(horizontal: true, vertical: false)
-                                        }.padding(5).frame(width: 180)//.padding(.horizontal, 20)
-                                    }
-                                }.background(self.genresselect[gen] ? Color(.darkGray) : Color(.clear)).cornerRadius(10)
-                            }
+                            VStack {
+                                ForEach(0...self.genres.count-1, id: \.self) { gen in
+                                    VStack(spacing: 5) {
+                                        Button(action: {
+                                            self.genresselect = [Bool](repeating: false, count: 10)
+                                            self.genresselect[gen] = true
+                                            self.genre = self.genres[gen]
+                                        }) {
+                                            HStack {
+                                                Image(self.genres[gen])
+                                                    .renderingMode(.template)
+                                                    .resizable()
+                                                    .frame(width: 25, height: 25)
+                                                    .foregroundColor(self.genresselect[gen] ? Color(.white) : Color(.darkGray).opacity(0.6))
+                                                Text(self.genres[gen])
+                                                    .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                    .fontWeight(.semibold)
+                                                    .foregroundColor(self.genresselect[gen] ? Color(.white) : Color(.darkGray).opacity(0.6))
+                                                    .fixedSize(horizontal: true, vertical: false)
+                                            }.padding(5).frame(width: 180, height: 50)
+                                        }
+                                    }.background(Color(self.genresselect[gen] ? .darkGray : .white).cornerRadius(10).shadow(color: Color(.black).opacity(self.genresselect[gen] ? 0 : 0.1), radius: 15, x: 10, y: 10)).padding(.horizontal, 30)
+                                }
+                            }.padding(.bottom, 30)
                         }.padding(10)
-                    }.frame(width: 200, height: 300).background(Color(.white).cornerRadius(20).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                    }.frame(width: 200, height: 400)
                 }.scaleEffect(self.title.count > 0 ? 1 : 0)
                 HStack {
                     if self.select != -1  {
@@ -3165,7 +3198,7 @@ struct MoviesAndTVView: View {
                                 .opacity(0.4)
                         }
                     }
-                }.offset(y: self.title.count > 0 ? 10 : -325)
+                }.offset(y: self.title.count > 0 ? 10 : -425)
             }
             Spacer()
         }.edgesIgnoringSafeArea(.all)
@@ -3224,13 +3257,13 @@ struct MusicView: View {
                     ZStack {
                         if self.title.count < 1 {
                             Text("Song Title")
-                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                .font(Font.custom("ProximaNova-Regular", size: 16))
                                 .fontWeight(.semibold)
                                 .foregroundColor(.gray)
                                 .opacity(0.5)
                         }
                         TextField("", text: self.$title)
-                            .font(Font.custom("ProximaNova-Regular", size: 24).weight(.semibold))
+                            .font(Font.custom("ProximaNova-Regular", size: 20).weight(.semibold))
                             .foregroundColor(Color(.darkGray))
                             .padding(10)
                             .frame(width: screenwidth - 80, height: 50)
@@ -3245,30 +3278,32 @@ struct MusicView: View {
                         .foregroundColor(Color(.darkGray))
                     VStack {
                         ScrollView(showsIndicators: false) {
-                            ForEach(0...self.genres.count-1, id: \.self) { gen in
-                                VStack {
-                                    Button(action: {
-                                        self.genresselect = [Bool](repeating: false, count: 14)
-                                        self.genresselect[gen] = true
-                                        self.genre = self.genres[gen]
-                                    }) {
-                                        HStack {
-                                            Image(self.genres[gen])
-                                                .renderingMode(.template)
-                                                .resizable()
-                                                .frame(width: 30, height: 30)
-                                                .foregroundColor(self.genresselect[gen] ? Color(.white) : Color(.darkGray).opacity(0.8))
-                                            Text(self.genres[gen])
-                                                .font(Font.custom("ProximaNova-Regular", size: 24))
-                                                .fontWeight(.semibold)
-                                                .foregroundColor(self.genresselect[gen] ? Color(.white) : Color(.darkGray).opacity(0.8))
-                                                .fixedSize(horizontal: true, vertical: false)
-                                        }.padding(5).frame(width: 180)//.padding(.horizontal, 20)
-                                    }
-                                }.background(self.genresselect[gen] ? Color(.darkGray) : Color(.clear)).cornerRadius(10)
-                            }
+                            VStack {
+                                ForEach(0...self.genres.count-1, id: \.self) { gen in
+                                    VStack {
+                                        Button(action: {
+                                            self.genresselect = [Bool](repeating: false, count: 14)
+                                            self.genresselect[gen] = true
+                                            self.genre = self.genres[gen]
+                                        }) {
+                                            HStack {
+                                                Image(self.genres[gen])
+                                                    .renderingMode(.template)
+                                                    .resizable()
+                                                    .frame(width: 25, height: 25)
+                                                    .foregroundColor(self.genresselect[gen] ? Color(.white) : Color(.darkGray).opacity(0.8))
+                                                Text(self.genres[gen])
+                                                    .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                    .fontWeight(.semibold)
+                                                    .foregroundColor(self.genresselect[gen] ? Color(.white) : Color(.darkGray).opacity(0.8))
+                                                    .fixedSize(horizontal: true, vertical: false)
+                                            }.padding(5).frame(width: 180, height: 50)//.padding(.horizontal, 20)
+                                        }
+                                    }.background(Color(self.genresselect[gen] ? .darkGray : .white).cornerRadius(10).shadow(color: Color(.black).opacity(self.genresselect[gen] ? 0 : 0.1), radius: 15, x: 10, y: 10)).padding(.horizontal, 30)
+                                }
+                            }.padding(.bottom, 30)
                         }.padding(10)
-                    }.frame(width: 200, height: 300).background(Color(.white).cornerRadius(20).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
+                    }.frame(width: 200, height: 400)
                 }.scaleEffect(self.title.count > 0 ? 1 : 0)
                 HStack {
                     if self.select != -1  {
@@ -3331,27 +3366,7 @@ struct MusicView: View {
                                 .opacity(0.4)
                         }
                     }
-                    /*if self.title.count > 0 && self.genre.count > 0 {
-                        
-                    }
-                    else {
-                        Button(action: {
-                            self.music = false
-                            self.edit = false
-                            self.picker = false
-                        }) {
-                            Text("Cancel")
-                                .font(Font.custom("ProximaNova-Regular", size: 14))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color(.darkGray))
-                                .frame(width: 60)
-                                .padding(10).padding(.horizontal, 10)
-                                .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color(.darkGray)))
-                                //.padding(.bottom, 50)
-                                .opacity(0.4)
-                        }
-                    }*/
-                }.offset(y: self.title.count > 0 ? 10 : -325)
+                }.offset(y: self.title.count > 0 ? 10 : -425)
             }
             Spacer()
         }.edgesIgnoringSafeArea(.all)
