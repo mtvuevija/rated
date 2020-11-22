@@ -112,16 +112,17 @@ struct FrontView: View {
                             if self.enteredcode.isEmpty {
                                 HStack {
                                     Text("Code")
-                                        .foregroundColor(Color(.black).opacity(0.5))
+                                        .foregroundColor(Color(.darkGray).opacity(0.5))
                                         .font(Font.custom("ProximaNova-Regular", size: 20))
+                                        .fontWeight(.semibold)
                                 }.frame(width: screenwidth/2 - 80, height: 50)
                             }
                             TextField("", text: $enteredcode)
-                                .font(Font.custom("ProximaNova-Regular", size: 20))
+                                .font(Font.custom("ProximaNova-Regular", size: 20).weight(.semibold))
                                 .frame(width: screenwidth/2 - 80, height: 50)
                                 .keyboardType(.numberPad)
-                                .foregroundColor(.black)
-                                .multilineTextAlignment(TextAlignment.center)
+                                .foregroundColor(Color(.darkGray))
+                                .multilineTextAlignment(.center)
                             
                         }.padding(.bottom, 20)
                     }
@@ -136,13 +137,14 @@ struct FrontView: View {
                                 
                                 HStack(spacing: 0) {
                                     Text(self.ccode.isEmpty ? "" : "+")
-                                        .foregroundColor(Color(.black))
+                                        .foregroundColor(Color(.darkGray))
                                         .font(Font.custom("ProximaNova-Regular", size: 20))
+                                        .fontWeight(.semibold)
                                     ZStack {
                                         
                                         TextField("", text: $ccode)
-                                            .foregroundColor(.black)
-                                            .font(Font.custom("ProximaNova-Regular", size: 20))
+                                            .foregroundColor(Color(.darkGray))
+                                            .font(Font.custom("ProximaNova-Regular", size: 20).weight(.semibold))
                                             .keyboardType(.numberPad)
                                             .multilineTextAlignment(.center)
                                     }
@@ -157,12 +159,13 @@ struct FrontView: View {
                                 
                                 if self.phonenumber.isEmpty {
                                     Text("Phone Number")
-                                        .foregroundColor(Color(.black).opacity(0.5))
+                                        .foregroundColor(Color(.darkGray).opacity(0.5))
                                         .font(Font.custom("ProximaNova-Regular", size: 20))
+                                        .fontWeight(.semibold)
                                 }
                                 TextField("", text: $phonenumber)
-                                    .foregroundColor(Color(.black).opacity(0.75))
-                                    .font(Font.custom("ProximaNova-Regular", size: 20))
+                                    .foregroundColor(Color(.darkGray))
+                                    .font(Font.custom("ProximaNova-Regular", size: 20).weight(.semibold))
                                     .frame(width: screenwidth - 240, height: 50)
                                     .keyboardType(.numberPad)
                                     .multilineTextAlignment(.center)
@@ -311,9 +314,9 @@ struct SignUpView: View {
     @State var picker: Bool = false
     @State var confirm: Bool = false
     @State var verificationcode = ""
-    @State var next: CGFloat = -8*UIScreen.main.bounds.width
+    @State var next: CGFloat = 0//-8*UIScreen.main.bounds.width
     @State var enteredcode = ""
-    @State var count: Int = 4
+    @State var count: Int = 1
     @State var genders: Int = 0
     @State var genderoffest: CGFloat = 0
     @State var biocards: [String] = ["00General", "01Education", "02Occupation", "03Music", "04Sports", "05Movies", "06TV-Shows", "07Hobbies", "08Motto", "09Future"]
@@ -360,6 +363,10 @@ struct SignUpView: View {
     @State var starsigns = ["Aquarius", "Aries", "Capricorn", "Cancer", "Gemini", "Leo", "Libra", "Pisces", "Sagittarius", "Scorpio", "Taurus", "Virgo"]
     @State var starsignsselect = [Bool](repeating: false, count: 12)
     
+    @State var political = ""
+    @State var politicals = ["Apolitical", "Liberal", "Moderate", "Conservative"]
+    @State var politicalselect = [Bool](repeating: false, count: 4)
+    
     //Image Picker
     @State var numimage: Int = 0
     @State var showimage = [false, false, false, false]
@@ -402,8 +409,7 @@ struct SignUpView: View {
                     VStack(spacing: 20) {
                         Image("phone")
                             .resizable()
-                            .padding(10)
-                            .frame(width: 75, height: 75)
+                            .frame(width: 30, height: 30)
                         
                         Text("Enter Your Phone Number")
                             .font(Font.custom("ProximaNova-Regular", size: 26))
@@ -419,13 +425,14 @@ struct SignUpView: View {
                                 
                                 HStack(spacing: 0) {
                                     Text(self.ccode.isEmpty ? "" : "+")
-                                        .foregroundColor(Color(.black))
-                                        .font(Font.custom("ProximaNova-Regular", size: 20))
+                                        .foregroundColor(Color(.darkGray))
+                                        .font(Font.custom("ProximaNova-Regular", size: 18))
+                                        .fontWeight(.semibold)
                                     ZStack {
                                         
                                         TextField("", text: $ccode)
-                                            .foregroundColor(.black)
-                                            .font(Font.custom("ProximaNova-Regular", size: 20))
+                                            .foregroundColor(Color(.darkGray))
+                                            .font(Font.custom("ProximaNova-Regular", size: 18).weight(.semibold))
                                             .keyboardType(.numberPad)
                                             .multilineTextAlignment(.center)
                                     }
@@ -442,13 +449,13 @@ struct SignUpView: View {
                                 
                                 if self.phonenumber.isEmpty {
                                     Text("Phone Number")
-                                        .foregroundColor(Color(.black).opacity(0.5))
-                                        .font(.body)
-                                        .font(Font.custom("ProximaNova-Regular", size: 22))
+                                        .foregroundColor(Color(.darkGray).opacity(0.5))
+                                        .font(Font.custom("ProximaNova-Regular", size: 18))
+                                        .fontWeight(.semibold)
                                 }
                                 TextField("", text: $phonenumber)
-                                    .foregroundColor(Color(.black).opacity(0.75))
-                                    .font(Font.custom("ProximaNova-Regular", size: 20))
+                                    .foregroundColor(Color(.darkGray).opacity(0.75))
+                                    .font(Font.custom("ProximaNova-Regular", size: 18).weight(.semibold))
                                     .frame(width: screenwidth - 240, height: 50)
                                     .keyboardType(.numberPad)
                                     .multilineTextAlignment(.center)
@@ -486,7 +493,7 @@ struct SignUpView: View {
                     VStack(spacing: 20) {
                         Image("phone")
                             .resizable()
-                            .frame(width: 75, height: 75)
+                            .frame(width: 30, height: 30)
                         
                         Text("Enter The Verification Code")
                             .font(Font.custom("ProximaNova-Regular", size: 26))
@@ -503,15 +510,16 @@ struct SignUpView: View {
                                 if self.enteredcode.isEmpty {
                                     HStack {
                                         Text("Code")
-                                            .foregroundColor(Color(.black).opacity(0.5))
-                                            .font(Font.custom("ProximaNova-Regular", size: 20))
+                                            .foregroundColor(Color(.darkGray).opacity(0.5))
+                                            .font(Font.custom("ProximaNova-Regular", size: 18))
+                                            .fontWeight(.semibold)
                                     }.frame(width: screenwidth/2 - 80, height: 50)
                                 }
                                 TextField("", text: $enteredcode)
-                                    .font(Font.custom("ProximaNova-Regular", size: 20))
+                                    .font(Font.custom("ProximaNova-Regular", size: 18).weight(.semibold))
                                     .frame(width: screenwidth/2 - 80, height: 50)
                                     .keyboardType(.numberPad)
-                                    .foregroundColor(.black)
+                                    .foregroundColor(Color(.darkGray))
                                     .multilineTextAlignment(TextAlignment.center)
                                 
                             }
@@ -560,288 +568,208 @@ struct SignUpView: View {
                         }
                     }.frame(width: screenwidth, height: screenheight/1.3).offset(y: -100)
                     
-                    //MARK: Name 3
-                    VStack {
-                        Image("name")
-                            .resizable()
-                            .frame(width: 75, height: 75)
-                        
-                        Text("Enter Your First Name")
-                            .font(Font.custom("ProximaNova-Regular", size: 26))
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color(.black))
-                        
-                        HStack(spacing: 15) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 15)
-                                    .foregroundColor(.white)
-                                    .frame(width: screenwidth - 120, height: 50)
-                                    .shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10)
-                                    .shadow(color: .white, radius: 15, x: -10, y: -10)
-                                if self.name.isEmpty {
-                                    Text("First Name")
-                                        .foregroundColor(Color(.black).opacity(0.5))
-                                        .font(Font.custom("ProximaNova-Regular", size: 22))
+                    Group {
+                        //MARK: Name 3
+                        VStack {
+                            Image("name")
+                                .resizable()
+                                .frame(width: 30, height: 30)
+                            
+                            Text("Enter Your First Name")
+                                .font(Font.custom("ProximaNova-Regular", size: 26))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.black))
+                            
+                            HStack(spacing: 15) {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 15)
+                                        .foregroundColor(.white)
+                                        .frame(width: screenwidth - 120, height: 50)
+                                        .shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10)
+                                        .shadow(color: .white, radius: 15, x: -10, y: -10)
+                                    if self.name.isEmpty {
+                                        Text("First Name")
+                                            .foregroundColor(Color(.darkGray).opacity(0.5))
+                                            .fontWeight(.semibold)
+                                            .font(Font.custom("ProximaNova-Regular", size: 18))
+                                    }
+                                    TextField("", text: $name)
+                                        .font(Font.custom("ProximaNova-Regular", size: 18).weight(.semibold))
+                                        .frame(width: screenwidth - 140, height: 50)
+                                        .foregroundColor(Color(.darkGray))
+                                        .multilineTextAlignment(TextAlignment.center)
                                 }
-                                TextField("", text: $name)
-                                    .font(Font.custom("ProximaNova-Regular", size: 22))
-                                    .frame(width: screenwidth - 140, height: 50)
-                                    .foregroundColor(Color(.black))
-                                    .multilineTextAlignment(TextAlignment.center)
+                                Button(action: {
+                                    if self.name.count > 0 {
+                                        self.next -= self.screenwidth
+                                        self.count += 1
+                                    }
+                                }) {
+                                    Image(systemName: "arrow.right")
+                                        .font(Font.system(size: 30, weight: .bold))
+                                        .foregroundColor(self.name.count > 0 ? Color(.blue).opacity(0.5) : Color("lightgray"))
+                                }
                             }
+                        }.frame(width: screenwidth, height: screenheight/1.3).offset(y: -130)
+                        
+                        //MARK: Age 4
+                        VStack {
+                            Image("age")
+                                .resizable()
+                                .frame(width: 30, height: 30)
+                            
+                            Text("Enter Your Birthdate")
+                                .font(Font.custom("ProximaNova-Regular", size: 26))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.black))
+                            
+                            DatePicker("", selection: $date, in: closedRange, displayedComponents: .date)
+                                .frame(width: screenwidth - 40)
+                                .colorInvert()
+                                .colorMultiply(Color.black)
+                                .padding(.vertical, 10)
+                                .background(Color(.white).cornerRadius(35).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10)
+                                .shadow(color: .white, radius: 15, x: -10, y: -10))
+                                .padding(.bottom, 10)
+                            
                             Button(action: {
-                                if self.name.count > 0 {
-                                    self.next -= self.screenwidth
+                                let components = Calendar.current.dateComponents([.year, .month, .day], from: self.date, to: Date())
+                                self.age = String(components.year!)
+                                print(self.date.description.prefix(10))
+                                self.bdate = String(self.date.description.prefix(10))
+                                if Int(self.age) ?? 0 < 18 {
+                                    self.msg = "You must be 18 or older to register."
+                                    self.alert.toggle()
+                                }
+                                else {
+                                self.next -= self.screenwidth
                                     self.count += 1
                                 }
                             }) {
                                 Image(systemName: "arrow.right")
-                                    .font(Font.system(size: 30, weight: .bold))
-                                    .foregroundColor(self.name.count > 0 ? Color(.blue).opacity(0.5) : Color("lightgray"))
-                            }
-                        }
-                    }.frame(width: screenwidth, height: screenheight/1.3).offset(y: -130)
-                    
-                    //MARK: Age 4
-                    VStack {
-                        Image("age")
-                            .resizable()
-                            .frame(width: 75, height: 75)
-                        
-                        Text("Enter Your Age")
-                            .font(Font.custom("ProximaNova-Regular", size: 26))
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color(.black))
-                        
-                        DatePicker("", selection: $date, in: closedRange, displayedComponents: .date)
-                            .frame(width: screenwidth - 40)
-                            .colorInvert()
-                            .colorMultiply(Color.black)
-                            .padding(.vertical, 10)
-                            .background(Color(.white).cornerRadius(35).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10)
-                            .shadow(color: .white, radius: 15, x: -10, y: -10))
-                            .padding(.bottom, 10)
-                        
-                        Button(action: {
-                            let components = Calendar.current.dateComponents([.year, .month, .day], from: self.date, to: Date())
-                            self.age = String(components.year!)
-                            print(self.date.description.prefix(10))
-                            self.bdate = String(self.date.description.prefix(10))
-                            if Int(self.age) ?? 0 < 18 {
-                                self.msg = "You must be 18 or older to register."
-                                self.alert.toggle()
-                            }
-                            else {
-                            self.next -= self.screenwidth
-                                self.count += 1
-                            }
-                        }) {
-                            Image(systemName: "arrow.right")
-                                .font(Font.system(size: 36, weight: .bold))
-                                .foregroundColor(Calendar.current.dateComponents([.year, .month, .day], from: self.date, to: Date()).year! >= 18 ? Color(.blue).opacity(0.5) : Color("lightgray"))
-                        }.padding(.top, 10)
-                        
-                    }.frame(width: screenwidth, height: screenheight/1.3)
-                    
-                    //MARK: Gender 5
-                    VStack(spacing: 20) {
-                        Image("gender")
-                            .resizable()
-                            .scaledToFit()
-                            .padding(10)
-                            .frame(width: 75, height: 75)
-                        
-                        Text("Select Your Gender")
-                            .font(Font.custom("ProximaNova-Regular", size: 26))
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color(.black))
-                        
-                        ZStack {
-                            Color(.white)
-                                .frame(width: 270, height: 60)
-                                .cornerRadius(15)
-                                .shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10)
-                                .shadow(color: .white, radius: 15, x: -10, y: -10)
+                                    .font(Font.system(size: 36, weight: .bold))
+                                    .foregroundColor(Calendar.current.dateComponents([.year, .month, .day], from: self.date, to: Date()).year! >= 18 ? Color(.blue).opacity(0.5) : Color("lightgray"))
+                            }.padding(.top, 10)
                             
-                            if self.genders == 0 {
-                                
-                            }
-                            else {
-                                HStack(spacing: 0) {
-                                    RoundedRectangle(cornerRadius: 15).frame(width: 85, height: 55)
-                                }.foregroundColor(Color("lightgray").opacity(0.5)).offset(x: self.genderoffest)
-                            }
-                            
-                            HStack(spacing: 0) {
-                                
-                                Button(action: {
-                                    self.genders = 1
-                                    self.genderoffest = -90
-                                    self.gender = "Male"
-                                }) {
-                                    Text("Male")
-                                        .font(Font.custom("ProximaNova-Regular", size: 20))
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(Color(.black))
-                                }.frame(width: 90)
-                                
-                                Button(action: {
-                                    self.genders = 2
-                                    self.genderoffest = 0
-                                    self.gender = "Female"
-                                }) {
-                                    Text("Female")
-                                        .font(Font.custom("ProximaNova-Regular", size: 20))
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(Color(.black))
-                                }.frame(width: 90)
-                                
-                                Button(action: {
-                                    self.genders = 3
-                                    self.genderoffest = 90
-                                    self.gender = ""
-                                }) {
-                                    Text("Other")
-                                        .font(Font.custom("ProximaNova-Regular", size: 20))
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(Color(.black))
-                                }.frame(width: 90)
-                                
-                            }
-                            
-                            
-                        }.animation(.spring()).padding(.bottom, self.genders != 3 ? 30 : 0)
+                        }.frame(width: screenwidth, height: screenheight/1.3)
                         
-                        if self.genders == 3 {
-                            Text("Specify Your Gender")
-                                .font(Font.custom("ProximaNova-Regular", size: 20))
+                        //MARK: Gender 5
+                        VStack(spacing: 20) {
+                            Image("gender")
+                                .resizable()
+                                .frame(width: 30, height: 30)
+                            
+                            Text("Select Your Gender")
+                                .font(Font.custom("ProximaNova-Regular", size: 26))
                                 .fontWeight(.semibold)
                                 .foregroundColor(Color(.black))
                             
                             ZStack {
-                                RoundedRectangle(cornerRadius: 15)
-                                    .foregroundColor(.white)
-                                    .frame(width: screenwidth - 120, height: 50)
+                                Color(.white)
+                                    .frame(width: 270, height: 60)
+                                    .cornerRadius(15)
                                     .shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10)
                                     .shadow(color: .white, radius: 15, x: -10, y: -10)
                                 
-                                if self.gender.count < 1 {
-                                    Text("Gender")
-                                        .foregroundColor(Color(.black).opacity(0.5))
-                                        .font(Font.custom("ProximaNova-Regular", size: 20))
+                                if self.genders == 0 {
+                                    
                                 }
-                                TextField("", text: $gender)
+                                else {
+                                    HStack(spacing: 0) {
+                                        RoundedRectangle(cornerRadius: 15).frame(width: 85, height: 55)
+                                    }.foregroundColor(Color("lightgray").opacity(0.5)).offset(x: self.genderoffest)
+                                }
+                                
+                                HStack(spacing: 0) {
+                                    
+                                    Button(action: {
+                                        self.genders = 1
+                                        self.genderoffest = -90
+                                        self.gender = "Male"
+                                    }) {
+                                        Text("Male")
+                                            .font(Font.custom("ProximaNova-Regular", size: 20))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color(.black))
+                                    }.frame(width: 90)
+                                    
+                                    Button(action: {
+                                        self.genders = 2
+                                        self.genderoffest = 0
+                                        self.gender = "Female"
+                                    }) {
+                                        Text("Female")
+                                            .font(Font.custom("ProximaNova-Regular", size: 20))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color(.black))
+                                    }.frame(width: 90)
+                                    
+                                    Button(action: {
+                                        self.genders = 3
+                                        self.genderoffest = 90
+                                        self.gender = ""
+                                    }) {
+                                        Text("Other")
+                                            .font(Font.custom("ProximaNova-Regular", size: 20))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color(.black))
+                                    }.frame(width: 90)
+                                    
+                                }
+                                
+                                
+                            }.animation(.spring()).padding(.bottom, self.genders != 3 ? 30 : 0)
+                            
+                            if self.genders == 3 {
+                                Text("Specify Your Gender")
                                     .font(Font.custom("ProximaNova-Regular", size: 20))
-                                    .frame(width: screenwidth - 140, height: 50)
+                                    .fontWeight(.semibold)
                                     .foregroundColor(Color(.black))
-                                    .multilineTextAlignment(TextAlignment.center)
-                            }.padding(.bottom, 30)
-                        }
-                        
-                        Button(action: {
-                            if self.genders == 3 && self.gender.isEmpty || self.genders == 0 {
                                 
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 15)
+                                        .foregroundColor(.white)
+                                        .frame(width: screenwidth - 120, height: 50)
+                                        .shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10)
+                                        .shadow(color: .white, radius: 15, x: -10, y: -10)
+                                    
+                                    if self.gender.count < 1 {
+                                        Text("Gender")
+                                            .font(Font.custom("ProximaNova-Regular", size: 18))
+                                            .foregroundColor(Color(.darkGray).opacity(0.5))
+                                            .fontWeight(.semibold)
+                                            
+                                    }
+                                    TextField("", text: $gender)
+                                        .font(Font.custom("ProximaNova-Regular", size: 18).weight(.semibold))
+                                        .frame(width: screenwidth - 140, height: 50)
+                                        .foregroundColor(Color(.darkGray))
+                                        .multilineTextAlignment(TextAlignment.center)
+                                }.padding(.bottom, 30)
                             }
-                            else {
-                                self.next -= self.screenwidth
-                                self.count += 1
-                            }
-                        })  {
-                            Image(systemName: "arrow.right")
-                                .font(Font.system(size: 36, weight: .bold))
-                                .foregroundColor(!(self.genders == 3 && self.gender.isEmpty || self.genders == 0) ? Color(.blue).opacity(0.5) : Color("lightgray"))
-                        }
-                        
-                    }.animation(.spring()).frame(width: screenwidth, height: screenheight/1.3).offset(y: self.genders == 3 ? -80 : -50)
-                    
-                    //MARK: What Matters? 6
-                    VStack {
-                        HStack(spacing: 40) {
-                            Image("eye")
-                                .renderingMode(.template)
-                                .resizable()
-                                .frame(width: 75, height: 80)
-                                .foregroundColor(Color("appearance"))
-                            
-                            Image("heart")
-                                .renderingMode(.template)
-                                .resizable()
-                                .frame(width: 75, height: 75)
-                                .foregroundColor(Color("personality"))
-                        }.padding(.top, 30)
-                        
-                        Text("Appearance vs Personality")
-                            .font(Font.custom("ProximaNova-Regular", size: 26))
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color(.black))
-                            .multilineTextAlignment(.center)
-                        
-                        Text("(This is how your rating will be calculated)")
-                            .font(Font.custom("ProximaNova-Regular", size: 16))
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color(.darkGray))
-                        
-                        PercentageSlider(percentage: self.$percentage)
-                            .frame(width: 90, height: screenheight/2.25)
-                            .accentColor(Color("personality"))
-                            .padding(10)
-                            .background(Color(.white).cornerRadius(25).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
-                            .padding(.bottom, 25)
-                        
-                        Button(action: {
-                            self.next -= self.screenwidth
-                            self.count += 1
-                        }) {
-                            Image(systemName: "arrow.right")
-                                .font(Font.system(size: 36, weight: .bold))
-                                .foregroundColor(Color(.blue).opacity(0.5))
-                        }
-                    }.frame(width: screenwidth, height: screenheight)
-                    
-                    Group {
-                        //MARK: Rate Yourself 7
-                        VStack {
-                            /*Image("rating(temp)")
-                                .resizable()
-                                .frame(width: 75, height: 75)*/
-                            GIFView(gifName: "rategif")
-                                .frame(width: 100, height: 50)
-                                
-                            Text("Rate Yourself")
-                                .font(Font.custom("ProximaNova-Regular", size: 24))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color(.black))
-                            
-                            HStack(spacing: 45) {
-                                VerticalSlider(percentage: self.$selfratingappearance, title: "Appearance")
-                                    .frame(width: 90, height: screenheight/2.25)
-                                    .accentColor(Color("appearance"))
-                                    .padding(7.5)
-                                    .background(Color(.white).cornerRadius(25).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
-                                
-                                VerticalSlider(percentage: self.$selfratingpersonality, title: "Personality")
-                                    .frame(width: 90, height: screenheight/2.25)
-                                    .accentColor(Color("personality"))
-                                    .padding(7.5)
-                                    .background(Color(.white).cornerRadius(25).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
-                            }.padding(.vertical, 25)
                             
                             Button(action: {
-                                self.next -= self.screenwidth
-                                self.count += 1
-                            }) {
+                                if self.genders == 3 && self.gender.isEmpty || self.genders == 0 {
+                                    
+                                }
+                                else {
+                                    self.next -= self.screenwidth
+                                    self.count += 1
+                                }
+                            })  {
                                 Image(systemName: "arrow.right")
                                     .font(Font.system(size: 36, weight: .bold))
-                                    .foregroundColor(Color(.blue).opacity(0.5))
+                                    .foregroundColor(!(self.genders == 3 && self.gender.isEmpty || self.genders == 0) ? Color(.blue).opacity(0.5) : Color("lightgray"))
                             }
-                        }.frame(width: screenwidth, height: screenheight)
+                            
+                        }.animation(.spring()).frame(width: screenwidth, height: screenheight/1.3).offset(y: self.genders == 3 ? -80 : -50)
                         
                         //MARK: Profile Pictures 8
                         VStack(spacing: 20) {
                             
                             Image("profilepic")
                                 .resizable()
-                                .frame(width: 75, height: 75)
+                                .frame(width: 30, height: 30)
                                 .padding(.top, 30)
                             
                             Text("Select Four Pictures")
@@ -960,7 +888,7 @@ struct SignUpView: View {
                                     if !val {
                                         return
                                     }
-                                }*/	
+                                }*/
                                 self.next -= self.screenwidth
                                 self.count += 1
                             }) {
@@ -972,7 +900,38 @@ struct SignUpView: View {
                     }
                     
                     Group {
-                        //MARK: New Bio 9
+                        
+                        //MARK: Set Up Bio
+                        VStack {
+                            Image("Bio")
+                                .resizable()
+                                .frame(width: 50, height: 50)
+                            
+                            Text("Now you will set up your bio. Remember, adding more information will allow people to get a better sense of who you really are.")
+                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.darkGray))
+                                .multilineTextAlignment(.center)
+                                .fixedSize(horizontal: false, vertical: false)
+                                .padding(.horizontal, 40)
+                                .padding(.bottom, 10)
+                            
+                            Button(action: {
+                                self.next -= self.screenwidth
+                                self.count += 1
+                            }) {
+                                Text("Next")
+                                    .font(Font.custom("ProximaNova-Regular", size: 14))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color(.white))
+                                    .padding(10).padding(.horizontal, 20)
+                                    .background(Color(.darkGray).cornerRadius(20))
+                                    .padding(.bottom, 50)
+                                    .opacity(0.7)
+                            }
+                        }.frame(width: screenwidth, height: screenheight)
+                        
+                        //MARK: Personality Traits
                         VStack {
                             Text("Personality Traits")
                                 .font(Font.custom("ProximaNova-Regular", size: 28))
@@ -997,15 +956,15 @@ struct SignUpView: View {
                                         HStack {
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray).opacity(1))
                                                 .frame(width: 40, height: 40)
-                                                .overlay(Circle().foregroundColor(Color("purp").opacity(openness[0] ? 0.6 : 0)).frame(width: 28, height: 28))
+                                                .overlay(Circle().foregroundColor(Color("purp").opacity(openness[0] ? 1 : 0)).frame(width: 28, height: 28))
                                                 .onTapGesture {
                                                     self.openness = [true, false, false, false, false, false, false]
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray).opacity(1))
                                                 .frame(width: 35, height: 35)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(openness[1] ? 0.6 : 0)).frame(width: 23, height: 23))
                                                 .onTapGesture {
@@ -1013,7 +972,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray).opacity(1))
                                                 .frame(width: 30, height: 30)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(openness[2] ? 0.6 : 0)).frame(width: 18, height: 18))
                                                 .onTapGesture {
@@ -1021,7 +980,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray).opacity(1))
                                                 .frame(width: 27.5, height: 27.5)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(openness[3] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
                                                 .onTapGesture {
@@ -1029,7 +988,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray).opacity(1))
                                                 .frame(width: 30, height: 30)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(openness[4] ? 0.6 : 0)).frame(width: 18, height: 18))
                                                 .onTapGesture {
@@ -1037,7 +996,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray).opacity(1))
                                                 .frame(width: 35, height: 35)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(openness[5] ? 0.6 : 0)).frame(width: 23, height: 23))
                                                 .onTapGesture {
@@ -1045,7 +1004,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 40, height: 40)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(openness[6] ? 0.6 : 0)).frame(width: 28, height: 28))
                                                 .onTapGesture {
@@ -1096,7 +1055,7 @@ struct SignUpView: View {
                                         HStack {
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 40, height: 40)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(conscientiousness[0] ? 0.6 : 0)).frame(width: 28, height: 28))
                                                 .onTapGesture {
@@ -1104,7 +1063,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 35, height: 35)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(conscientiousness[1] ? 0.6 : 0)).frame(width: 23, height: 23))
                                                 .onTapGesture {
@@ -1112,7 +1071,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 30, height: 30)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(conscientiousness[2] ? 0.6 : 0)).frame(width: 18, height: 18))
                                                 .onTapGesture {
@@ -1120,7 +1079,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 27.5, height: 27.5)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(conscientiousness[3] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
                                                 .onTapGesture {
@@ -1128,7 +1087,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 30, height: 30)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(conscientiousness[4] ? 0.6 : 0)).frame(width: 18, height: 18))
                                                 .onTapGesture {
@@ -1136,7 +1095,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 35, height: 35)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(conscientiousness[5] ? 0.6 : 0)).frame(width: 23, height: 23))
                                                 .onTapGesture {
@@ -1144,7 +1103,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 40, height: 40)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(conscientiousness[6] ? 0.6 : 0)).frame(width: 28, height: 28))
                                                 .onTapGesture {
@@ -1196,7 +1155,7 @@ struct SignUpView: View {
                                         HStack {
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 40, height: 40)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(extraversion[0] ? 0.6 : 0)).frame(width: 28, height: 28))
                                                 .onTapGesture {
@@ -1204,7 +1163,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 35, height: 35)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(extraversion[1] ? 0.6 : 0)).frame(width: 23, height: 23))
                                                 .onTapGesture {
@@ -1212,7 +1171,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 30, height: 30)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(extraversion[2] ? 0.6 : 0)).frame(width: 18, height: 18))
                                                 .onTapGesture {
@@ -1220,7 +1179,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 27.5, height: 27.5)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(extraversion[3] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
                                                 .onTapGesture {
@@ -1228,7 +1187,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 30, height: 30)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(extraversion[4] ? 0.6 : 0)).frame(width: 18, height: 18))
                                                 .onTapGesture {
@@ -1236,7 +1195,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 35, height: 35)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(extraversion[5] ? 0.6 : 0)).frame(width: 23, height: 23))
                                                 .onTapGesture {
@@ -1244,7 +1203,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 40, height: 40)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(extraversion[6] ? 0.6 : 0)).frame(width: 28, height: 28))
                                                 .onTapGesture {
@@ -1296,7 +1255,7 @@ struct SignUpView: View {
                                         HStack {
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 40, height: 40)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(agreeableness[0] ? 0.6 : 0)).frame(width: 28, height: 28))
                                                 .onTapGesture {
@@ -1304,7 +1263,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 35, height: 35)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(agreeableness[1] ? 0.6 : 0)).frame(width: 23, height: 23))
                                                 .onTapGesture {
@@ -1312,7 +1271,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 30, height: 30)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(agreeableness[2] ? 0.6 : 0)).frame(width: 18, height: 18))
                                                 .onTapGesture {
@@ -1320,7 +1279,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 27.5, height: 27.5)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(agreeableness[3] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
                                                 .onTapGesture {
@@ -1328,7 +1287,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 30, height: 30)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(agreeableness[4] ? 0.6 : 0)).frame(width: 18, height: 18))
                                                 .onTapGesture {
@@ -1336,7 +1295,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 35, height: 35)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(agreeableness[5] ? 0.6 : 0)).frame(width: 23, height: 23))
                                                 .onTapGesture {
@@ -1344,7 +1303,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 40, height: 40)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(agreeableness[6] ? 0.6 : 0)).frame(width: 28, height: 28))
                                                 .onTapGesture {
@@ -1396,7 +1355,7 @@ struct SignUpView: View {
                                         HStack {
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 40, height: 40)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(neuroticism[0] ? 0.6 : 0)).frame(width: 28, height: 28))
                                                 .onTapGesture {
@@ -1404,7 +1363,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 35, height: 35)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(neuroticism[1] ? 0.6 : 0)).frame(width: 23, height: 23))
                                                 .onTapGesture {
@@ -1412,7 +1371,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 30, height: 30)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(neuroticism[2] ? 0.6 : 0)).frame(width: 18, height: 18))
                                                 .onTapGesture {
@@ -1420,7 +1379,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 27.5, height: 27.5)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(neuroticism[3] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
                                                 .onTapGesture {
@@ -1428,7 +1387,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 30, height: 30)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(neuroticism[4] ? 0.6 : 0)).frame(width: 18, height: 18))
                                                 .onTapGesture {
@@ -1436,7 +1395,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 35, height: 35)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(neuroticism[5] ? 0.6 : 0)).frame(width: 23, height: 23))
                                                 .onTapGesture {
@@ -1444,7 +1403,7 @@ struct SignUpView: View {
                                                 }
                                             Circle()
                                                 .strokeBorder(lineWidth: 5)
-                                                .foregroundColor(Color("purp").opacity(0.6))
+                                                .foregroundColor(Color(.darkGray))
                                                 .frame(width: 40, height: 40)
                                                 .overlay(Circle().foregroundColor(Color("purp").opacity(neuroticism[6] ? 0.6 : 0)).frame(width: 28, height: 28))
                                                 .onTapGesture {
@@ -1479,7 +1438,7 @@ struct SignUpView: View {
                                         }.padding(.horizontal, 30)
                                     }
                                 }
-                            }
+                            }.scaleEffect(0.9)
                             
                             Button(action: {
                                 self.next -= self.screenwidth
@@ -1491,13 +1450,12 @@ struct SignUpView: View {
                             }
                         }.frame(width: screenwidth, height: screenheight)
                         
-                        
                         //MARK: Education
                         VStack(spacing: 0) {
                             Spacer()
                             Image("Education")
                                 .resizable()
-                                .frame(width: 50, height: 50)
+                                .frame(width: 30, height: 30)
                             VStack(spacing: 20) {
                                 Text("Education")
                                     .font(Font.custom("ProximaNova-Regular", size: 30))
@@ -1610,7 +1568,7 @@ struct SignUpView: View {
                             Spacer()
                             Image("Occupation")
                                 .resizable()
-                                .frame(width: 50, height: 50)
+                                .frame(width: 30, height: 30)
                             VStack(spacing: 20) {
                                 Text("Occupation")
                                     .font(Font.custom("ProximaNova-Regular", size: 30))
@@ -1726,7 +1684,7 @@ struct SignUpView: View {
                             Spacer()
                             Image("Sports")
                                 .resizable()
-                                .frame(width: 50, height: 50)
+                                .frame(width: 30, height: 30)
                             VStack(spacing: 15) {
                                 Text("Sports")
                                     .font(Font.custom("ProximaNova-Regular", size: 30))
@@ -1752,6 +1710,13 @@ struct SignUpView: View {
                                         }.padding(5).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                                     }
                                     Button(action: {
+                                        for s in self.newsports {
+                                            if s == self.newitem {
+                                                self.msg = "No Duplicates Allowed"
+                                                self.alert.toggle()
+                                                return
+                                            }
+                                        }
                                         if self.newitem.count > 0 {
                                             self.newsports.insert(self.newitem, at: 0)
                                             self.newsportsselect.insert(true, at: 0)
@@ -1871,7 +1836,7 @@ struct SignUpView: View {
                             Spacer()
                             Image("Hobbies")
                                 .resizable()
-                                .frame(width: 50, height: 50)
+                                .frame(width: 30, height: 30)
                             VStack {
                                 Text("Hobbies")
                                     .font(Font.custom("ProximaNova-Regular", size: 30))
@@ -1896,6 +1861,14 @@ struct SignUpView: View {
                                                 .multilineTextAlignment(.center)
                                         }.padding(5).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                                         Button(action: {
+                                            for h in self.hobbiesdata {
+                                                if h == self.newitem {
+                                                    self.msg = "No Duplicates Allowed"
+                                                    self.alert.toggle()
+                                                    self.newitem = ""
+                                                    return
+                                                }
+                                            }
                                             if self.newitem.count > 0 {
                                                 self.hobbiesdata.insert(self.newitem, at: 0)
                                                 self.newitem = ""
@@ -1907,7 +1880,7 @@ struct SignUpView: View {
                                                 .foregroundColor(Color("purp"))
                                                 .opacity(self.newitem.count > 0 ? 1 : 0.3)
                                         }
-                                    }
+                                    }.padding(.bottom, 10)
                                 }
                                 ForEach(hobbiesdata, id: \.self) { hobbie in
                                     HStack {
@@ -1928,14 +1901,14 @@ struct SignUpView: View {
                                             .frame(width: 2.5, height: 70)
                                             .foregroundColor(Color(.gray))
                                             .opacity(0.5)
-                                        Image(systemName: "line.horizontal.3")
+                                        Image(systemName: "xmark")
                                             .font(Font.system(size: 20, weight: .heavy))
-                                            .foregroundColor(Color(.darkGray))
+                                            .foregroundColor(Color("personality"))
                                             .padding(.leading, 10)
                                             .onTapGesture {
-                                                
+                                                self.hobbiesdata.remove(at: self.hobbiesdata.firstIndex(of: hobbie)!)
                                             }
-                                    }.padding(.vertical, 5).padding(.horizontal, 20).frame(width: self.screenwidth - 80, height: 70).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color("purp")))
+                                    }.padding(.vertical, 5).padding(.horizontal, 20).frame(width: self.screenwidth - 80, height: 70).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
                                 }
                                 Spacer()
                                 if self.hobbiesdata.count > 0 {
@@ -1962,6 +1935,7 @@ struct SignUpView: View {
                                             .font(Font.custom("ProximaNova-Regular", size: 14))
                                             .fontWeight(.semibold)
                                             .foregroundColor(Color(.darkGray))
+                                            .fixedSize(horizontal: true, vertical: true)
                                             .padding(10).padding(.horizontal, 20)
                                             .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color(.darkGray)))
                                             .padding(.bottom, 50)
@@ -1976,7 +1950,7 @@ struct SignUpView: View {
                             Spacer()
                             Image("Movies")
                                 .resizable()
-                                .frame(width: 50, height: 50)
+                                .frame(width: 30, height: 30)
                             VStack(spacing: 15) {
                                 Text("Movies and TV")
                                     .font(Font.custom("ProximaNova-Regular", size: 30))
@@ -2094,7 +2068,7 @@ struct SignUpView: View {
                             Spacer()
                             Image("Music")
                                 .resizable()
-                                .frame(width: 50, height: 50)
+                                .frame(width: 30, height: 30)
                             VStack(spacing: 15) {
                                 Text("Music")
                                     .font(Font.custom("ProximaNova-Regular", size: 30))
@@ -2211,21 +2185,26 @@ struct SignUpView: View {
                             Spacer()
                             Image("Astrology")
                                 .resizable()
-                                .frame(width: 50, height: 50)
+                                .frame(width: 30, height: 30)
                             VStack(spacing: 15) {
                                 Text("Star Sign")
-                                    .font(Font.custom("ProximaNova-Regular", size: 34))
+                                    .font(Font.custom("ProximaNova-Regular", size: 30))
                                     .fontWeight(.semibold)
                                     .foregroundColor(Color(.darkGray))
-                                    .padding(.bottom, 10)
                                 ScrollView {
                                     VStack {
                                         ForEach(0...self.starsigns.count-1, id: \.self) { ind in
                                             VStack(spacing: 5) {
                                                 Button(action: {
-                                                    self.starsignsselect = [Bool](repeating: false, count: 12)
-                                                    self.starsignsselect[ind] = true
-                                                    self.starsign = self.starsigns[ind]
+                                                    if self.starsignsselect[ind] {
+                                                        self.starsign = ""
+                                                        self.starsignsselect = [Bool](repeating: false, count: 12)
+                                                    }
+                                                    else {
+                                                        self.starsignsselect = [Bool](repeating: false, count: 12)
+                                                        self.starsignsselect[ind] = true
+                                                        self.starsign = self.starsigns[ind]
+                                                    }
                                                 }) {
                                                     HStack {
                                                         Image(self.starsigns[ind])
@@ -2272,73 +2251,77 @@ struct SignUpView: View {
                                 }.padding(.bottom, 50)
                             }.frame(height: screenheight/1.3)
                         }.frame(width: screenwidth, height: screenheight)
+                        
+                        //MARK: Political Leaning
+                        VStack {
+                            Spacer()
+                            Image("Politics")
+                                .resizable()
+                                .frame(width: 30, height: 30)
+                            VStack {
+                                Text("Political Leaning")
+                                    .font(Font.custom("ProximaNova-Regular", size: 30))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color(.darkGray))
+                                    .padding(.bottom, 10)
+                                VStack {
+                                    ForEach(0...self.politicals.count-1, id: \.self) { ind in
+                                        VStack(spacing: 5) {
+                                            Button(action: {
+                                                if self.politicalselect[ind] {
+                                                    self.political = ""
+                                                    self.politicalselect = [Bool](repeating: false, count: 4)
+                                                }
+                                                else {
+                                                    self.politicalselect = [Bool](repeating: false, count: 4)
+                                                    self.political = self.politicals[ind]
+                                                    self.politicalselect[ind] = true
+                                                }
+                                            }) {
+                                                HStack {
+                                                    /*Image(self.politicals[ind])
+                                                        .renderingMode(.template)
+                                                        .resizable()
+                                                        .frame(width: 20, height: 20)
+                                                        .foregroundColor(self.politicalselect[ind] ? Color(.white) : Color(.darkGray).opacity(0.8))*/
+                                                    Text(self.politicals[ind])
+                                                        .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                        .fontWeight(.semibold)
+                                                        .foregroundColor(self.politicalselect[ind] ? Color(.white) : Color(.darkGray).opacity(0.8))
+                                                        .fixedSize(horizontal: true, vertical: false)
+                                                }.padding(20).frame(width: 280)
+                                            }.background(Color(self.politicalselect[ind] ? .darkGray : .white).cornerRadius(10).shadow(color: Color(.black).opacity(self.starsignsselect[ind] ? 0 : 0.1), radius: 15, x: 10, y: 10))
+                                        }.padding(.vertical, 7.5)
+                                    }
+                                }
+                                Spacer()
+                                Button(action: {
+                                    self.next -= self.screenwidth
+                                    self.count += 1
+                                }) {
+                                    if self.political.count > 0 {
+                                        Text("Next")
+                                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color(.white))
+                                            .padding(10).padding(.horizontal, 20)
+                                            .background(Color(.darkGray).cornerRadius(20))
+                                            .opacity(0.7)
+                                    }
+                                    else {
+                                        Text("Skip")
+                                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color(.darkGray))
+                                            .padding(10).padding(.horizontal, 20)
+                                            .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color(.darkGray)))
+                                            .opacity(0.4)
+                                    }
+                                }.padding(.bottom, 50)
+                            }.frame(height: screenheight/1.3)
+                        }.frame(width: screenwidth, height: screenheight)
                     }
                     
-                    /*MARK: Prompts Select 9
-                    VStack(spacing: 10) {
-                        
-                        Text("Select Topics To Create Your Bio")
-                            .font(Font.custom("ProximaNova-Regular", size: 24))
-                            .fontWeight(.semibold)
-                            .padding(.horizontal, 20)
-                            .foregroundColor(.black)
-                            .padding(.top, 20)
-                            .multilineTextAlignment(.center)
-                        
-                        Text("(Press on the topics to bring up more info. Press the checkmark to select the topics you like and then press the pencil to edit them.)")
-                            .font(Font.custom("ProximaNova-Regular", size: 14))
-                            .fontWeight(.semibold)
-                            .multilineTextAlignment(.center)
-                            .foregroundColor(Color(.darkGray))
-                            .padding(.horizontal, 25)
-                        
-                        ScrollView(.vertical, showsIndicators: false) {
-                            ForEach(biocards, id: \.self) { title in
-                                BioCards(selected: self.$selectedprompts, showinfo: self.$selectedinfo, text: self.$text, index: (title.prefix(2) as NSString).integerValue, title: String(title.suffix(title.count-2)))
-                            }
-                        }.padding(.vertical, 15)
-                            .frame(width: screenwidth - 60, height: screenheight/1.75)
-                            .background(Color("lightgray").opacity(0.6).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
-                            .cornerRadius(35)
-                        
-                        Button(action: {
-                            var check = true
-                            var length = true
-                            for num in 0...9 {
-                                if self.selectedprompts[num] {
-                                    if self.text[num].isEmpty {
-                                        check = false
-                                    }
-                                    if self.text[num].count > 200 {
-                                        length = false
-                                    }
-                                }
-                            }
-                            if check && length {
-                                for num in self.biocards {
-                                    let index = (num.prefix(2) as NSString).integerValue
-                                    if self.selectedprompts[index] {
-                                        self.text[index] = "1" + String(num.prefix(2)) + self.text[index]
-                                    }
-                                }
-                                print(self.text)
-                                self.next -= self.screenwidth
-                                self.count += 1
-                            }
-                            else if !check {
-                                self.msg = "You need to finish filling out the prompts you selected."
-                                self.alert.toggle()
-                            }
-                            else if !length {
-                                self.msg = "One of your prompt descriptions is too long. (No more than 200 characters)"
-                                self.alert.toggle()
-                            }
-                        }) {
-                            Image(systemName: "arrow.right")
-                                .font(Font.system(size: 36, weight: .bold))
-                                .foregroundColor(Color(.blue).opacity(0.5))
-                        }
-                    }.frame(width: screenwidth, height: screenheight)*/
                     
                     //MARK: Socials 10
                     VStack {
@@ -2346,7 +2329,7 @@ struct SignUpView: View {
                             .font(Font.custom("ProximaNova-Regular", size: 30))
                             .fontWeight(.semibold)
                             .foregroundColor(.black)
-                        Text("(These social media handles will be public.)")
+                        Text("(These social media handles will be public)")
                             .font(Font.custom("ProximaNova-Regular", size: 16))
                             .fontWeight(.semibold)
                             .multilineTextAlignment(.center)
@@ -2363,25 +2346,27 @@ struct SignUpView: View {
                                         if self.instagramhandle.count < 1 {
                                             Text("Instagram Handle")
                                                 .font(Font.custom("ProximaNova-Regular", size: 18))
-                                                .foregroundColor(.black)
+                                                .fontWeight(.semibold)
+                                                .foregroundColor(Color(.darkGray))
                                                 .opacity(0.5)
                                         }
                                         TextField("", text: self.$instagramhandle)
-                                            .font(Font.custom("ProximaNova-Regular", size: 18))
-                                            .foregroundColor(.black)
+                                            .font(Font.custom("ProximaNova-Regular", size: 18).weight(.semibold))
+                                            .foregroundColor(Color(.darkGray))
                                             .padding(10)
                                             .frame(width: 140, height: 40)
                                             .multilineTextAlignment(.center)
-                                    }.padding(5).background(Color("lightgray").opacity(0.5).cornerRadius(15))
+                                    }.padding(5).background(Color("lightgray").opacity(0.5).cornerRadius(10))
                                 }
                                 Button(action: {
                                     self.instagram.toggle()
                                 }) {
-                                    Image(systemName: self.instagram ? "xmark" : "checkmark")
-                                        .font(Font.system(size: 36, weight: .bold))
+                                    Image(systemName: "plus")
+                                        .font(Font.system(size: 24, weight: .bold))
                                         .foregroundColor(self.instagram ? Color("personality") : .gray)
+                                        .rotationEffect(Angle(degrees: self.instagram ? 45 : 0))
                                 }.padding(10).buttonStyle(PlainButtonStyle())
-                            }.background(Color(.white).cornerRadius(25).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
+                            }.background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
                             HStack {
                                 Image("twitter")
                                     .resizable()
@@ -2391,26 +2376,28 @@ struct SignUpView: View {
                                     ZStack {
                                         if self.twitterhandle.count < 1 {
                                             Text("Twitter Handle")
-                                                .font(Font.custom("ProximaNova-Regular", size: 18))
-                                                .foregroundColor(.black)
+                                                .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                .fontWeight(.semibold)
+                                                .foregroundColor(Color(.darkGray))
                                                 .opacity(0.5)
                                         }
                                         TextField("", text: self.$twitterhandle)
-                                            .font(Font.custom("ProximaNova-Regular", size: 18))
-                                            .foregroundColor(.black)
+                                            .font(Font.custom("ProximaNova-Regular", size: 16).weight(.semibold))
+                                            .foregroundColor(Color(.darkGray))
                                             .padding(10)
                                             .frame(width: 140, height: 40)
                                             .multilineTextAlignment(.center)
-                                    }.padding(5).background(Color("lightgray").opacity(0.5).cornerRadius(15))
+                                    }.padding(5).background(Color("lightgray").opacity(0.5).cornerRadius(10))
                                 }
                                 Button(action: {
                                     self.twitter.toggle()
                                 }) {
-                                    Image(systemName: self.twitter ? "xmark" : "checkmark")
-                                        .font(Font.system(size: 36, weight: .bold))
+                                    Image(systemName: "plus")
+                                        .font(Font.system(size: 24, weight: .bold))
                                         .foregroundColor(self.twitter ? Color("personality") : .gray)
+                                        .rotationEffect(Angle(degrees: self.twitter ? 45 : 0))
                                 }.padding(10).buttonStyle(PlainButtonStyle())
-                            }.background(Color(.white).cornerRadius(25).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
+                            }.background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
                             HStack {
                                 Image("snapchat")
                                     .resizable()
@@ -2420,26 +2407,28 @@ struct SignUpView: View {
                                     ZStack {
                                         if self.snapchathandle.count < 1 {
                                             Text("Snapchat Handle")
-                                                .font(Font.custom("ProximaNova-Regular", size: 18))
-                                                .foregroundColor(.black)
+                                                .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                .fontWeight(.semibold)
+                                                .foregroundColor(Color(.darkGray))
                                                 .opacity(0.5)
                                         }
                                         TextField("", text: self.$snapchathandle)
-                                            .font(Font.custom("ProximaNova-Regular", size: 18))
-                                            .foregroundColor(.black)
+                                            .font(Font.custom("ProximaNova-Regular", size: 16).weight(.semibold))
+                                            .foregroundColor(Color(.darkGray))
                                             .padding(10)
                                             .frame(width: 140, height: 40)
                                             .multilineTextAlignment(.center)
-                                    }.padding(5).background(Color("lightgray").opacity(0.5).cornerRadius(15))
+                                    }.padding(5).background(Color("lightgray").opacity(0.5).cornerRadius(10))
                                 }
                                 Button(action: {
                                     self.snapchat.toggle()
                                 }) {
-                                    Image(systemName: self.snapchat ? "xmark" : "checkmark")
-                                        .font(Font.system(size: 36, weight: .bold))
+                                    Image(systemName: "plus")
+                                        .font(Font.system(size: 24, weight: .bold))
                                         .foregroundColor(self.snapchat ? Color("personality") : .gray)
+                                        .rotationEffect(Angle(degrees: self.snapchat ? 45 : 0))
                                 }.padding(10).buttonStyle(PlainButtonStyle())
-                            }.background(Color(.white).cornerRadius(25).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
+                            }.background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
                         }
                         
                         if self.loading {
@@ -2485,6 +2474,90 @@ struct SignUpView: View {
                         }
                     }.frame(width: screenwidth, height: screenheight).offset(y: -80)
                     
+                    Group {
+                        //MARK: What Matters?
+                        VStack {
+                            HStack(spacing: 40) {
+                                Image("eye")
+                                    .renderingMode(.template)
+                                    .resizable()
+                                    .frame(width: 30, height: 35)
+                                    .foregroundColor(Color("appearance"))
+                                
+                                Image("heart")
+                                    .renderingMode(.template)
+                                    .resizable()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundColor(Color("personality"))
+                            }.padding(.top, 30)
+                            
+                            Text("Appearance vs Personality")
+                                .font(Font.custom("ProximaNova-Regular", size: 26))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.black))
+                                .multilineTextAlignment(.center)
+                            
+                            Text("(This is how your rating will be calculated)")
+                                .font(Font.custom("ProximaNova-Regular", size: 16))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.darkGray))
+                            
+                            PercentageSlider(percentage: self.$percentage)
+                                .frame(width: 90, height: screenheight/2.25)
+                                .accentColor(Color("personality"))
+                                .padding(10)
+                                .background(Color(.white).cornerRadius(25).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
+                                .padding(.bottom, 25)
+                            
+                            Button(action: {
+                                self.next -= self.screenwidth
+                                self.count += 1
+                            }) {
+                                Image(systemName: "arrow.right")
+                                    .font(Font.system(size: 36, weight: .bold))
+                                    .foregroundColor(Color(.blue).opacity(0.5))
+                            }
+                        }.frame(width: screenwidth, height: screenheight)
+                        
+                        //MARK: Rate Yourself
+                        VStack {
+                            /*Image("rating(temp)")
+                                .resizable()
+                                .frame(width: 75, height: 75)*/
+                            GIFView(gifName: "rategif")
+                                .frame(width: 60, height: 30)
+                                
+                            Text("Rate Yourself")
+                                .font(Font.custom("ProximaNova-Regular", size: 24))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.black))
+                            
+                            HStack(spacing: 45) {
+                                VerticalSlider(percentage: self.$selfratingappearance, title: "Appearance")
+                                    .frame(width: 90, height: screenheight/2.25)
+                                    .accentColor(Color("appearance"))
+                                    .padding(7.5)
+                                    .background(Color(.white).cornerRadius(25).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
+                                
+                                VerticalSlider(percentage: self.$selfratingpersonality, title: "Personality")
+                                    .frame(width: 90, height: screenheight/2.25)
+                                    .accentColor(Color("personality"))
+                                    .padding(7.5)
+                                    .background(Color(.white).cornerRadius(25).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
+                            }.padding(.vertical, 25)
+                            
+                            Button(action: {
+                                self.next -= self.screenwidth
+                                self.count += 1
+                            }) {
+                                Image(systemName: "arrow.right")
+                                    .font(Font.system(size: 36, weight: .bold))
+                                    .foregroundColor(Color(.blue).opacity(0.5))
+                            }
+                        }.frame(width: screenwidth, height: screenheight)
+                    }
+                    
+                    
                     //MARK: Your Profile 11
                     VStack(spacing: 0) {
                         Spacer()
@@ -2520,7 +2593,7 @@ struct SignUpView: View {
                         }
                     }.frame(width: screenwidth, height: screenheight)
                     
-                }.animation(.spring()).offset(x: screenwidth*8.5 + next).sheet(isPresented: self.$picker) {
+                }.animation(.spring()).offset(x: screenwidth*9.5 + next).sheet(isPresented: self.$picker) {
                     if self.edit && self.education {
                         EducationView(education: self.$education, educationdata: self.$educationdata, edit: self.$edit, picker: self.$picker, select: self.editselect)
                     }
@@ -2553,36 +2626,60 @@ struct SignUpView: View {
                 VStack(spacing: 10) {
                     //MARK: Back Button
                     HStack(spacing: 5) {
+                        if self.count != 3 && self.count != 7 && self.count != 8 {
+                            Button(action: {
+                                if self.count == 1 {
+                                    self.signup.toggle()
+                                }
+                                else {
+                                    self.next += self.screenwidth
+                                    self.count -= 1
+                                }
+                            }) {
+                                Image("back")
+                                    .resizable()
+                                    .frame(width: 30, height: 30)
+                                    .foregroundColor(Color(.darkGray))
+                            }.padding(.horizontal, 15)
+                        }
                         
-                        Button(action: {
-                            if self.count == 1 || self.count == 3 {
-                                self.signup.toggle()
-                            }
-                            else {
-                                self.next += self.screenwidth
-                                self.count -= 1
-                            }
-                        }) {
-                            Image("back")
-                                .resizable()
-                                .frame(width: 30, height: 30)
-                                .foregroundColor(Color(.darkGray))
-                        }.padding(.horizontal, 15)
                         Text("Sign Up")
                             .font(Font.custom("ProximaNova-Regular", size: 36))
                             .fontWeight(.semibold)
                             .foregroundColor(Color(.darkGray))
+                            .padding(.horizontal, self.count != 3 && self.count != 7 && self.count != 8 ? 0 : 50)
                         Spacer()
+                        
+                        Button(action: {
+                            
+                        }) {
+                            Image(systemName: "xmark")
+                                .font(Font.system(size: 24, weight: .heavy))
+                                .foregroundColor(Color("personality"))
+                        }.padding(.horizontal, 25)
                     }.frame(width: screenwidth).padding(.top, self.screenheight > 800 ? screenheight*0.055 : screenheight*0.02)
-                    if self.count > 2 {
+                    if self.count > 2 && self.count < 7 {
                         VStack {
                             ZStack(alignment: .leading) {
                                 RoundedRectangle(cornerRadius: 2.5)
                                     .frame(width: screenwidth - 60, height: 10)
-                                    .foregroundColor(Color("lightgray").opacity(0.6))
+                                    .foregroundColor(Color("lightgray").opacity(0.5))
                                 Rectangle()
-                                    .frame(width: (screenwidth - 60)*(CGFloat(self.count-3)/15), height: 10)
-                                    .foregroundColor(.gray)
+                                    .frame(width: (screenwidth - 60)*(CGFloat(self.count-3)/4), height: 10)
+                                    .foregroundColor(Color("appearance"))
+                            }.cornerRadius(3.5)
+                            Spacer()
+                        }
+                    }
+                    if self.count > 7 {
+                        VStack {
+                            ZStack(alignment: .leading) {
+                                RoundedRectangle(cornerRadius: 2.5)
+                                    .frame(width: screenwidth - 60, height: 10)
+                                    .foregroundColor(Color("lightgray").opacity(0.5))
+                                Rectangle()
+                                    .frame(width: (screenwidth - 60)*(CGFloat(self.count-8)/10), height: 10)
+                                    .foregroundColor(Color("personality"))
                             }.cornerRadius(3.5)
                             Spacer()
                         }
