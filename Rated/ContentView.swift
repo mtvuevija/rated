@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import Combine
 import Firebase
 import FirebaseAuth
 import FirebaseStorage
@@ -297,6 +298,10 @@ struct FrontView: View {
     }
 }
 
+enum ActiveAlert {
+    case first, second
+}
+
 
 //MARK: SignUpView
 struct SignUpView: View {
@@ -400,6 +405,8 @@ struct SignUpView: View {
     @State var snapchathandle = ""
     
     @State var logged = false
+    @State var quit = false
+    @State private var activeAlert: ActiveAlert = .first
     
     var body: some View {
         ZStack {
@@ -461,7 +468,7 @@ struct SignUpView: View {
                                     .multilineTextAlignment(.center)
                             }
                             Button(action: {
-                                /*if self.phonenumber.count == 10 {
+                                if self.phonenumber.count == 10 {
                                     self.loading.toggle()
                                     PhoneAuthProvider.provider().verifyPhoneNumber("+" + self.ccode + self.phonenumber, uiDelegate: nil) { (verificationID, error) in
                                         if error != nil {
@@ -471,11 +478,11 @@ struct SignUpView: View {
                                             return
                                         }
                                         self.loading.toggle()
-                                        self.verificationcode = verificationID!*/
+                                        self.verificationcode = verificationID!
                                         self.next -= self.screenwidth
                                         self.count += 1
-                                    //}
-                                //}
+                                    }
+                                }
                             }) {
                                 Image(systemName: "arrow.right")
                                     .font(Font.system(size: 30, weight: .bold))
@@ -521,10 +528,11 @@ struct SignUpView: View {
                                     .keyboardType(.numberPad)
                                     .foregroundColor(Color(.darkGray))
                                     .multilineTextAlignment(TextAlignment.center)
+                                    .onReceive(Just(self.enteredcode)) { _ in self.limit() }
                                 
                             }
                             Button(action: {
-                                /*if self.enteredcode.count == 6 {
+                                if self.enteredcode.count == 6 {
                                     self.loading.toggle()
                                     let credential = PhoneAuthProvider.provider().credential(withVerificationID: self.verificationcode, verificationCode: self.enteredcode)
                                     
@@ -549,13 +557,13 @@ struct SignUpView: View {
                                                 }
                                             }
                                             else {
-                                                self.loading.toggle()*/
+                                                self.loading.toggle()
                                                 self.next -= self.screenwidth
-                                                self.count += 1/*
+                                                self.count += 1
                                             }
                                         }
                                     }
-                                }*/
+                                }
                             }) {
                                 Image(systemName: "arrow.right")
                                     .font(Font.system(size: 30, weight: .bold))
@@ -598,6 +606,7 @@ struct SignUpView: View {
                                         .frame(width: screenwidth - 140, height: 50)
                                         .foregroundColor(Color(.darkGray))
                                         .multilineTextAlignment(TextAlignment.center)
+                                        .onReceive(Just(self.name)) { _ in self.limit() }
                                 }
                                 Button(action: {
                                     if self.name.count > 0 {
@@ -745,6 +754,7 @@ struct SignUpView: View {
                                         .frame(width: screenwidth - 140, height: 50)
                                         .foregroundColor(Color(.darkGray))
                                         .multilineTextAlignment(TextAlignment.center)
+                                        .onReceive(Just(self.gender)) { _ in self.limit() }
                                 }.padding(.bottom, 30)
                             }
                             
@@ -884,11 +894,11 @@ struct SignUpView: View {
                             }.padding(20)
                             
                             Button(action: {
-                                /*for val in self.showimage {
+                                for val in self.showimage {
                                     if !val {
                                         return
                                     }
-                                }*/
+                                }
                                 self.next -= self.screenwidth
                                 self.count += 1
                             }) {
@@ -1444,9 +1454,14 @@ struct SignUpView: View {
                                 self.next -= self.screenwidth
                                 self.count += 1
                             }) {
-                                Image(systemName: "arrow.right")
-                                    .font(Font.system(size: 36, weight: .bold))
-                                    .foregroundColor(Color(.blue).opacity(0.5))
+                                Text("Next")
+                                    .font(Font.custom("ProximaNova-Regular", size: 14))
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(Color(.white))
+                                    .padding(10).padding(.horizontal, 20)
+                                    .background(Color(.darkGray).cornerRadius(20))
+                                    .padding(.bottom, 30)
+                                    .opacity(0.7)
                             }
                         }.frame(width: screenwidth, height: screenheight)
                         
@@ -1707,6 +1722,7 @@ struct SignUpView: View {
                                                 .padding(10)
                                                 .frame(width: screenwidth - 180, height: 40)
                                                 .multilineTextAlignment(.center)
+                                                .onReceive(Just(self.newitem)) { _ in self.limit() }
                                         }.padding(5).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                                     }
                                     Button(action: {
@@ -1859,6 +1875,7 @@ struct SignUpView: View {
                                                 .padding(10)
                                                 .frame(width: screenwidth - 180, height: 40)
                                                 .multilineTextAlignment(.center)
+                                                .onReceive(Just(self.newitem)) { _ in self.limit() }
                                         }.padding(5).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                                         Button(action: {
                                             for h in self.hobbiesdata {
@@ -2356,6 +2373,7 @@ struct SignUpView: View {
                                             .padding(10)
                                             .frame(width: 140, height: 40)
                                             .multilineTextAlignment(.center)
+                                            .onReceive(Just(self.instagramhandle)) { _ in self.limit() }
                                     }.padding(5).background(Color("lightgray").opacity(0.5).cornerRadius(10))
                                 }
                                 Button(action: {
@@ -2387,6 +2405,7 @@ struct SignUpView: View {
                                             .padding(10)
                                             .frame(width: 140, height: 40)
                                             .multilineTextAlignment(.center)
+                                            .onReceive(Just(self.twitterhandle)) { _ in self.limit() }
                                     }.padding(5).background(Color("lightgray").opacity(0.5).cornerRadius(10))
                                 }
                                 Button(action: {
@@ -2418,6 +2437,7 @@ struct SignUpView: View {
                                             .padding(10)
                                             .frame(width: 140, height: 40)
                                             .multilineTextAlignment(.center)
+                                            .onReceive(Just(self.snapchathandle)) { _ in self.limit() }
                                     }.padding(5).background(Color("lightgray").opacity(0.5).cornerRadius(10))
                                 }
                                 Button(action: {
@@ -2450,7 +2470,7 @@ struct SignUpView: View {
                                     if !self.snapchat {
                                         self.snapchathandle = "N/A"
                                     }
-                                    let socials = [self.instagramhandle, self.snapchathandle, self.twitterhandle]
+                                    /*let socials = [self.instagramhandle, self.snapchathandle, self.twitterhandle]
                                     
                                     let per = Double(self.percentage/10).truncate(places: 1)
                                     
@@ -2464,7 +2484,9 @@ struct SignUpView: View {
                                             self.observer.signedup()
                                             self.loading.toggle()
                                         }
-                                    }
+                                    }*/
+                                    self.next -= self.screenwidth
+                                    self.count += 1
                                 }
                             }) {
                                 Image(systemName: "arrow.right")
@@ -2547,8 +2569,75 @@ struct SignUpView: View {
                             }.padding(.vertical, 25)
                             
                             Button(action: {
-                                self.next -= self.screenwidth
-                                self.count += 1
+                                print("hello")
+                                let socials = [self.instagramhandle, self.snapchathandle, self.twitterhandle]
+                                
+                                let per = Double(self.percentage/10).truncate(places: 1)
+                                
+                                let overall = Double(Double(self.selfratingpersonality)*per + Double(self.selfratingappearance)*Double(1-per)).truncate(places: 1)
+                                var traits = [Int]()
+                                var counter: Int = 0
+                                for val in self.openness {
+                                    if val {
+                                        traits.append(counter+1)
+                                    }
+                                    counter += 1
+                                }
+                                counter = 0
+                                for val in self.conscientiousness {
+                                    if val {
+                                        traits.append(counter+1)
+                                    }
+                                    counter += 1
+                                }
+                                counter = 0
+                                for val in self.extraversion {
+                                    if val {
+                                        traits.append(counter+1)
+                                    }
+                                    counter += 1
+                                }
+                                counter = 0
+                                for val in self.agreeableness {
+                                    if val {
+                                        traits.append(counter+1)
+                                    }
+                                    counter += 1
+                                }
+                                counter = 0
+                                for val in self.neuroticism {
+                                    if val {
+                                        traits.append(counter+1)
+                                    }
+                                    counter += 1
+                                }
+                                print(traits)
+                                var sportsfin = [String]()
+                                if self.newsports.count != 0 {
+                                    for num in 0...(self.newsports.count-1) {
+                                        if self.newsportsselect[num] {
+                                            sportsfin.append(self.newsports[num])
+                                        }
+                                    }
+                                }
+                                for num in 0...(self.sports.count-1) {
+                                    if self.sportsselect[num] {
+                                        sportsfin.append(self.sports[num])
+                                    }
+                                }
+                                CreateUser2(name: self.name, bdate: self.bdate, gender: self.gender, percentage: per, overallrating: overall, appearancerating: Double(self.selfratingappearance).truncate(places: 1), personalityrating: Double(self.selfratingpersonality).truncate(places: 1), profilepics: self.profilepics, traits: traits, education: self.educationdata, occupation1: self.occupationdata, occupation2: self.occupationdata1, sports: sportsfin, hobby: self.hobbiesdata, mnt1: self.mntdata, mnt2: self.mntgenres, music1: self.musicdata, music2: self.musicgenres, starsign: self.starsign, politics: self.political, socials: socials) { (val) in
+                                    if val {
+                                        self.showprofile.toggle()
+                                        self.next -= self.screenwidth
+                                        self.count += 1
+                                        self.observer.signedup()
+                                        self.loading.toggle()
+                                    }
+                                    else {
+                                        self.msg = "There was an error with signing up. Try again later."
+                                        self.alert.toggle()
+                                    }
+                                }
                             }) {
                                 Image(systemName: "arrow.right")
                                     .font(Font.system(size: 36, weight: .bold))
@@ -2557,8 +2646,37 @@ struct SignUpView: View {
                         }.frame(width: screenwidth, height: screenheight)
                     }
                     
+                    //MARK: Finished
+                    VStack {
+                        Image("Bio")
+                            .resizable()
+                            .frame(width: 50, height: 50)
+                        
+                        Text("Your account is now all set up.")
+                            .font(Font.custom("ProximaNova-Regular", size: 24))
+                            .fontWeight(.semibold)
+                            .foregroundColor(Color(.darkGray))
+                            .multilineTextAlignment(.center)
+                            .fixedSize(horizontal: false, vertical: false)
+                            .padding(.horizontal, 40)
+                            .padding(.bottom, 10)
+                        
+                        Button(action: {
+                            self.next -= self.screenwidth
+                            self.count += 1
+                        }) {
+                            Text("Next")
+                                .font(Font.custom("ProximaNova-Regular", size: 14))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.white))
+                                .padding(10).padding(.horizontal, 20)
+                                .background(Color(.darkGray).cornerRadius(20))
+                                .padding(.bottom, 50)
+                                .opacity(0.7)
+                        }
+                    }.frame(width: screenwidth, height: screenheight)
                     
-                    //MARK: Your Profile 11
+                    /*//MARK: Your Profile 11
                     VStack(spacing: 0) {
                         Spacer()
                         if self.showprofile {
@@ -2591,7 +2709,7 @@ struct SignUpView: View {
                                 }
                             }.frame(width: self.screenwidth)
                         }
-                    }.frame(width: screenwidth, height: screenheight)
+                    }.frame(width: screenwidth, height: screenheight)*/
                     
                 }.animation(.spring()).offset(x: screenwidth*9.5 + next).sheet(isPresented: self.$picker) {
                     if self.edit && self.education {
@@ -2651,12 +2769,15 @@ struct SignUpView: View {
                         Spacer()
                         
                         Button(action: {
-                            
+                            //self.activeAlert = .second
+                            self.quit = true
+                            self.alert.toggle()
                         }) {
                             Image(systemName: "xmark")
                                 .font(Font.system(size: 24, weight: .heavy))
                                 .foregroundColor(Color("personality"))
                         }.padding(.horizontal, 25)
+                        
                     }.frame(width: screenwidth).padding(.top, self.screenheight > 800 ? screenheight*0.055 : screenheight*0.02)
                     if self.count > 2 && self.count < 7 {
                         VStack {
@@ -2688,16 +2809,56 @@ struct SignUpView: View {
                     Spacer()
                     
                     
-                }.animation(.easeInOut)
+                }.animation(.easeInOut)/*
+                .alert(isPresented: self.$quit) {
+                    Alert(title: Text("Quit Sign Up?"), message: Text("Are you sure you want to leave the sign up page?"), primaryButton: .destructive(Text("Yes")) {
+                            print("BURHHHHH")
+                    }, secondaryButton: .cancel())
+                }*/
                 
             }.navigationBarBackButtonHidden(true)
             .navigationBarTitle("")
             .navigationBarHidden(true)
                 .background(LinearGradient(gradient: Gradient(colors: [Color(.white), Color("lightgray")]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all))
                 .alert(isPresented: $alert) {
-                Alert(title: Text("Error"), message: Text(self.msg), dismissButton: .default(Text("OK")))
-            }.offset(y: self.logged ? -screenheight*1.25 : 0).animation(.spring())
+                    if self.quit {
+                        return Alert(title: Text("Quit Sign Up?"), message: Text("Are you sure you want to leave the sign up page?"), primaryButton: .destructive(Text("Yes")) {
+                            self.signup.toggle()
+                            self.quit = false
+                            }, secondaryButton: .cancel() {
+                                self.quit = false
+                            })
+                    }
+                    else {
+                        return Alert(title: Text("Error"), message: Text(self.msg), dismissButton: .default(Text("OK")))
+                    }
+                    
+                }.offset(y: self.logged ? -screenheight*1.25 : 0).animation(.spring())
         }.background(Color("personality").edgesIgnoringSafeArea(.all))
+    }
+    
+    func limit() {
+        if self.enteredcode.count > 6 {
+            self.enteredcode = String(self.enteredcode.prefix(6))
+        }
+        if self.name.count > 20 {
+            self.name = String(self.name.prefix(20))
+        }
+        if self.gender.count > 20 {
+            self.gender = String(self.gender.prefix(20))
+        }
+        if self.instagramhandle.count > 20 {
+            self.instagramhandle = String(self.instagramhandle.prefix(20))
+        }
+        if self.twitterhandle.count > 20 {
+            self.twitterhandle = String(self.twitterhandle.prefix(20))
+        }
+        if self.snapchathandle.count > 20 {
+            self.snapchathandle = String(self.snapchathandle.prefix(20))
+        }
+        if self.newitem.count > 20 {
+            self.newitem = String(self.newitem.prefix(20))
+        }
     }
 }
 
@@ -2712,6 +2873,7 @@ struct EducationView: View {
     @State var year = [Bool](repeating: false, count: 100)
     @State var yearfin = ""
     @State var select: Int = -1
+    @State var alert = false
     let screenwidth = UIScreen.main.bounds.width
     let screenheight = UIScreen.main.bounds.height
     var body: some View {
@@ -2747,11 +2909,12 @@ struct EducationView: View {
                         .padding(10)
                         .frame(width: screenwidth - 80, height: 50)
                         .multilineTextAlignment(.center)
+                        .onReceive(Just(self.school)) { _ in self.limit() }
                 }.padding(5).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                 Spacer()
             }
             VStack {
-                Text("Select Year")
+                Text("Select Graduation Year")
                     .font(Font.custom("ProximaNova-Regular", size: 22))
                     .fontWeight(.semibold)
                     .foregroundColor(Color(.darkGray))
@@ -2806,6 +2969,12 @@ struct EducationView: View {
                 }
                 Button(action: {
                     if self.school.count > 0 && self.yearfin.count > 0 {
+                        for e in self.educationdata {
+                            if e == (self.school + self.yearfin) {
+                                self.alert.toggle()
+                                return
+                            }
+                        }
                         if self.select != -1 {
                             self.educationdata[self.select] = self.school + self.yearfin
                         }
@@ -2846,7 +3015,10 @@ struct EducationView: View {
             }.offset(y: self.school.count > 0 ? 0 : -275)
             Spacer()
         }.edgesIgnoringSafeArea(.all)
-            .background(LinearGradient(gradient: Gradient(colors: [Color(.white), Color("lightgray")]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all)).animation(.spring())
+            .background(LinearGradient(gradient: Gradient(colors: [Color(.white), Color("lightgray")]), startPoint: .top, endPoint: .bottom).edgesIgnoringSafeArea(.all))
+            .alert(isPresented: $alert) {
+                  Alert(title: Text("No Duplicates"), message: Text("You cannot add two of the same schools"), dismissButton: .default(Text("OK")))
+            }.animation(.spring())
             .onAppear {
                 if self.select != -1 {
                     let info = self.educationdata[self.select]
@@ -2860,136 +3032,12 @@ struct EducationView: View {
                 self.education = false
             }
     }
-}
-
-/*
-//MARK: HobbiesView
-struct HobbiesView: View {
-    @Binding var hobbies: Bool
-    @Binding var hobbiesdata: [String]
-    @Binding var edit: Bool
-    @Binding var picker: Bool
-    @State var hobby = ""
-    @State var select: Int = -1
-    let screenwidth = UIScreen.main.bounds.width
-    let screenheight = UIScreen.main.bounds.height
-    var body: some View {
-        VStack(spacing: 20) {
-            HStack {
-                Text("Add Hobbies")
-                    .font(Font.custom("ProximaNova-Regular", size: 30))
-                    .fontWeight(.semibold)
-                    .foregroundColor(Color(.darkGray))
-                Image("hobby-1")
-                    .renderingMode(.template)
-                    .resizable()
-                    .frame(width: 35, height: 35)
-                    .foregroundColor(Color(.darkGray))
-            }.padding(.vertical, 30)
-            VStack {
-                Text("Hobbies")
-                    .font(Font.custom("ProximaNova-Regular", size: 22))
-                    .fontWeight(.semibold)
-                    .foregroundColor(Color(.darkGray))
-                HStack {
-                    Spacer()
-                    ZStack {
-                        if self.hobby.count < 1 {
-                            Text("Hobby")
-                                .font(Font.custom("ProximaNova-Regular", size: 24))
-                                .foregroundColor(.black)
-                                .opacity(0.5)
-                        }
-                        TextField("", text: self.$hobby)
-                            .font(Font.custom("ProximaNova-Regular", size: 24).weight(.semibold))
-                            .foregroundColor(Color(.darkGray))
-                            .padding(10)
-                            .frame(width: screenwidth - 80, height: 50)
-                            .multilineTextAlignment(.center)
-                    }.padding(5).background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
-                    Spacer()
-                }
-            }
-            HStack {
-                if self.select != -1  {
-                    Button(action: {
-                        self.occupation.toggle()
-                        self.edit = false
-                        self.occupationdata.remove(at: self.select)
-                        self.occupationdata1.remove(at: self.select)
-                        self.picker = false
-                    }) {
-                        Text("Remove")
-                            .font(Font.custom("ProximaNova-Regular", size: 14))
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color("personality"))
-                            .frame(width: 60)
-                            .padding(10).padding(.horizontal, 10)
-                            .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color("personality")))
-                            .padding(.bottom, 50)
-                            .opacity(0.7)
-                    }
-                }
-                VStack {
-                    if self.hobby.count > 0 {
-                        Button(action: {
-                            if self.select != -1 {
-                                self.occupationdata[self.select] = self.title
-                                self.occupationdata1[self.select] = self.company
-                            }
-                            else {
-                                self.occupationdata.append(self.title)
-                                self.occupationdata1.append(self.company)
-                            }
-                            self.occupation.toggle()
-                            self.edit = false
-                            self.picker = false
-                        }) {
-                            Text("Confirm")
-                                .font(Font.custom("ProximaNova-Regular", size: 14))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color(.white))
-                                .frame(width: 60)
-                                .padding(10).padding(.horizontal, 10)
-                                .background(Color(.darkGray).cornerRadius(20))
-                                .padding(.bottom, 50)
-                                .opacity(0.7)
-                        }
-                    }
-                    else {
-                        Button(action: {
-                            self.occupation.toggle()
-                            self.edit = false
-                            self.picker = false
-                        }) {
-                            Text("Cancel")
-                                .font(Font.custom("ProximaNova-Regular", size: 14))
-                                .fontWeight(.semibold)
-                                .foregroundColor(Color(.darkGray))
-                                .frame(width: 60)
-                                .padding(10).padding(.horizontal, 10)
-                                .background(RoundedRectangle(cornerRadius: 20).stroke(lineWidth: 2).foregroundColor(Color(.darkGray)))
-                                .padding(.bottom, 50)
-                                .opacity(0.4)
-                        }
-                    }
-                }
-            }.offset(y: self.title.count > 0 ? 0 : -100)
-            Spacer()
-        }.edgesIgnoringSafeArea(.all)
-        .background(Color(.white).edgesIgnoringSafeArea(.all)).animation(.spring())
-            .onAppear {
-                if self.select != -1 {
-                    self.title = String(self.occupationdata[self.select])
-                    self.company = String(self.occupationdata1[self.select])
-                }
-            }
-        .onDisappear {
-            self.edit = false
-            self.occupation = false
+    func limit() {
+        if self.school.count > 25 {
+            self.school = String(self.school.prefix(25))
         }
     }
-}*/
+}
 
 
 //MARK: OccupationView
@@ -3038,6 +3086,7 @@ struct OccupationView: View {
                             .padding(10)
                             .frame(width: screenwidth - 80, height: 50)
                             .multilineTextAlignment(.center)
+                            .onReceive(Just(self.title)) { _ in self.limit() }
                     }.padding(5).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                     Spacer()
                 }
@@ -3063,6 +3112,7 @@ struct OccupationView: View {
                             .padding(10)
                             .frame(width: screenwidth - 80, height: 50)
                             .multilineTextAlignment(.center)
+                            .onReceive(Just(self.company)) { _ in self.limit() }
                     }.padding(5).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                     Spacer()
                 }
@@ -3144,6 +3194,14 @@ struct OccupationView: View {
             self.occupation = false
         }
     }
+    func limit() {
+        if self.title.count > 25 {
+            self.title = String(self.title.prefix(25))
+        }
+        if self.company.count > 25 {
+            self.company = String(self.company.prefix(25))
+        }
+    }
 }
 
 
@@ -3197,6 +3255,7 @@ struct MoviesAndTVView: View {
                             .padding(10)
                             .frame(width: screenwidth - 80, height: 50)
                             .multilineTextAlignment(.center)
+                            .onReceive(Just(self.title)) { _ in self.limit() }
                     }.padding(5).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                     Spacer()
                 }
@@ -3312,6 +3371,11 @@ struct MoviesAndTVView: View {
             self.mnt = false
         }
     }
+    func limit() {
+        if self.title.count > 25 {
+            self.title = String(self.title.prefix(25))
+        }
+    }
 }
 
 
@@ -3365,6 +3429,7 @@ struct MusicView: View {
                             .padding(10)
                             .frame(width: screenwidth - 80, height: 50)
                             .multilineTextAlignment(.center)
+                            .onReceive(Just(self.title)) { _ in self.limit() }
                     }.padding(5).background(Color(.white).cornerRadius(15).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))//RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))
                     Spacer()
                 }
@@ -3478,6 +3543,11 @@ struct MusicView: View {
         .onDisappear {
             self.edit = false
             self.music = false
+        }
+    }
+    func limit() {
+        if self.title.count > 25 {
+            self.title = String(self.title.prefix(25))
         }
     }
 }
@@ -8601,6 +8671,50 @@ class observer: ObservableObject {
     }
 }
 
+//MARK: CreateUser2
+func CreateUser2(name: String, bdate: String, gender: String, percentage: Double, overallrating: Double, appearancerating: Double, personalityrating: Double, profilepics: [Data], traits: [Int], education: [String], occupation1: [String], occupation2: [String], sports: [String], hobby: [String], mnt1: [String], mnt2: [String], music1: [String], music2: [String], starsign: String, politics: String, socials: [String], complete: @escaping (Bool)-> Void) {
+    print("bruh")
+    
+    let db = Firestore.firestore()
+    let storage = Storage.storage().reference()
+    let uid = Auth.auth().currentUser?.uid
+    var images = [String]()
+    
+    db.collection("users").document(uid!).setData(["Name": name, "Birthdate": bdate, "Gender": gender, "Percentage": percentage, "SelfRating": overallrating, "SelfARating": appearancerating, "SelfPRating": personalityrating, "ProfilePics": [String](), "Rates": [String](), "OverallRating": overallrating, "AppearanceRating": appearancerating, "PersonalityRating": personalityrating, "ID": uid!, "Lock": [Bool](), "Keys": 0, "Comments": [String](), "Socials": socials, "Report": 0, "Preferences": ["Everyone", "Everyone", "18-99"], "Reports": [String](), "Reported": [Bool](), "Traits": traits, "Education": education, "Occupation (title)": occupation1, "Occupation (co)": occupation2, "Sports": sports, "Hobbies": hobby, "Movie/TV (name)": mnt1,  "Movie/TV (genre)": mnt2, "Music (title)": music1, "Music (genre)": music2, "Star Sign": starsign, "Politics": politics]) { (err) in
+        if err != nil{
+            print((err?.localizedDescription)!)
+            complete(false)
+            return
+        }
+    }
+    for num in 0...3 {
+        let metadata = StorageMetadata.init()
+        metadata.contentType = "image/jpeg"
+        let upload = storage.child("ProfilePics").child(uid! + String(num)).putData(profilepics[num], metadata: metadata) { (_, err) in
+            if err != nil {
+                print((err?.localizedDescription)!)
+                complete(false)
+                return
+            }
+        }
+        upload.observe(.success) { snapshot in
+            storage.child("ProfilePics").child(uid! + String(num)).downloadURL { (url, err) in
+                if err != nil{
+                    print((err?.localizedDescription)!)
+                    complete(false)
+                    return
+                }
+                images.append(String(num) + "\(url!)")
+                UserDefaults.standard.set(images, forKey: "ProfilePics")
+                if num == 3 {
+                    complete(true)
+                }
+            }
+        }
+    }
+    print("bruh2")
+}
+
 
 //MARK: CreateUser
 func CreateUser(name: String, bdate: String, gender: String, percentage: Double, overallrating: Double, appearancerating: Double, personalityrating: Double, profilepics: [Data], photopostion: [Int], bio: [String], socials: [String], complete: @escaping (Bool)-> Void) {
@@ -8680,7 +8794,7 @@ func CheckUser(complete: @escaping (Bool)->Void) {
                 }
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + 7.5) {
-                if UserDefaults.standard.value(forKey: "notsignedup") as! Bool {
+                if UserDefaults.standard.value(forKey: "notsignedup") as? Bool ?? true{
                     complete(false)
                 }
             }
