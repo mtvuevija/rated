@@ -2662,8 +2662,13 @@ struct SignUpView: View {
                             .padding(.bottom, 10)
                         
                         Button(action: {
-                            self.next -= self.screenwidth
-                            self.count += 1
+                            AddImages()
+                            self.observer.signin()
+                            self.observer.refreshUsers()
+                            UserDefaults.standard.set(false, forKey: "signup")
+                            UserDefaults.standard.set(true, forKey: "status")
+                            UserDefaults.standard.set(false, forKey: "notsignedup")
+                            NotificationCenter.default.post(name: NSNotification.Name("StatusChange"), object: nil)
                         }) {
                             Text("Next")
                                 .font(Font.custom("ProximaNova-Regular", size: 14))
@@ -3610,14 +3615,16 @@ struct HomeView: View {
                                 }
                             }) {
                                 HStack(spacing: 2.5) {
-                                    Image(systemName: "chevron.left")
-                                        .font(Font.system(size: 18, weight: .heavy))
+                                    Image(systemName: "line.horizontal.3")
+                                        //.font(Font.system(size: 36, weight: .heavy))
+                                        .resizable()
+                                        .frame(width: 37.5, height: 30)
                                         .foregroundColor(Color(.darkGray))
-                                    Image("settings-1")
-                                        //.renderingMode(.template)
+                                    /*Image("settings-1")
+                                        .renderingMode(.template)
                                         .resizable()
                                         .frame(width: screenheight*0.047, height: screenheight*0.047)
-                                        //.foregroundColor(Color(.darkGray))
+                                        .foregroundColor(Color(.darkGray))*/
                                 }
                             }.buttonStyle(PlainButtonStyle()).padding(.leading, screenwidth*0.05)
                             Spacer()
@@ -3643,14 +3650,19 @@ struct HomeView: View {
                         }.padding(.top, self.screenheight > 800 ? self.screenheight*0.05 : screenheight*0.035)
                         //MARK: Recent Ratings
                         HStack {
+                            Image("ratings")
+                                .renderingMode(.template)
+                                .resizable()
+                                .frame(width: 25, height: 25)
+                                .foregroundColor(Color(.darkGray))
+                                .padding(.leading, 30)
                             Text("Recent Ratings")
-                                .font(Font.custom("ProximaNova-Regular", size: 30))
+                                .font(Font.custom("ProximaNova-Regular", size: 24))
                                 .fontWeight(.semibold)
                                 .lineLimit(1)
                                 .foregroundColor(Color(.darkGray))
                                 .frame(height: screenheight*0.05)
                                 .minimumScaleFactor(0.02)
-                                .padding(.leading, 25)
                             Spacer()
                         }
                         TrackableScrollView(.vertical, showIndicators: false, contentOffset: $refreshoffset) {
@@ -3670,7 +3682,7 @@ struct HomeView: View {
                                 VStack {
                                     if self.observer.userrates.count == 0 && self.recentratings {
                                         Text("No Ratings Yet")
-                                            .font(Font.custom("ProximaNova-Regular", size: 24))
+                                            .font(Font.custom("ProximaNova-Regular", size: 18))
                                             .fontWeight(.semibold)
                                             .foregroundColor(Color(.black))
                                             .frame(height: screenheight*0.35)
@@ -3686,7 +3698,7 @@ struct HomeView: View {
                                 }.frame(width: screenwidth*0.85).offset(y: self.refresh1 ? 50 : 0)
                             }
                         }.frame(width: screenwidth*0.85, height: screenheight*0.35)
-                            .background(Color(.white))
+                            .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10))
                             .cornerRadius(25)
                             .onPreferenceChange(ScrollOffsetPreferenceKey.self) { value in
                                 if value[0] < -60 && !self.start && !self.refresh1 {
@@ -3722,12 +3734,17 @@ struct HomeView: View {
                                             self.rating = true
                                         }
                                     }) {
-                                        HStack(spacing: 0) {
+                                        Text("Rate")
+                                            .font(Font.custom("ProximaNova-Regular", size: 18))
+                                            .fontWeight(.semibold)
+                                            .foregroundColor(Color(.darkGray))
+                                        /*HStack(spacing: 0) {
                                             GIFView(gifName: "rategif")
                                                 .frame(width: 80, height: 45)
-                                        }.frame(width: screenwidth/2).padding(2.5)
-                                            .background(Color(.blue).opacity(0.4).cornerRadius(screenheight*0.02))
-                                    }.padding(5).background(Color(.white).cornerRadius(screenheight*0.02 + 2.5))
+                                        }.frame(width: screenwidth/2).padding(2.5)*/
+                                        
+                                        //.background(Color(.blue).opacity(0.4).cornerRadius(screenheight*0.02))
+                                    }.padding(10).padding(.horizontal, 20).background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(screenheight*0.02 + 2.5))
                                         .padding(.top, screenheight*0.01)
                                 }
                             }
@@ -3755,15 +3772,20 @@ struct HomeView: View {
                                         }) {
                                             VStack(spacing: 2.5) {
                                                 Text("Statistics")
-                                                    .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                    .font(Font.custom("ProximaNova-Regular", size: 16))
                                                     .fontWeight(.semibold)
                                                     .lineLimit(1)
-                                                    .foregroundColor(self.stats ? Color(.black) : Color(.gray).opacity(0.5))
+                                                    .foregroundColor(self.stats ? Color(.darkGray) : Color(.gray).opacity(0.5))
                                                     .minimumScaleFactor(0.01)
-                                                Circle()
+                                                /*Circle()
                                                     .foregroundColor(Color("personality"))
                                                     .frame(width: 10, height: 10)
-                                                    .opacity(self.stats ? 1 : 0.1)
+                                                    .opacity(self.stats ? 1 : 0.1)*/
+                                                Image("stats")
+                                                    .renderingMode(.template)
+                                                    .resizable()
+                                                    .frame(width: 20, height: 20)
+                                                    .foregroundColor(self.stats ? Color(.darkGray) : Color(.gray).opacity(0.5))
                                                     
                                             }.frame(width: screenwidth/2.5, height: screenheight*0.05)
                                         }
@@ -3772,15 +3794,20 @@ struct HomeView: View {
                                         }) {
                                             VStack(spacing: 2.5) {
                                                 Text("Preferences")
-                                                    .font(Font.custom("ProximaNova-Regular", size: 24))
+                                                    .font(Font.custom("ProximaNova-Regular", size: 16))
                                                     .fontWeight(.semibold)
                                                     .lineLimit(1)
-                                                    .foregroundColor(self.stats ? Color(.gray).opacity(0.5) : Color(.black))
+                                                    .foregroundColor(self.stats ? Color(.gray).opacity(0.5) : Color(.darkGray))
                                                     .minimumScaleFactor(0.01)
-                                                Circle()
+                                                /*Circle()
                                                     .foregroundColor(Color("personality"))
                                                     .frame(width: 10, height: 10)
-                                                    .opacity(self.stats ? 0.1 : 1)
+                                                    .opacity(self.stats ? 0.1 : 1)*/
+                                                Image("settings")
+                                                    .renderingMode(.template)
+                                                    .resizable()
+                                                    .frame(width: 20, height: 20)
+                                                    .foregroundColor(self.stats ? Color(.gray).opacity(0.5) : Color(.darkGray))
                                             }.frame(width: screenwidth/2.5, height: screenheight*0.025)
                                         }
                                     }.padding(.bottom, self.stats ? 10 : 5)
@@ -3853,7 +3880,7 @@ struct HomeView: View {
                                                     .foregroundColor(.white)
                                                     .frame(width: screenwidth/3.5 - 20, height: screenheight*0.05 - 10)
                                                     .background(Color(.blue).opacity(0.4).cornerRadius(screenheight*0.015))
-                                            }.padding(5).background(Color(.white).cornerRadius(screenheight*0.015 + 2.5).shadow(color: Color(.lightGray).opacity(0.5), radius: 5)).padding(.top, screenheight*0.01)
+                                            }.padding(5)//.background(Color(.white).cornerRadius(screenheight*0.015 + 2.5).shadow(color: Color(.lightGray).opacity(0.5), radius: 5)).padding(.top, screenheight*0.01)
                                         }
                                     }
                                     Spacer()
@@ -4612,6 +4639,14 @@ struct RatingView: View {
     @State var loading = false
     @State var connectionstatus = true
     @State var refreshing: Int = 0
+    
+    @State var edu = true
+    @State var occu = true
+    @State var sport = true
+    @State var hobby = true
+    @State var mnt = true
+    @State var mus  = true
+    
     let categories = ["General", "Education", "Occupation", "Music", "Sports", "Movies", "TV-Shows", "Hobbies", "Motto", "Future"]
     var rewardAd: Rewarded
     let screenwidth = UIScreen.main.bounds.width
@@ -4735,7 +4770,7 @@ struct RatingView: View {
                                                         .foregroundColor(.white)
                                                         .shadow(radius: 10)
                                                         .minimumScaleFactor(0.02)
-                                                        .padding(.leading, self.screenheight*0.015)
+                                                        .padding(.leading, self.screenheight*0.02)
                                                         .padding(.bottom, self.screenheight*0.015)
                                                     Spacer()
                                                 }
@@ -4769,39 +4804,285 @@ struct RatingView: View {
                                                         .frame(width: screenwidth - 20, height: screenheight*0.7)
                                                         .cornerRadius(25)
                                                     ScrollView(.vertical, showsIndicators: false) {
-                                                        VStack(spacing: 0) {
-                                                            ForEach(self.observer.users[self.observer.rated].Bio, id: \.self) { bio in
-                                                                VStack(spacing: 0) {
-                                                                    VStack(spacing: 5) {
-                                                                        HStack {
-                                                                            Text(self.categories[(bio.prefix(2) as NSString).integerValue])
-                                                                                .font(Font.custom("ProximaNova-Regular", size: 25))
-                                                                                .fontWeight(.semibold)
-                                                                                .lineLimit(1)
-                                                                                .foregroundColor(Color(.white))
-                                                                                .frame(height: 15)
-                                                                                .minimumScaleFactor(0.02)
-                                                                            Image(self.categories[(bio.prefix(2) as NSString).integerValue])
-                                                                                .resizable()
-                                                                                .frame(width: 25, height: 25)
-                                                                            Spacer()
-                                                                        }
-                                                                        Text(bio.suffix(bio.count - 2))
+                                                        VStack(spacing: 5) {
+                                                            Group {
+                                                                //MARK: Education
+                                                                VStack(spacing: 5) {
+                                                                    HStack {
+                                                                        Image("education-2")
+                                                                            .renderingMode(.template)
+                                                                            .resizable()
+                                                                            .frame(width: 25, height: 25)
+                                                                            .foregroundColor(Color(.darkGray))
+                                                                        Text("Education")
                                                                             .font(Font.custom("ProximaNova-Regular", size: 20))
-                                                                            //.fontWeight(.semibold)
-                                                                            .foregroundColor(Color(.white))
-                                                                            .fixedSize(horizontal: false, vertical: true)
-                                                                    }.padding(15)
-                                                                        .frame(width: self.screenwidth-40)
-                                                                        //.background(Color(.blue).opacity(0.4))
-                                                                        
-                                                                }.background(RoundedRectangle(cornerRadius: 15).stroke(lineWidth: 10).foregroundColor(.white))
-                                                                    .cornerRadius(15)
-                                                                    .padding(.horizontal, 20)
-                                                                    .padding(.vertical, 2.5)
-                                                                    //.shadow(color: Color("lightgray"), radius: 7.5)
+                                                                            .fontWeight(.semibold)
+                                                                            .foregroundColor(Color(.darkGray))
+                                                                        Spacer()
+                                                                        Image(systemName: self.edu ? "chevron.up" : "chevron.down")
+                                                                            .font(Font.system(size: 15, weight: .heavy))
+                                                                            .foregroundColor(Color(.darkGray))
+                                                                    }.padding(10).background(Color(.white)).onTapGesture {
+                                                                        self.edu.toggle()
+                                                                    }
+                                                                    if edu && self.observer.users[self.observer.rated].Education.count > 0 {
+                                                                        ForEach(self.observer.users[self.observer.rated].Education, id: \.self) { education in
+                                                                            HStack {
+                                                                                Image("education-1")
+                                                                                    .renderingMode(.template)
+                                                                                    .resizable()
+                                                                                    .frame(width: 20, height: 20)
+                                                                                    .foregroundColor(Color(.white))
+                                                                                    .padding(.leading, 10)
+                                                                                VStack(alignment: .leading, spacing: 0) {
+                                                                                    Text(String(education.prefix(education.count-4)))
+                                                                                        .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                                                        .fontWeight(.semibold)
+                                                                                        .foregroundColor(Color(.white))
+                                                                                    Text(String(education.suffix(4)))
+                                                                                        .font(Font.custom("ProximaNova-Regular", size: 14))
+                                                                                        .fontWeight(.semibold)
+                                                                                        .foregroundColor(Color(.white))
+                                                                                        .opacity(0.5)
+                                                                                }
+                                                                                Spacer()
+                                                                            }.frame(width: self.screenwidth*0.7, height: 45)
+                                                                                .background(Color(.darkGray).cornerRadius(10))
+                                                                        }
+                                                                    }
+                                                                }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.edu ? 10 : 0)
+                                                                    .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))//.padding(.vertical, 10)
+                                                                Divider().frame(width: self.screenwidth*0.8 + 10)
+                                                                //MARK: Occupation
+                                                                VStack(spacing: 5) {
+                                                                    HStack {
+                                                                        Image("occupation-1")
+                                                                            .renderingMode(.template)
+                                                                            .resizable()
+                                                                            .frame(width: 25, height: 25)
+                                                                            .foregroundColor(Color(.darkGray))
+                                                                        Text("Occupation")
+                                                                            .font(Font.custom("ProximaNova-Regular", size: 20))
+                                                                            .fontWeight(.semibold)
+                                                                            .foregroundColor(Color(.darkGray))
+                                                                        Spacer()
+                                                                        Image(systemName: self.occu ? "chevron.up" : "chevron.down")
+                                                                            .font(Font.system(size: 15, weight: .heavy))
+                                                                            .foregroundColor(Color(.darkGray))
+                                                                    }.padding(10).background(Color(.white)).onTapGesture {
+                                                                        self.occu.toggle()
+                                                                    }
+                                                                    if occu && self.observer.users[self.observer.rated].Occupation1.count > 0 {
+                                                                        ForEach(0...(self.observer.users[self.observer.rated].Occupation1.count-1), id: \.self) { num in
+                                                                            HStack {
+                                                                                Image("occupation-1")
+                                                                                    .renderingMode(.template)
+                                                                                    .resizable()
+                                                                                    .frame(width: 20, height: 20)
+                                                                                    .foregroundColor(Color(.white))
+                                                                                    .padding(.leading, 10)
+                                                                                VStack(alignment: .leading, spacing: 0) {
+                                                                                    Text(self.observer.users[self.observer.rated].Occupation1[num])
+                                                                                        .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                                                        .fontWeight(.semibold)
+                                                                                        .foregroundColor(Color(.white))
+                                                                                    Text(self.observer.users[self.observer.rated].Occupation2[num])
+                                                                                        .font(Font.custom("ProximaNova-Regular", size: 14))
+                                                                                        .fontWeight(.semibold)
+                                                                                        .foregroundColor(Color(.white))
+                                                                                        .opacity(0.5)
+                                                                                }
+                                                                                Spacer()
+                                                                            }.frame(width: self.screenwidth*0.7, height: 45)
+                                                                                .background(Color(.darkGray).cornerRadius(10))
+                                                                        }
+                                                                    }
+                                                                }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.occu ? 10 : 0)
+                                                                .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))
+                                                                Divider().frame(width: self.screenwidth*0.8 + 10)
                                                             }
-                                                        }.padding(.vertical, 10)//.background(Color("lightgray").opacity(0.7))
+                                                            //MARK: Sports
+                                                            VStack(spacing: 5) {
+                                                                HStack {
+                                                                    Image("basketball")
+                                                                        .renderingMode(.template)
+                                                                        .resizable()
+                                                                        .frame(width: 25, height: 25)
+                                                                        .foregroundColor(Color(.darkGray))
+                                                                    Text("Sports")
+                                                                        .font(Font.custom("ProximaNova-Regular", size: 20))
+                                                                        .fontWeight(.semibold)
+                                                                        .foregroundColor(Color(.darkGray))
+                                                                    Spacer()
+                                                                    Image(systemName: self.sport ? "chevron.up" : "chevron.down")
+                                                                        .font(Font.system(size: 15, weight: .heavy))
+                                                                        .foregroundColor(Color(.darkGray))
+                                                                }.padding(10).background(Color(.white)).onTapGesture {
+                                                                    self.sport.toggle()
+                                                                }
+                                                                if sport && self.observer.users[self.observer.rated].Sports.count > 0 {
+                                                                    ForEach(self.observer.users[self.observer.rated].Sports, id: \.self) { sp in
+                                                                        HStack {
+                                                                            Image(sp.lowercased())
+                                                                                .renderingMode(.template)
+                                                                                .resizable()
+                                                                                .frame(width: 20, height: 20)
+                                                                                .foregroundColor(Color(.white))
+                                                                                .padding(.leading, 10)
+                                                                            VStack(alignment: .leading, spacing: 0) {
+                                                                                Text(sp)
+                                                                                    .font(Font.custom("ProximaNova-Regular", size: 18))
+                                                                                    .fontWeight(.semibold)
+                                                                                    .foregroundColor(Color(.white))
+                                                                            }
+                                                                            Spacer()
+                                                                        }.frame(width: self.screenwidth*0.7, height: 40)
+                                                                            .background(Color(.darkGray).cornerRadius(10))
+                                                                    }
+                                                                }
+                                                            }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.sport ? 10 : 0)
+                                                            .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))
+                                                            Divider().frame(width: self.screenwidth*0.8 + 10)
+                                                            //MARK: Hobbies
+                                                            VStack(spacing: 5) {
+                                                                HStack {
+                                                                    Image("hobbies-1")
+                                                                        .renderingMode(.template)
+                                                                        .resizable()
+                                                                        .frame(width: 25, height: 25)
+                                                                        .foregroundColor(Color(.darkGray))
+                                                                    Text("Hobbies")
+                                                                        .font(Font.custom("ProximaNova-Regular", size: 20))
+                                                                        .fontWeight(.semibold)
+                                                                        .foregroundColor(Color(.darkGray))
+                                                                    Spacer()
+                                                                    Image(systemName: self.hobby ? "chevron.up" : "chevron.down")
+                                                                        .font(Font.system(size: 15, weight: .heavy))
+                                                                        .foregroundColor(Color(.darkGray))
+                                                                }.padding(10).background(Color(.white)).onTapGesture {
+                                                                    self.hobby.toggle()
+                                                                }
+                                                                if hobby && self.observer.users[self.observer.rated].Hobbies.count > 0 {
+                                                                    ForEach(self.observer.users[self.observer.rated].Hobbies, id: \.self) { hb in
+                                                                        HStack {
+                                                                            Image("hobbies-1")
+                                                                                .renderingMode(.template)
+                                                                                .resizable()
+                                                                                .frame(width: 20, height: 20)
+                                                                                .foregroundColor(Color(.white))
+                                                                                .padding(.leading, 10)
+                                                                            VStack(alignment: .leading, spacing: 2.5) {
+                                                                                Text(hb)
+                                                                                    .font(Font.custom("ProximaNova-Regular", size: 18))
+                                                                                    .fontWeight(.semibold)
+                                                                                    .foregroundColor(Color(.white))
+                                                                            }
+                                                                            Spacer()
+                                                                        }.frame(width: self.screenwidth*0.7, height: 40)
+                                                                            .background(Color(.darkGray).cornerRadius(10))
+                                                                    }
+                                                                }
+                                                            }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.hobby ? 10 : 0)
+                                                            .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))
+                                                            Divider().frame(width: self.screenwidth*0.8 + 10)
+                                                            if self.observer.users[self.observer.rated].MovieTV1.count > 0 {
+                                                                //MARK: Movies/TV
+                                                                VStack(spacing: 5) {
+                                                                    HStack {
+                                                                        Image("Movies")
+                                                                            .renderingMode(.template)
+                                                                            .resizable()
+                                                                            .frame(width: 25, height: 25)
+                                                                            .foregroundColor(Color(.darkGray))
+                                                                        Text("Movies/TV")
+                                                                            .font(Font.custom("ProximaNova-Regular", size: 20))
+                                                                            .fontWeight(.semibold)
+                                                                            .foregroundColor(Color(.darkGray))
+                                                                        Spacer()
+                                                                        Image(systemName: self.mnt ? "chevron.up" : "chevron.down")
+                                                                            .font(Font.system(size: 15, weight: .heavy))
+                                                                            .foregroundColor(Color(.darkGray))
+                                                                    }.padding(10).background(Color(.white)).onTapGesture {
+                                                                        self.mnt.toggle()
+                                                                    }
+                                                                    if mnt {
+                                                                        ForEach(0...(self.observer.users[self.observer.rated].MovieTV1.count-1), id: \.self) { num in
+                                                                            HStack {
+                                                                                Image(self.observer.users[self.observer.rated].MovieTV2[num])
+                                                                                    .renderingMode(.template)
+                                                                                    .resizable()
+                                                                                    .frame(width: 20, height: 20)
+                                                                                    .foregroundColor(Color(.white))
+                                                                                    .padding(.leading, 10)
+                                                                                VStack(alignment: .leading, spacing: 0) {
+                                                                                    Text(self.observer.users[self.observer.rated].MovieTV1[num])
+                                                                                        .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                                                        .fontWeight(.semibold)
+                                                                                        .foregroundColor(Color(.white))
+                                                                                    Text(self.observer.users[self.observer.rated].MovieTV2[num])
+                                                                                        .font(Font.custom("ProximaNova-Regular", size: 14))
+                                                                                        .fontWeight(.semibold)
+                                                                                        .foregroundColor(Color(.white))
+                                                                                        .opacity(0.5)
+                                                                                }
+                                                                                Spacer()
+                                                                            }.frame(width: self.screenwidth*0.7, height: 45)
+                                                                                .background(Color(.darkGray).cornerRadius(10))
+                                                                        }
+                                                                    }
+                                                                }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.mnt ? 10 : 0)
+                                                                .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))
+                                                                Divider().frame(width: self.screenwidth*0.8 + 10)
+                                                            }
+                                                            //MARK: Music
+                                                            VStack(spacing: 5) {
+                                                                HStack {
+                                                                    Image("song")
+                                                                        .renderingMode(.template)
+                                                                        .resizable()
+                                                                        .frame(width: 25, height: 25)
+                                                                        .foregroundColor(Color(.darkGray))
+                                                                    Text("Music")
+                                                                        .font(Font.custom("ProximaNova-Regular", size: 20))
+                                                                        .fontWeight(.semibold)
+                                                                        .foregroundColor(Color(.darkGray))
+                                                                    Spacer()
+                                                                    Image(systemName: self.mus ? "chevron.up" : "chevron.down")
+                                                                        .font(Font.system(size: 15, weight: .heavy))
+                                                                        .foregroundColor(Color(.darkGray))
+                                                                }.padding(10).background(Color(.white)).onTapGesture {
+                                                                    if self.observer.users[self.observer.rated].Music1.count > 0 {
+                                                                        self.mus.toggle()
+                                                                    }
+                                                                }
+                                                                if mus && self.observer.users[self.observer.rated].Music1.count > 0 {
+                                                                    ForEach(0...(self.observer.users[self.observer.rated].Music1.count-1), id: \.self) { num in
+                                                                        HStack {
+                                                                            Image(self.observer.users[self.observer.rated].Music2[num])
+                                                                                .renderingMode(.template)
+                                                                                .resizable()
+                                                                                .frame(width: 20, height: 20)
+                                                                                .foregroundColor(Color(.white))
+                                                                                .padding(.leading, 10)
+                                                                            VStack(alignment: .leading, spacing: 0) {
+                                                                                Text(self.observer.users[self.observer.rated].Music1[num])
+                                                                                    .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                                                    .fontWeight(.semibold)
+                                                                                    .foregroundColor(Color(.white))
+                                                                                Text(self.observer.users[self.observer.rated].Music2[num])
+                                                                                    .font(Font.custom("ProximaNova-Regular", size: 14))
+                                                                                    .fontWeight(.semibold)
+                                                                                    .foregroundColor(Color(.white))
+                                                                                    .opacity(0.5)
+                                                                            }
+                                                                            Spacer()
+                                                                        }.frame(width: self.screenwidth*0.7, height: 45)
+                                                                            .background(Color(.darkGray).cornerRadius(10))
+                                                                    }
+                                                                }
+                                                            }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.mus ? 10 : 0)
+                                                            .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))
+                                                        }.background(Color(.white).cornerRadius(15))
                                                     }.frame(width: screenwidth - 20, height: screenheight*0.7 - 20).background(Color(.clear)).cornerRadius(30)
                                                     
                                                 }
@@ -4831,7 +5112,7 @@ struct RatingView: View {
                                                         .frame(width: 25, height: 25)
                                                         .foregroundColor(.white)
                                                         .padding(20)
-                                                        .background(Circle().frame(width: 65, height: 65).foregroundColor(.blue).shadow(color: .blue, radius: 5))
+                                                        .background(Circle().frame(width: 65, height: 65).foregroundColor(.blue))//.shadow(color: .blue, radius: 5))
                                                 }
                                             }
                                         }
@@ -4839,7 +5120,8 @@ struct RatingView: View {
                                             RoundedRectangle(cornerRadius: 37.5)
                                                 .frame(width: self.rating ? 265 : 65, height: self.rating ? 75 : 65)
                                                 .foregroundColor(self.rating ? .white : .yellow)
-                                                .shadow(color: self.rating ? Color("lightgray") : .yellow, radius: 5)
+                                                .shadow(color: Color("lightgray"), radius: 5)
+                                                //.shadow(color: self.rating ? Color("lightgray") : .yellow, radius: 5)
                                             
                                             if self.rating {
                                                 HStack {
@@ -4884,7 +5166,7 @@ struct RatingView: View {
                                                 .frame(width: 25, height: 25)
                                                 .padding(20)
                                                 .foregroundColor(.white)
-                                                .background(Circle().frame(width: 65, height: 65).foregroundColor(Color(self.bio ? "appearance" : "personality")).shadow(color: Color(self.bio ? "appearance" : "personality"), radius: 5))
+                                                .background(Circle().frame(width: 65, height: 65).foregroundColor(Color(self.bio ? "appearance" : "personality"))) //.shadow(color: Color(self.bio ? "appearance" : "personality"), radius: 5))
                                         }
                                         if !self.rating {
                                             Button(action: {
@@ -4896,7 +5178,7 @@ struct RatingView: View {
                                                 }
                                             }) {
                                                 Image(systemName: "arrow.right")
-                                                    .font(Font.system(size: 32, weight: .bold))
+                                                    .font(Font.system(size: 32, weight: .heavy))
                                                     .foregroundColor(Color(.blue).opacity(0.5))
                                                     .padding(10)
                                             }
@@ -6731,7 +7013,7 @@ struct Bio: View {
                     }.padding(.leading, screenwidth * 0.04)
                     Spacer()
                 }.padding(.top, self.screenheight > 800 ? self.screenheight*0.055 : screenheight*0.035)
-                VStack(spacing: 5) {
+                /*VStack(spacing: 5) {
                     if !self.edit {
                         Text("Bio")
                             .font(Font.custom("ProximaNova-Regular", size: 30))
@@ -6959,7 +7241,7 @@ struct Bio: View {
                             }
                         }
                     }
-                }.offset(y: self.shift ? CGFloat(-32*self.index) : 0).animation(.spring())
+                }.offset(y: self.shift ? CGFloat(-32*self.index) : 0).animation(.spring())*/
                 Spacer()
             }.frame(width: screenwidth, height: screenheight).offset(y: self.edit ? -15 : 0)
             .background(Color("lightgray").edgesIgnoringSafeArea(.all)).animation(.spring())
@@ -7011,9 +7293,9 @@ struct Bio: View {
                 Timer.scheduledTimer(withTimeInterval: 10, repeats: true) { _ in
                     self.connectionstatus = Reachability.isConnectedToNetwork()
                 }
-                for str in self.observer.myprofile.Bio {
+                /*for str in self.observer.myprofile.Bio {
                     self.newbio[(String(str.prefix(2)) as NSString).integerValue] = String(str)[2..<str.count]
-                }
+                }*/
         }.alert(isPresented: $alert) {
             Alert(title: Text("Error"), message: Text(self.msg), dismissButton: .default(Text("OK")))
         }
@@ -7214,7 +7496,7 @@ struct ShowProfile: View {
                                             .frame(width: screenwidth/3, height: screenheight*0.62)
                                     }
                                 }.frame(height: screenheight*0.62)
-                                ScrollView(.vertical, showsIndicators: false) {
+                                /*ScrollView(.vertical, showsIndicators: false) {
                                     VStack(spacing: 0) {
                                         ForEach(self.observer.ratesinfo[self.index].Bio, id: \.self) { bio in
                                             VStack(spacing: 5) {
@@ -7242,7 +7524,7 @@ struct ShowProfile: View {
                                             .padding(.vertical, 10)
                                         }
                                     }
-                                }.frame(width: 0.84*screenwidth, height: screenheight*0.62 - 20)
+                                }.frame(width: 0.84*screenwidth, height: screenheight*0.62 - 20)*/
                             }.offset(y: self.bio ? -screenheight*0.31 : screenheight*0.31)
                         }.frame(width: 0.84*screenwidth, height: screenheight*0.62).cornerRadius(25)
                     }.frame(width: 0.84*screenwidth, height: screenheight*0.62).cornerRadius(35)
@@ -7920,7 +8202,7 @@ struct Profile: View {
                             .animation(nil)
                     }.background(Color(.white).opacity(0.75).frame(height: 40).cornerRadius(7.5).shadow(radius: 20)).padding(.leading, 10)
                     Spacer()
-                }
+                }/*
                 ZStack {
                     ZStack {
                         Color("lightgray")
@@ -7938,7 +8220,7 @@ struct Profile: View {
                             }
                         }.frame(width: screenwidth - 40, height: screenheight/3.25 - 20).cornerRadius(15)
                     }
-                }.frame(height: screenheight/3.25)
+                }.frame(height: screenheight/3.25)*/
             }.frame(width: screenwidth-20, height: screenheight/1.25)
             .cornerRadius(20)
         }.frame(width: screenwidth, height: screenheight)
@@ -8373,7 +8655,7 @@ extension Double {
 
 //MARK: Observer
 class observer: ObservableObject {
-    @Published var myprofile: UserData = UserData(Age: "", Bio: [String](), Gender: "", id: "", Name: "", Percentage: 0, ProfilePics: [String](), Rates: [String](), OverallRating: 0, AppearanceRating: 0, PersonalityRating: 0, SelfRating: 0, Socials: [String](), Report: 0, Reports: [String](), Preferences: [String]())
+    @Published var myprofile = UserData(Age: "", Traits: [Int](), Education: [String](), Occupation1: [String](), Occupation2: [String](), Sports: [String](), Hobbies: [String](), MovieTV1: [String](), MovieTV2: [String](), Music1: [String](), Music2: [String](), StarSign: "", Politics: "", Gender: "", id: "", Name: "", Percentage: 0, ProfilePics: [String](), Rates: [String](), OverallRating: 0, AppearanceRating: 0, PersonalityRating: 0, SelfRating: 0, Socials: [String](), Report: 0, Reports: [String](), Preferences: [String]())
     @Published var users = [UserData]()
     @Published var userrates = [String]()
     @Published var ratesinfo = [UserData]()
@@ -8423,7 +8705,19 @@ class observer: ObservableObject {
                         let date = dateFormatter.date(from: bdate)!
                         let components = Calendar.current.dateComponents([.year, .month, .day], from: date, to: Date())
                         let age = String(components.year!)
-                        let bio = document.get("Bio") as! [String]
+                        //let bio = document.get("Bio") as! [String]
+                        let traits = document.get("Traits") as! [Int]
+                        let education = document.get("Education") as! [String]
+                        let occupation1 = document.get("Occupation (title)") as! [String]
+                        let occupation2 = document.get("Occupation (co)") as! [String]
+                        let sports = document.get("Sports") as! [String]
+                        let hobbies = document.get("Hobbies") as! [String]
+                        let mnt1 = document.get("MovieTV (title)") as! [String]
+                        let mnt2 = document.get("MovieTV (genre)") as! [String]
+                        let music1 = document.get("Music (title)") as! [String]
+                        let music2 = document.get("Music (genre)") as! [String]
+                        let starsign = document.get("Star Sign") as! String
+                        let politics = document.get("Politics") as! String
                         let gender = document.get("Gender") as! String
                         let id = document.get("ID") as! String
                         let name = document.get("Name") as! String
@@ -8438,7 +8732,7 @@ class observer: ObservableObject {
                         let report = document.get("Report") as! Double
                         let preferences = document.get("Preferences") as! [String]
                         let reports = document.get("Reports") as! [String]
-                        self.myprofile = UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Reports: reports, Preferences: preferences)
+                        self.myprofile = UserData(Age: age, Traits: traits, Education: education, Occupation1: occupation1, Occupation2: occupation2, Sports: sports, Hobbies: hobbies, MovieTV1: mnt1, MovieTV2: mnt2, Music1: music1, Music2: music2, StarSign: starsign, Politics: politics, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Reports: reports, Preferences: preferences)
                         self.selfratings = ratingtype(overall: CGFloat(selfrating), appearance: document.get("SelfARating") as! CGFloat, personality: document.get("SelfPRating") as! CGFloat)
                     }
                 }
@@ -8471,7 +8765,18 @@ class observer: ObservableObject {
                                 }
                                 if check && check1 {
                                     let age = String(age1)
-                                    let bio = document.get("Bio") as! [String]
+                                    let traits = document.get("Traits") as! [Int]
+                                    let education = document.get("Education") as! [String]
+                                    let occupation1 = document.get("Occupation (title)") as! [String]
+                                    let occupation2 = document.get("Occupation (co)") as! [String]
+                                    let sports = document.get("Sports") as! [String]
+                                    let hobbies = document.get("Hobbies") as! [String]
+                                    let mnt1 = document.get("MovieTV (title)") as! [String]
+                                    let mnt2 = document.get("MovieTV (genre)") as! [String]
+                                    let music1 = document.get("Music (title)") as! [String]
+                                    let music2 = document.get("Music (genre)") as! [String]
+                                    let starsign = document.get("Star Sign") as! String
+                                    let politics = document.get("Politics") as! String
                                     let gender = document.get("Gender") as! String
                                     let id = document.get("ID") as! String
                                     let name = document.get("Name") as! String
@@ -8486,7 +8791,7 @@ class observer: ObservableObject {
                                     let report = document.get("Report") as! Double
                                     let preferences = document.get("Preferences") as! [String]
                                     let reports = document.get("Reports") as! [String]
-                                    self.users.append(UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Reports: reports, Preferences: preferences))
+                                    self.users.append(UserData(Age: age, Traits: traits, Education: education, Occupation1: occupation1, Occupation2: occupation2, Sports: sports, Hobbies: hobbies, MovieTV1: mnt1, MovieTV2: mnt2, Music1: music1, Music2: music2, StarSign: starsign, Politics: politics, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Reports: reports, Preferences: preferences))
                                     print(name)
                                 }
                             }
@@ -8505,7 +8810,18 @@ class observer: ObservableObject {
                             let date = dateFormatter.date(from: bdate)!
                             let components = Calendar.current.dateComponents([.year, .month, .day], from: date, to: Date())
                             let age = String(components.year!)
-                            let bio = document.get("Bio") as! [String]
+                            let traits = document.get("Traits") as! [Int]
+                            let education = document.get("Education") as! [String]
+                            let occupation1 = document.get("Occupation (title)") as! [String]
+                            let occupation2 = document.get("Occupation (co)") as! [String]
+                            let sports = document.get("Sports") as! [String]
+                            let hobbies = document.get("Hobbies") as! [String]
+                            let mnt1 = document.get("MovieTV (title)") as! [String]
+                            let mnt2 = document.get("MovieTV (genre)") as! [String]
+                            let music1 = document.get("Music (title)") as! [String]
+                            let music2 = document.get("Music (genre)") as! [String]
+                            let starsign = document.get("Star Sign") as! String
+                            let politics = document.get("Politics") as! String
                             let gender = document.get("Gender") as! String
                             let id = document.get("ID") as! String
                             let name = document.get("Name") as! String
@@ -8520,7 +8836,7 @@ class observer: ObservableObject {
                             let report = document.get("Report") as! Double
                             let preferences = document.get("Preferences") as! [String]
                             let reports = document.get("Reports") as! [String]
-                            self.ratesinfo.append(UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Reports: reports, Preferences: preferences))
+                            self.ratesinfo.append(UserData(Age: age, Traits: traits, Education: education, Occupation1: occupation1, Occupation2: occupation2, Sports: sports, Hobbies: hobbies, MovieTV1: mnt1, MovieTV2: mnt2, Music1: music1, Music2: music2, StarSign: starsign, Politics: politics, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Reports: reports, Preferences: preferences))
                         }
                     }
                 }
@@ -8558,7 +8874,18 @@ class observer: ObservableObject {
                             }
                             if check {
                                 let age = String(age1)
-                                let bio = document.get("Bio") as! [String]
+                                let traits = document.get("Traits") as! [Int]
+                                let education = document.get("Education") as! [String]
+                                let occupation1 = document.get("Occupation (title)") as! [String]
+                                let occupation2 = document.get("Occupation (co)") as! [String]
+                                let sports = document.get("Sports") as! [String]
+                                let hobbies = document.get("Hobbies") as! [String]
+                                let mnt1 = document.get("MovieTV (title)") as! [String]
+                                let mnt2 = document.get("MovieTV (genre)") as! [String]
+                                let music1 = document.get("Music (title)") as! [String]
+                                let music2 = document.get("Music (genre)") as! [String]
+                                let starsign = document.get("Star Sign") as! String
+                                let politics = document.get("Politics") as! String
                                 let gender = document.get("Gender") as! String
                                 let id = document.get("ID") as! String
                                 let name = document.get("Name") as! String
@@ -8573,7 +8900,7 @@ class observer: ObservableObject {
                                 let report = document.get("Report") as! Double
                                 let preferences = document.get("Preferences") as! [String]
                                 let reports = document.get("Reports") as! [String]
-                                newusers.append(UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Reports: reports, Preferences: preferences))
+                                newusers.append(UserData(Age: age, Traits: traits, Education: education, Occupation1: occupation1, Occupation2: occupation2, Sports: sports, Hobbies: hobbies, MovieTV1: mnt1, MovieTV2: mnt2, Music1: music1, Music2: music2, StarSign: starsign, Politics: politics, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Reports: reports, Preferences: preferences))
                                 self.users = newusers
                                 print(name)
                             }
@@ -8616,7 +8943,18 @@ class observer: ObservableObject {
                         let date = dateFormatter.date(from: bdate)!
                         let components = Calendar.current.dateComponents([.year, .month, .day], from: date, to: Date())
                         let age = String(components.year!)
-                        let bio = document.get("Bio") as! [String]
+                        let traits = document.get("Traits") as! [Int]
+                        let education = document.get("Education") as! [String]
+                        let occupation1 = document.get("Occupation (title)") as! [String]
+                        let occupation2 = document.get("Occupation (co)") as! [String]
+                        let sports = document.get("Sports") as! [String]
+                        let hobbies = document.get("Hobbies") as! [String]
+                        let mnt1 = document.get("MovieTV (title)") as! [String]
+                        let mnt2 = document.get("MovieTV (genre)") as! [String]
+                        let music1 = document.get("Music (title)") as! [String]
+                        let music2 = document.get("Music (genre)") as! [String]
+                        let starsign = document.get("Star Sign") as! String
+                        let politics = document.get("Politics") as! String
                         let gender = document.get("Gender") as! String
                         let id = document.get("ID") as! String
                         let name = document.get("Name") as! String
@@ -8631,7 +8969,7 @@ class observer: ObservableObject {
                         let report = document.get("Report") as! Double
                         let preferences = document.get("Preferences") as! [String]
                         let reports = document.get("Reports") as! [String]
-                        self.myprofile = UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Reports: reports, Preferences: preferences)
+                        self.myprofile = UserData(Age: age, Traits: traits, Education: education, Occupation1: occupation1, Occupation2: occupation2, Sports: sports, Hobbies: hobbies, MovieTV1: mnt1, MovieTV2: mnt2, Music1: music1, Music2: music2, StarSign: starsign, Politics: politics, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Reports: reports, Preferences: preferences)
                     }
                 }
                 for users in self.userrates {
@@ -8643,7 +8981,18 @@ class observer: ObservableObject {
                             let date = dateFormatter.date(from: bdate)!
                             let components = Calendar.current.dateComponents([.year, .month, .day], from: date, to: Date())
                             let age = String(components.year!)
-                            let bio = document.get("Bio") as! [String]
+                            let traits = document.get("Traits") as! [Int]
+                            let education = document.get("Education") as! [String]
+                            let occupation1 = document.get("Occupation (title)") as! [String]
+                            let occupation2 = document.get("Occupation (co)") as! [String]
+                            let sports = document.get("Sports") as! [String]
+                            let hobbies = document.get("Hobbies") as! [String]
+                            let mnt1 = document.get("MovieTV (title)") as! [String]
+                            let mnt2 = document.get("MovieTV (genre)") as! [String]
+                            let music1 = document.get("Music (title)") as! [String]
+                            let music2 = document.get("Music (genre)") as! [String]
+                            let starsign = document.get("Star Sign") as! String
+                            let politics = document.get("Politics") as! String
                             let gender = document.get("Gender") as! String
                             let id = document.get("ID") as! String
                             let name = document.get("Name") as! String
@@ -8658,7 +9007,7 @@ class observer: ObservableObject {
                             let report = document.get("Report") as! Double
                             let preferences = document.get("Preferences") as! [String]
                             let reports = document.get("Reports") as! [String]
-                            self.ratesinfo.append(UserData(Age: age, Bio: bio, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Reports: reports, Preferences: preferences))
+                            self.ratesinfo.append(UserData(Age: age, Traits: traits, Education: education, Occupation1: occupation1, Occupation2: occupation2, Sports: sports, Hobbies: hobbies, MovieTV1: mnt1, MovieTV2: mnt2, Music1: music1, Music2: music2, StarSign: starsign, Politics: politics, Gender: gender, id: id, Name: name, Percentage: percentage, ProfilePics: profilepics, Rates: rates, OverallRating: overallrating, AppearanceRating: appearancerating, PersonalityRating: personalityrating, SelfRating: selfrating, Socials: socials, Report: report, Reports: reports, Preferences: preferences))
                         }
                     }
                 }
@@ -8680,7 +9029,7 @@ func CreateUser2(name: String, bdate: String, gender: String, percentage: Double
     let uid = Auth.auth().currentUser?.uid
     var images = [String]()
     
-    db.collection("users").document(uid!).setData(["Name": name, "Birthdate": bdate, "Gender": gender, "Percentage": percentage, "SelfRating": overallrating, "SelfARating": appearancerating, "SelfPRating": personalityrating, "ProfilePics": [String](), "Rates": [String](), "OverallRating": overallrating, "AppearanceRating": appearancerating, "PersonalityRating": personalityrating, "ID": uid!, "Lock": [Bool](), "Keys": 0, "Comments": [String](), "Socials": socials, "Report": 0, "Preferences": ["Everyone", "Everyone", "18-99"], "Reports": [String](), "Reported": [Bool](), "Traits": traits, "Education": education, "Occupation (title)": occupation1, "Occupation (co)": occupation2, "Sports": sports, "Hobbies": hobby, "Movie/TV (name)": mnt1,  "Movie/TV (genre)": mnt2, "Music (title)": music1, "Music (genre)": music2, "Star Sign": starsign, "Politics": politics]) { (err) in
+    db.collection("users").document(uid!).setData(["Name": name, "Birthdate": bdate, "Gender": gender, "Percentage": percentage, "SelfRating": overallrating, "SelfARating": appearancerating, "SelfPRating": personalityrating, "ProfilePics": [String](), "Rates": [String](), "OverallRating": overallrating, "AppearanceRating": appearancerating, "PersonalityRating": personalityrating, "ID": uid!, "Lock": [Bool](), "Keys": 0, "Comments": [String](), "Socials": socials, "Report": 0, "Preferences": ["Everyone", "Everyone", "18-99"], "Reports": [String](), "Reported": [Bool](), "Traits": traits, "Education": education, "Occupation (title)": occupation1, "Occupation (co)": occupation2, "Sports": sports, "Hobbies": hobby, "MovieTV (title)": mnt1,  "MovieTV (genre)": mnt2, "Music (title)": music1, "Music (genre)": music2, "Star Sign": starsign, "Politics": politics]) { (err) in
         if err != nil{
             print((err?.localizedDescription)!)
             complete(false)
@@ -9296,7 +9645,19 @@ struct ratingtype {
 //MARK: UserData
 struct UserData: Identifiable {
     var Age: String
-    var Bio: [String]
+    //var Bio: [String]
+    var Traits: [Int]
+    var Education: [String]
+    var Occupation1: [String]
+    var Occupation2: [String]
+    var Sports: [String]
+    var Hobbies: [String]
+    var MovieTV1: [String]
+    var MovieTV2: [String]
+    var Music1: [String]
+    var Music2: [String]
+    var StarSign: String
+    var Politics: String
     var Gender: String
     var id: String
     var Name: String
