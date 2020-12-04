@@ -3614,11 +3614,14 @@ struct HomeView: View {
                                     self.settings.toggle()
                                 }
                             }) {
-                                HStack(spacing: 2.5) {
+                                ZStack {
+                                    Color(.white)
+                                        .frame(width: 50, height: 40)
+                                        .opacity(0)
                                     Image(systemName: "line.horizontal.3")
                                         //.font(Font.system(size: 36, weight: .heavy))
                                         .resizable()
-                                        .frame(width: 37.5, height: 30)
+                                        .frame(width: 30, height: 24)
                                         .foregroundColor(Color(.darkGray))
                                     /*Image("settings-1")
                                         .renderingMode(.template)
@@ -3626,7 +3629,7 @@ struct HomeView: View {
                                         .frame(width: screenheight*0.047, height: screenheight*0.047)
                                         .foregroundColor(Color(.darkGray))*/
                                 }
-                            }.buttonStyle(PlainButtonStyle()).padding(.leading, screenwidth*0.05)
+                            }.buttonStyle(PlainButtonStyle()).padding(.leading, 10)
                             Spacer()
                             Button(action: {
                                 self.showkeys = true
@@ -3643,7 +3646,7 @@ struct HomeView: View {
                                         .shadow(radius: 5)
                                     Image("key")
                                         .resizable()
-                                        .frame(width: screenheight*0.044, height: screenheight*0.044)
+                                        .frame(width: screenheight*0.04, height: screenheight*0.04)
                                         .foregroundColor(Color(.blue).opacity(0.4))
                                 }//.padding(2.5).background(Color(.blue).opacity(0.4).cornerRadius(10))
                             }/*.padding(5).background(Color(.white).cornerRadius(12.5).shadow(color: Color("lightgray"), radius: 5))*/.padding(.trailing, screenwidth*0.05)
@@ -3874,13 +3877,19 @@ struct HomeView: View {
                                                     }
                                                 }
                                             }) {
-                                                Text("Save")
-                                                    .font(Font.custom("ProximaNova-Regular", size: 22))
-                                                    .fontWeight(.semibold)
-                                                    .foregroundColor(.white)
-                                                    .frame(width: screenwidth/3.5 - 20, height: screenheight*0.05 - 10)
-                                                    .background(Color(.blue).opacity(0.4).cornerRadius(screenheight*0.015))
-                                            }.padding(5)//.background(Color(.white).cornerRadius(screenheight*0.015 + 2.5).shadow(color: Color(.lightGray).opacity(0.5), radius: 5)).padding(.top, screenheight*0.01)
+                                                HStack(spacing: 7.5) {
+                                                    Text("Save")
+                                                        .font(Font.custom("ProximaNova-Regular", size: 20))
+                                                        .fontWeight(.semibold)
+                                                        .foregroundColor(Color(.darkGray))
+                                                        .fixedSize(horizontal: true, vertical: true)
+                                                    Image("save")
+                                                        .renderingMode(.template)
+                                                        .resizable()
+                                                        .frame(width: 20, height: 20)
+                                                        .foregroundColor(Color(.darkGray))
+                                                }
+                                            }.padding(10)//.padding(.horizontal, 10).background(Color("lightgray").opacity(0.2).shadow(color: Color("lightgray"), radius: 15).cornerRadius(5))
                                         }
                                     }
                                     Spacer()
@@ -4038,9 +4047,10 @@ struct HomeView: View {
                                 Text(self.observer.comments[self.unlockindex])
                                     .font(Font.custom("ProximaNova-Regular", size: 20))
                                     .fontWeight(.semibold)
-                                    .foregroundColor(Color(.gray))
+                                    .foregroundColor(Color(.darkGray))
                                     .frame(width: self.screenwidth/1.75)
                                     .fixedSize(horizontal: false, vertical: true)
+                                    .padding(.top, 10)
                             }
                             if self.report {
                                 VStack(spacing: 20) {
@@ -4202,7 +4212,7 @@ struct HomeView: View {
                                                     .font(Font.custom("ProximaNova-Regular", size: 22))
                                                     .fontWeight(.semibold)
                                                     .animation(nil)
-                                                    .foregroundColor(.black)
+                                                    .foregroundColor(Color(.darkGray))
                                                     .frame(height: 50)
                                                 Spacer().frame(width: 2.5)
                                                 HStack(spacing: 2.5) {
@@ -4223,7 +4233,7 @@ struct HomeView: View {
                                                     .font(Font.custom("ProximaNova-Regular", size: 22))
                                                     .fontWeight(.semibold)
                                                     .animation(nil)
-                                                    .foregroundColor(.black)
+                                                    .foregroundColor(Color(.darkGray))
                                                     .frame(height: 50)
                                             }
                                             else {
@@ -4231,7 +4241,7 @@ struct HomeView: View {
                                                     .font(Font.custom("ProximaNova-Regular", size: 22))
                                                     .fontWeight(.semibold)
                                                     .animation(nil)
-                                                    .foregroundColor(.black)
+                                                    .foregroundColor(Color(.darkGray))
                                                     .frame(height: 50)
                                             }
                                         }.frame(width: screenwidth/1.5).background(Color(.white).cornerRadius(25).shadow(color: Color("lightgray").opacity(0.9), radius: 10))
@@ -4252,7 +4262,7 @@ struct HomeView: View {
                                                     .fontWeight(.semibold)
                                                     .lineLimit(1)
                                                     .animation(nil)
-                                                    .foregroundColor(self.confirm || self.confirm1 ? .white : Color(.black))
+                                                    .foregroundColor(self.confirm || self.confirm1 ? .white : Color(.darkGray))
                                                     .frame(maxWidth: .infinity)
                                                     .frame(height: 50)
                                             }.frame(width: screenwidth/1.5).background((self.confirm || self.confirm1 ? Color("personality") : Color(.white)).cornerRadius(25).shadow(color: Color("lightgray").opacity(0.9), radius: 10))
@@ -4640,6 +4650,12 @@ struct RatingView: View {
     @State var connectionstatus = true
     @State var refreshing: Int = 0
     
+    @State var openness = [false, false, false, true, false, false, false]
+    @State var conscientiousness = [false, false, false, true, false, false, false]
+    @State var extraversion = [false, false, false, true, false, false, false]
+    @State var agreeableness = [false, false, false, true, false, false, false]
+    @State var neuroticism = [false, false, false, true, false, false, false]
+    
     @State var edu = true
     @State var occu = true
     @State var sport = true
@@ -4804,187 +4820,205 @@ struct RatingView: View {
                                                         .frame(width: screenwidth - 20, height: screenheight*0.7)
                                                         .cornerRadius(25)
                                                     ScrollView(.vertical, showsIndicators: false) {
+                                                        //MARK: Personality Traits
+                                                        VStack {
+                                                            Text("Personality Traits")
+                                                                .font(Font.custom("ProximaNova-Regular", size: 20))
+                                                                .fontWeight(.semibold)
+                                                                .foregroundColor(Color(.darkGray))
+                                                            PersonalityTraitsView(openness: self.$openness, conscientiousness: self.$conscientiousness, extraversion: self.$extraversion, agreeableness: self.$agreeableness, neuroticism: self.$neuroticism)
+                                                        }.frame(width: self.screenwidth*0.8 + 10).padding(5).background(Color(.white).cornerRadius(15))
+                                                        
                                                         VStack(spacing: 5) {
                                                             Group {
-                                                                //MARK: Education
+                                                                if self.observer.users[self.observer.rated].Education.count > 0 {
+                                                                    //MARK: Education
+                                                                    VStack(spacing: 5) {
+                                                                        HStack {
+                                                                            Image("education-2")
+                                                                                .renderingMode(.template)
+                                                                                .resizable()
+                                                                                .frame(width: 25, height: 25)
+                                                                                .foregroundColor(Color(.darkGray))
+                                                                            Text("Education")
+                                                                                .font(Font.custom("ProximaNova-Regular", size: 20))
+                                                                                .fontWeight(.semibold)
+                                                                                .foregroundColor(Color(.darkGray))
+                                                                            Spacer()
+                                                                            Image(systemName: self.edu ? "chevron.up" : "chevron.down")
+                                                                                .font(Font.system(size: 15, weight: .heavy))
+                                                                                .foregroundColor(Color(.darkGray))
+                                                                        }.padding(10).background(Color(.white)).onTapGesture {
+                                                                            self.edu.toggle()
+                                                                        }
+                                                                        if edu {
+                                                                            ForEach(self.observer.users[self.observer.rated].Education, id: \.self) { education in
+                                                                                HStack {
+                                                                                    Image("education-1")
+                                                                                        .renderingMode(.template)
+                                                                                        .resizable()
+                                                                                        .frame(width: 20, height: 20)
+                                                                                        .foregroundColor(Color(.white))
+                                                                                        .padding(.leading, 10)
+                                                                                    VStack(alignment: .leading, spacing: 0) {
+                                                                                        Text(String(education.prefix(education.count-4)))
+                                                                                            .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                                                            .fontWeight(.semibold)
+                                                                                            .foregroundColor(Color(.white))
+                                                                                        Text(String(education.suffix(4)))
+                                                                                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                                                                                            .fontWeight(.semibold)
+                                                                                            .foregroundColor(Color(.white))
+                                                                                            .opacity(0.5)
+                                                                                    }
+                                                                                    Spacer()
+                                                                                }.frame(width: self.screenwidth*0.7, height: 45)
+                                                                                    .background(Color(.darkGray).cornerRadius(10))
+                                                                            }
+                                                                        }
+                                                                    }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.edu ? 10 : 0)
+                                                                        .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))//.padding(.vertical, 10)
+                                                                    Divider().frame(width: self.screenwidth*0.8 + 10)
+                                                                }
+                                                                if self.observer.users[self.observer.rated].Occupation1.count > 0 {
+                                                                    //MARK: Occupation
+                                                                    VStack(spacing: 5) {
+                                                                        HStack {
+                                                                            Image("occupation-1")
+                                                                                .renderingMode(.template)
+                                                                                .resizable()
+                                                                                .frame(width: 25, height: 25)
+                                                                                .foregroundColor(Color(.darkGray))
+                                                                            Text("Occupation")
+                                                                                .font(Font.custom("ProximaNova-Regular", size: 20))
+                                                                                .fontWeight(.semibold)
+                                                                                .foregroundColor(Color(.darkGray))
+                                                                            Spacer()
+                                                                            Image(systemName: self.occu ? "chevron.up" : "chevron.down")
+                                                                                .font(Font.system(size: 15, weight: .heavy))
+                                                                                .foregroundColor(Color(.darkGray))
+                                                                        }.padding(10).background(Color(.white)).onTapGesture {
+                                                                            self.occu.toggle()
+                                                                        }
+                                                                        if occu {
+                                                                            ForEach(0...(self.observer.users[self.observer.rated].Occupation1.count-1), id: \.self) { num in
+                                                                                HStack {
+                                                                                    Image("occupation-1")
+                                                                                        .renderingMode(.template)
+                                                                                        .resizable()
+                                                                                        .frame(width: 20, height: 20)
+                                                                                        .foregroundColor(Color(.white))
+                                                                                        .padding(.leading, 10)
+                                                                                    VStack(alignment: .leading, spacing: 0) {
+                                                                                        Text(self.observer.users[self.observer.rated].Occupation1[num])
+                                                                                            .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                                                            .fontWeight(.semibold)
+                                                                                            .foregroundColor(Color(.white))
+                                                                                        Text(self.observer.users[self.observer.rated].Occupation2[num])
+                                                                                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                                                                                            .fontWeight(.semibold)
+                                                                                            .foregroundColor(Color(.white))
+                                                                                            .opacity(0.5)
+                                                                                    }
+                                                                                    Spacer()
+                                                                                }.frame(width: self.screenwidth*0.7, height: 45)
+                                                                                    .background(Color(.darkGray).cornerRadius(10))
+                                                                            }
+                                                                        }
+                                                                    }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.occu ? 10 : 0)
+                                                                    .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))
+                                                                    Divider().frame(width: self.screenwidth*0.8 + 10)
+                                                                }
+                                                            }
+                                                            if self.observer.users[self.observer.rated].Sports.count > 0 {
+                                                                //MARK: Sports
                                                                 VStack(spacing: 5) {
                                                                     HStack {
-                                                                        Image("education-2")
+                                                                        Image("basketball")
                                                                             .renderingMode(.template)
                                                                             .resizable()
                                                                             .frame(width: 25, height: 25)
                                                                             .foregroundColor(Color(.darkGray))
-                                                                        Text("Education")
+                                                                        Text("Sports")
                                                                             .font(Font.custom("ProximaNova-Regular", size: 20))
                                                                             .fontWeight(.semibold)
                                                                             .foregroundColor(Color(.darkGray))
                                                                         Spacer()
-                                                                        Image(systemName: self.edu ? "chevron.up" : "chevron.down")
+                                                                        Image(systemName: self.sport ? "chevron.up" : "chevron.down")
                                                                             .font(Font.system(size: 15, weight: .heavy))
                                                                             .foregroundColor(Color(.darkGray))
                                                                     }.padding(10).background(Color(.white)).onTapGesture {
-                                                                        self.edu.toggle()
+                                                                        self.sport.toggle()
                                                                     }
-                                                                    if edu && self.observer.users[self.observer.rated].Education.count > 0 {
-                                                                        ForEach(self.observer.users[self.observer.rated].Education, id: \.self) { education in
+                                                                    if sport {
+                                                                        ForEach(self.observer.users[self.observer.rated].Sports, id: \.self) { sp in
                                                                             HStack {
-                                                                                Image("education-1")
+                                                                                Image(sp.lowercased())
                                                                                     .renderingMode(.template)
                                                                                     .resizable()
                                                                                     .frame(width: 20, height: 20)
                                                                                     .foregroundColor(Color(.white))
                                                                                     .padding(.leading, 10)
                                                                                 VStack(alignment: .leading, spacing: 0) {
-                                                                                    Text(String(education.prefix(education.count-4)))
-                                                                                        .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                                                    Text(sp)
+                                                                                        .font(Font.custom("ProximaNova-Regular", size: 18))
                                                                                         .fontWeight(.semibold)
                                                                                         .foregroundColor(Color(.white))
-                                                                                    Text(String(education.suffix(4)))
-                                                                                        .font(Font.custom("ProximaNova-Regular", size: 14))
-                                                                                        .fontWeight(.semibold)
-                                                                                        .foregroundColor(Color(.white))
-                                                                                        .opacity(0.5)
                                                                                 }
                                                                                 Spacer()
-                                                                            }.frame(width: self.screenwidth*0.7, height: 45)
+                                                                            }.frame(width: self.screenwidth*0.7, height: 40)
                                                                                 .background(Color(.darkGray).cornerRadius(10))
                                                                         }
                                                                     }
-                                                                }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.edu ? 10 : 0)
-                                                                    .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))//.padding(.vertical, 10)
-                                                                Divider().frame(width: self.screenwidth*0.8 + 10)
-                                                                //MARK: Occupation
-                                                                VStack(spacing: 5) {
-                                                                    HStack {
-                                                                        Image("occupation-1")
-                                                                            .renderingMode(.template)
-                                                                            .resizable()
-                                                                            .frame(width: 25, height: 25)
-                                                                            .foregroundColor(Color(.darkGray))
-                                                                        Text("Occupation")
-                                                                            .font(Font.custom("ProximaNova-Regular", size: 20))
-                                                                            .fontWeight(.semibold)
-                                                                            .foregroundColor(Color(.darkGray))
-                                                                        Spacer()
-                                                                        Image(systemName: self.occu ? "chevron.up" : "chevron.down")
-                                                                            .font(Font.system(size: 15, weight: .heavy))
-                                                                            .foregroundColor(Color(.darkGray))
-                                                                    }.padding(10).background(Color(.white)).onTapGesture {
-                                                                        self.occu.toggle()
-                                                                    }
-                                                                    if occu && self.observer.users[self.observer.rated].Occupation1.count > 0 {
-                                                                        ForEach(0...(self.observer.users[self.observer.rated].Occupation1.count-1), id: \.self) { num in
-                                                                            HStack {
-                                                                                Image("occupation-1")
-                                                                                    .renderingMode(.template)
-                                                                                    .resizable()
-                                                                                    .frame(width: 20, height: 20)
-                                                                                    .foregroundColor(Color(.white))
-                                                                                    .padding(.leading, 10)
-                                                                                VStack(alignment: .leading, spacing: 0) {
-                                                                                    Text(self.observer.users[self.observer.rated].Occupation1[num])
-                                                                                        .font(Font.custom("ProximaNova-Regular", size: 16))
-                                                                                        .fontWeight(.semibold)
-                                                                                        .foregroundColor(Color(.white))
-                                                                                    Text(self.observer.users[self.observer.rated].Occupation2[num])
-                                                                                        .font(Font.custom("ProximaNova-Regular", size: 14))
-                                                                                        .fontWeight(.semibold)
-                                                                                        .foregroundColor(Color(.white))
-                                                                                        .opacity(0.5)
-                                                                                }
-                                                                                Spacer()
-                                                                            }.frame(width: self.screenwidth*0.7, height: 45)
-                                                                                .background(Color(.darkGray).cornerRadius(10))
-                                                                        }
-                                                                    }
-                                                                }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.occu ? 10 : 0)
+                                                                }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.sport ? 10 : 0)
                                                                 .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))
                                                                 Divider().frame(width: self.screenwidth*0.8 + 10)
                                                             }
-                                                            //MARK: Sports
-                                                            VStack(spacing: 5) {
-                                                                HStack {
-                                                                    Image("basketball")
-                                                                        .renderingMode(.template)
-                                                                        .resizable()
-                                                                        .frame(width: 25, height: 25)
-                                                                        .foregroundColor(Color(.darkGray))
-                                                                    Text("Sports")
-                                                                        .font(Font.custom("ProximaNova-Regular", size: 20))
-                                                                        .fontWeight(.semibold)
-                                                                        .foregroundColor(Color(.darkGray))
-                                                                    Spacer()
-                                                                    Image(systemName: self.sport ? "chevron.up" : "chevron.down")
-                                                                        .font(Font.system(size: 15, weight: .heavy))
-                                                                        .foregroundColor(Color(.darkGray))
-                                                                }.padding(10).background(Color(.white)).onTapGesture {
-                                                                    self.sport.toggle()
-                                                                }
-                                                                if sport && self.observer.users[self.observer.rated].Sports.count > 0 {
-                                                                    ForEach(self.observer.users[self.observer.rated].Sports, id: \.self) { sp in
-                                                                        HStack {
-                                                                            Image(sp.lowercased())
-                                                                                .renderingMode(.template)
-                                                                                .resizable()
-                                                                                .frame(width: 20, height: 20)
-                                                                                .foregroundColor(Color(.white))
-                                                                                .padding(.leading, 10)
-                                                                            VStack(alignment: .leading, spacing: 0) {
-                                                                                Text(sp)
-                                                                                    .font(Font.custom("ProximaNova-Regular", size: 18))
-                                                                                    .fontWeight(.semibold)
-                                                                                    .foregroundColor(Color(.white))
-                                                                            }
-                                                                            Spacer()
-                                                                        }.frame(width: self.screenwidth*0.7, height: 40)
-                                                                            .background(Color(.darkGray).cornerRadius(10))
+                                                            if self.observer.users[self.observer.rated].Hobbies.count > 0 {
+                                                                //MARK: Hobbies
+                                                                VStack(spacing: 5) {
+                                                                    HStack {
+                                                                        Image("hobbies-1")
+                                                                            .renderingMode(.template)
+                                                                            .resizable()
+                                                                            .frame(width: 25, height: 25)
+                                                                            .foregroundColor(Color(.darkGray))
+                                                                        Text("Hobbies")
+                                                                            .font(Font.custom("ProximaNova-Regular", size: 20))
+                                                                            .fontWeight(.semibold)
+                                                                            .foregroundColor(Color(.darkGray))
+                                                                        Spacer()
+                                                                        Image(systemName: self.hobby ? "chevron.up" : "chevron.down")
+                                                                            .font(Font.system(size: 15, weight: .heavy))
+                                                                            .foregroundColor(Color(.darkGray))
+                                                                    }.padding(10).background(Color(.white)).onTapGesture {
+                                                                        self.hobby.toggle()
                                                                     }
-                                                                }
-                                                            }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.sport ? 10 : 0)
-                                                            .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))
-                                                            Divider().frame(width: self.screenwidth*0.8 + 10)
-                                                            //MARK: Hobbies
-                                                            VStack(spacing: 5) {
-                                                                HStack {
-                                                                    Image("hobbies-1")
-                                                                        .renderingMode(.template)
-                                                                        .resizable()
-                                                                        .frame(width: 25, height: 25)
-                                                                        .foregroundColor(Color(.darkGray))
-                                                                    Text("Hobbies")
-                                                                        .font(Font.custom("ProximaNova-Regular", size: 20))
-                                                                        .fontWeight(.semibold)
-                                                                        .foregroundColor(Color(.darkGray))
-                                                                    Spacer()
-                                                                    Image(systemName: self.hobby ? "chevron.up" : "chevron.down")
-                                                                        .font(Font.system(size: 15, weight: .heavy))
-                                                                        .foregroundColor(Color(.darkGray))
-                                                                }.padding(10).background(Color(.white)).onTapGesture {
-                                                                    self.hobby.toggle()
-                                                                }
-                                                                if hobby && self.observer.users[self.observer.rated].Hobbies.count > 0 {
-                                                                    ForEach(self.observer.users[self.observer.rated].Hobbies, id: \.self) { hb in
-                                                                        HStack {
-                                                                            Image("hobbies-1")
-                                                                                .renderingMode(.template)
-                                                                                .resizable()
-                                                                                .frame(width: 20, height: 20)
-                                                                                .foregroundColor(Color(.white))
-                                                                                .padding(.leading, 10)
-                                                                            VStack(alignment: .leading, spacing: 2.5) {
-                                                                                Text(hb)
-                                                                                    .font(Font.custom("ProximaNova-Regular", size: 18))
-                                                                                    .fontWeight(.semibold)
+                                                                    if hobby {
+                                                                        ForEach(self.observer.users[self.observer.rated].Hobbies, id: \.self) { hb in
+                                                                            HStack {
+                                                                                Image("hobbies-1")
+                                                                                    .renderingMode(.template)
+                                                                                    .resizable()
+                                                                                    .frame(width: 20, height: 20)
                                                                                     .foregroundColor(Color(.white))
-                                                                            }
-                                                                            Spacer()
-                                                                        }.frame(width: self.screenwidth*0.7, height: 40)
-                                                                            .background(Color(.darkGray).cornerRadius(10))
+                                                                                    .padding(.leading, 10)
+                                                                                VStack(alignment: .leading, spacing: 2.5) {
+                                                                                    Text(hb)
+                                                                                        .font(Font.custom("ProximaNova-Regular", size: 18))
+                                                                                        .fontWeight(.semibold)
+                                                                                        .foregroundColor(Color(.white))
+                                                                                }
+                                                                                Spacer()
+                                                                            }.frame(width: self.screenwidth*0.7, height: 40)
+                                                                                .background(Color(.darkGray).cornerRadius(10))
+                                                                        }
                                                                     }
-                                                                }
-                                                            }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.hobby ? 10 : 0)
-                                                            .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))
-                                                            Divider().frame(width: self.screenwidth*0.8 + 10)
+                                                                }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.hobby ? 10 : 0)
+                                                                .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))
+                                                                Divider().frame(width: self.screenwidth*0.8 + 10)
+                                                            }
+                                                            
                                                             if self.observer.users[self.observer.rated].MovieTV1.count > 0 {
                                                                 //MARK: Movies/TV
                                                                 VStack(spacing: 5) {
@@ -5034,63 +5068,62 @@ struct RatingView: View {
                                                                 .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))
                                                                 Divider().frame(width: self.screenwidth*0.8 + 10)
                                                             }
-                                                            //MARK: Music
-                                                            VStack(spacing: 5) {
-                                                                HStack {
-                                                                    Image("song")
-                                                                        .renderingMode(.template)
-                                                                        .resizable()
-                                                                        .frame(width: 25, height: 25)
-                                                                        .foregroundColor(Color(.darkGray))
-                                                                    Text("Music")
-                                                                        .font(Font.custom("ProximaNova-Regular", size: 20))
-                                                                        .fontWeight(.semibold)
-                                                                        .foregroundColor(Color(.darkGray))
-                                                                    Spacer()
-                                                                    Image(systemName: self.mus ? "chevron.up" : "chevron.down")
-                                                                        .font(Font.system(size: 15, weight: .heavy))
-                                                                        .foregroundColor(Color(.darkGray))
-                                                                }.padding(10).background(Color(.white)).onTapGesture {
-                                                                    if self.observer.users[self.observer.rated].Music1.count > 0 {
+                                                            if self.observer.users[self.observer.rated].Music1.count > 0 {
+                                                                //MARK: Music
+                                                                VStack(spacing: 5) {
+                                                                    HStack {
+                                                                        Image("song")
+                                                                            .renderingMode(.template)
+                                                                            .resizable()
+                                                                            .frame(width: 25, height: 25)
+                                                                            .foregroundColor(Color(.darkGray))
+                                                                        Text("Music")
+                                                                            .font(Font.custom("ProximaNova-Regular", size: 20))
+                                                                            .fontWeight(.semibold)
+                                                                            .foregroundColor(Color(.darkGray))
+                                                                        Spacer()
+                                                                        Image(systemName: self.mus ? "chevron.up" : "chevron.down")
+                                                                            .font(Font.system(size: 15, weight: .heavy))
+                                                                            .foregroundColor(Color(.darkGray))
+                                                                    }.padding(10).background(Color(.white)).onTapGesture {
                                                                         self.mus.toggle()
                                                                     }
-                                                                }
-                                                                if mus && self.observer.users[self.observer.rated].Music1.count > 0 {
-                                                                    ForEach(0...(self.observer.users[self.observer.rated].Music1.count-1), id: \.self) { num in
-                                                                        HStack {
-                                                                            Image(self.observer.users[self.observer.rated].Music2[num])
-                                                                                .renderingMode(.template)
-                                                                                .resizable()
-                                                                                .frame(width: 20, height: 20)
-                                                                                .foregroundColor(Color(.white))
-                                                                                .padding(.leading, 10)
-                                                                            VStack(alignment: .leading, spacing: 0) {
-                                                                                Text(self.observer.users[self.observer.rated].Music1[num])
-                                                                                    .font(Font.custom("ProximaNova-Regular", size: 16))
-                                                                                    .fontWeight(.semibold)
+                                                                    if mus {
+                                                                        ForEach(0...(self.observer.users[self.observer.rated].Music1.count-1), id: \.self) { num in
+                                                                            HStack {
+                                                                                Image(self.observer.users[self.observer.rated].Music2[num])
+                                                                                    .renderingMode(.template)
+                                                                                    .resizable()
+                                                                                    .frame(width: 20, height: 20)
                                                                                     .foregroundColor(Color(.white))
-                                                                                Text(self.observer.users[self.observer.rated].Music2[num])
-                                                                                    .font(Font.custom("ProximaNova-Regular", size: 14))
-                                                                                    .fontWeight(.semibold)
-                                                                                    .foregroundColor(Color(.white))
-                                                                                    .opacity(0.5)
-                                                                            }
-                                                                            Spacer()
-                                                                        }.frame(width: self.screenwidth*0.7, height: 45)
-                                                                            .background(Color(.darkGray).cornerRadius(10))
+                                                                                    .padding(.leading, 10)
+                                                                                VStack(alignment: .leading, spacing: 0) {
+                                                                                    Text(self.observer.users[self.observer.rated].Music1[num])
+                                                                                        .font(Font.custom("ProximaNova-Regular", size: 16))
+                                                                                        .fontWeight(.semibold)
+                                                                                        .foregroundColor(Color(.white))
+                                                                                    Text(self.observer.users[self.observer.rated].Music2[num])
+                                                                                        .font(Font.custom("ProximaNova-Regular", size: 14))
+                                                                                        .fontWeight(.semibold)
+                                                                                        .foregroundColor(Color(.white))
+                                                                                        .opacity(0.5)
+                                                                                }
+                                                                                Spacer()
+                                                                            }.frame(width: self.screenwidth*0.7, height: 45)
+                                                                                .background(Color(.darkGray).cornerRadius(10))
+                                                                        }
                                                                     }
-                                                                }
-                                                            }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.mus ? 10 : 0)
-                                                            .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))
+                                                                }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.mus ? 10 : 0)
+                                                                .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))
+                                                            }
                                                         }.background(Color(.white).cornerRadius(15))
-                                                    }.frame(width: screenwidth - 20, height: screenheight*0.7 - 20).background(Color(.clear)).cornerRadius(30)
+                                                    }.frame(width: screenwidth - 20, height: screenheight*0.7 - 20).background(Color(.clear)).cornerRadius(30).animation(.spring())
                                                     
                                                 }
                                                 
                                             }.offset(y: self.bio ? -screenheight*0.35 : screenheight*0.35)
                                         }.frame(width: screenwidth - 20, height: screenheight*0.7).cornerRadius(25)
                                     }.frame(width: screenwidth - 20, height: screenheight*0.7).cornerRadius(25).scaleEffect(self.next ? 0 : 1)
-                                    //Spacer()
                                     //MARK: Bottom UI Buttons
                                     HStack(spacing: 10) {
                                         if !self.rating {
@@ -5194,29 +5227,33 @@ struct RatingView: View {
                 VStack {
                     HStack {
                         Button(action: {
-                            self.rating1.toggle()
+                            self.rating1 = false
                         }) {
-                            Image("back")
-                                .resizable()
-                                .frame(width: 37, height: 35)
-                                .foregroundColor(Color(.gray))
-                        }.padding(.leading, 15)
+                            ZStack {
+                                Color(.white)
+                                    .frame(width: 50, height: 50)
+                                    .opacity(0)
+                                Image(systemName: "chevron.left")
+                                    .font(Font.system(size: 24, weight: .heavy))
+                                    .foregroundColor(Color(.darkGray))
+                            }
+                        }//.padding(.leading, 10)
                         Spacer()
                         Button(action: {
                             self.showkeys.toggle()
                         }) {
-                            HStack {
+                            HStack(spacing: 2.5) {
                                 Text(String(self.observer.keys))
-                                    .font(Font.custom("ProximaNova-Regular", size: 32))
+                                    .font(Font.custom("ProximaNova-Regular", size: 28))
                                     .fontWeight(.semibold)
                                     .foregroundColor(Color(.blue).opacity(0.5))
                                     .animation(nil)
                                 Image("key")
                                     .resizable()
-                                    .frame(width: 40, height: 40)
+                                    .frame(width: 30, height: 30)
                                     .foregroundColor(Color(.blue).opacity(0.5))
                             }
-                        }.padding(.trailing, 10)
+                        }.padding(.trailing, 15)
                     }.padding(.top, self.screenheight > 800 ? self.screenheight*0.05 : self.screenheight*0.035)
                     Spacer()
                 }
@@ -5963,6 +6000,449 @@ struct RatingView: View {
             UserDefaults.standard.set(self.ad, forKey: "ad")
             UserDefaults.standard.set(self.showad, forKey: "showad")
         }
+    }
+}
+
+//MARK: Personality Traits
+struct PersonalityTraitsView: View {
+    @Binding var openness: [Bool]
+    @Binding var conscientiousness: [Bool]
+    @Binding var extraversion: [Bool]
+    @Binding var agreeableness: [Bool]
+    @Binding var neuroticism: [Bool]
+    @State var o = false
+    @State var c = false
+    @State var e = false
+    @State var a = false
+    @State var n = false
+    var body: some View {
+        VStack(spacing: 2.5) {
+            HStack(alignment: .top, spacing: self.o ? 0 : 10) {
+                Image("openness")
+                    .renderingMode(.template)
+                    .resizable()
+                    .frame(width: 30, height: 30)
+                    .foregroundColor(Color(.darkGray))
+                    .padding(.leading, 5)
+                VStack(spacing: 2.5) {
+                    HStack(spacing: 2.5) {
+                        Circle()
+                            .strokeBorder(lineWidth: 2.5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(openness[0] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 2.5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(openness[1] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 2.5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(openness[2] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 2.5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(openness[3] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 2.5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(openness[4] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 2.5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(openness[5] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 2.5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(openness[6] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                    }
+                    if o {
+                        HStack(alignment: .top) {
+                            Text("calculative practical")
+                                .font(Font.custom("ProximaNova-Regular", size: 10))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.darkGray))
+                                .multilineTextAlignment(.center)
+                                .frame(width: 65)
+                                .fixedSize(horizontal: false, vertical: true)
+                            
+                            Spacer()
+                            
+                            Text("neutral")
+                                .font(Font.custom("ProximaNova-Regular", size: 12))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.darkGray))
+                            
+                            Spacer()
+                            
+                            Text("creative imaginative")
+                                .font(Font.custom("ProximaNova-Regular", size: 10))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.darkGray))
+                                .multilineTextAlignment(.center)
+                                .frame(width: 65)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }.padding(.horizontal, 15)
+                    }
+                    
+                }
+                Button(action: {
+                    self.o.toggle()
+                }) {
+                    Image("info")
+                        .renderingMode(.template)
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(Color(.darkGray))
+                }
+            }
+            HStack(alignment: .top, spacing: self.c ? 0 : 10) {
+                Image("conscientiousness")
+                    .renderingMode(.template)
+                    .resizable()
+                    .frame(width: 30, height: 30)
+                    .foregroundColor(Color(.darkGray))
+                    .padding(.leading, 5)
+                VStack(spacing: 2.5) {
+                    HStack(spacing: 5) {
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(conscientiousness[0] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(conscientiousness[1] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(conscientiousness[2] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(conscientiousness[3] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(conscientiousness[4] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(conscientiousness[5] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(conscientiousness[6] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                    }
+                    if c {
+                        HStack(alignment: .top) {
+                            Text("careless disorganized")
+                                .font(Font.custom("ProximaNova-Regular", size: 10))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.darkGray))
+                                .multilineTextAlignment(.center)
+                                .frame(width: 65)
+                                .fixedSize(horizontal: false, vertical: true)
+                            
+                            Spacer()
+                            
+                            Text("neutral")
+                                .font(Font.custom("ProximaNova-Regular", size: 12))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.darkGray))
+                            
+                            Spacer()
+                            
+                            Text("focused organized")
+                                .font(Font.custom("ProximaNova-Regular", size: 10))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.darkGray))
+                                .multilineTextAlignment(.center)
+                                .frame(width: 65)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }//.padding(.horizontal, 30)
+                    }
+                }
+                Button(action: {
+                    self.c.toggle()
+                }) {
+                    Image("info")
+                        .renderingMode(.template)
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(Color(.darkGray))
+                }
+            }
+            HStack(alignment: .top, spacing: self.e ? 0 : 10) {
+                Image("extraversion")
+                    .renderingMode(.template)
+                    .resizable()
+                    .frame(width: 30, height: 30)
+                    .foregroundColor(Color(.darkGray))
+                    .padding(.leading, 5)
+                VStack(spacing: 2.5) {
+                    HStack(spacing: 5) {
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(extraversion[0] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(extraversion[1] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(extraversion[2] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(extraversion[3] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(extraversion[4] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(extraversion[5] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(extraversion[6] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                    }
+                    if e {
+                        HStack(alignment: .top) {
+                            Text("reserved solitary")
+                                .font(Font.custom("ProximaNova-Regular", size: 10))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.darkGray))
+                                .multilineTextAlignment(.center)
+                                .frame(width: 65)
+                                .fixedSize(horizontal: false, vertical: true)
+                            
+                            Spacer()
+                            
+                            Text("neutral")
+                                .font(Font.custom("ProximaNova-Regular", size: 12))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.darkGray))
+                            
+                            Spacer()
+                            
+                            Text("outgoing adventurous")
+                                .font(Font.custom("ProximaNova-Regular", size: 10))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.darkGray))
+                                .multilineTextAlignment(.center)
+                                .frame(width: 65)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }//.padding(.horizontal, 30)
+                    }
+                }
+                Button(action: {
+                    self.e.toggle()
+                }) {
+                    Image("info")
+                        .renderingMode(.template)
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(Color(.darkGray))
+                }
+            }
+            HStack(alignment: .top, spacing: self.a ? 0 : 10) {
+                Image("agreeableness")
+                    .renderingMode(.template)
+                    .resizable()
+                    .frame(width: 30, height: 30)
+                    .foregroundColor(Color(.darkGray))
+                    .padding(.leading, 5)
+                
+                VStack(spacing: 2.5) {
+                    HStack(spacing: 5) {
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(agreeableness[0] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(agreeableness[1] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(agreeableness[2] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(agreeableness[3] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(agreeableness[4] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(agreeableness[5] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(agreeableness[6] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                    }
+                    if a {
+                        HStack(alignment: .top) {
+                            Text("critical \n hostile")
+                                .font(Font.custom("ProximaNova-Regular", size: 10))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.darkGray))
+                                .multilineTextAlignment(.center)
+                                .frame(width: 65)
+                                .fixedSize(horizontal: false, vertical: true)
+                            
+                            Spacer()
+                            
+                            Text("neutral")
+                                .font(Font.custom("ProximaNova-Regular", size: 12))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.darkGray))
+                            
+                            Spacer()
+                            
+                            Text("friendly empathetic")
+                                .font(Font.custom("ProximaNova-Regular", size: 10))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.darkGray))
+                                .multilineTextAlignment(.center)
+                                .frame(width: 65)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }//.padding(.horizontal, 30)
+                    }
+                    
+                }
+                Button(action: {
+                    self.a.toggle()
+                }) {
+                    Image("info")
+                        .renderingMode(.template)
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(Color(.darkGray))
+                }
+            }
+            HStack(alignment: .top, spacing: self.n ? 0 : 10) {
+                Image("neuroticism")
+                    .renderingMode(.template)
+                    .resizable()
+                    .frame(width: 30, height: 30)
+                    .foregroundColor(Color(.darkGray))
+                    .padding(.leading, 5)
+            
+                VStack(spacing: 2.5) {
+                    HStack(spacing: 5) {
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(neuroticism[0] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(neuroticism[1] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(neuroticism[2] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(neuroticism[3] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(neuroticism[4] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(neuroticism[5] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                        Circle()
+                            .strokeBorder(lineWidth: 5)
+                            .foregroundColor(Color(.darkGray))
+                            .frame(width: 27.5, height: 27.5)
+                            .overlay(Circle().foregroundColor(Color("purp").opacity(neuroticism[6] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                    }
+                    if n {
+                        HStack(alignment: .top) {
+                            Text("confident secure")
+                                .font(Font.custom("ProximaNova-Regular", size: 10))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.darkGray))
+                                .multilineTextAlignment(.center)
+                                .frame(width: 65)
+                                .fixedSize(horizontal: false, vertical: true)
+                            
+                            Spacer()
+                            
+                            Text("neutral")
+                                .font(Font.custom("ProximaNova-Regular", size: 12))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.darkGray))
+                            
+                            Spacer()
+                            
+                            Text("anxious sensitive")
+                                .font(Font.custom("ProximaNova-Regular", size: 10))
+                                .fontWeight(.semibold)
+                                .foregroundColor(Color(.darkGray))
+                                .multilineTextAlignment(.center)
+                                .frame(width: 65)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }//.padding(.horizontal, 30)
+                    }
+                    
+                }
+                Button(action: {
+                    self.n.toggle()
+                }) {
+                    Image("info")
+                        .renderingMode(.template)
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(Color(.darkGray))
+                }
+            }
+        }//.scaleEffect(0.9)
     }
 }
 
@@ -7659,10 +8139,8 @@ struct RatingMeter: View {
     @EnvironmentObject var observer: observer
     var body: some View {
         ZStack(alignment: .bottom) {
-            /*Image("rateneedle")
-                .resizable()*/
             RoundedRectangle(cornerRadius: 3.5)
-                .frame(width: 7, height: screenheight*0.074)//screenheight*0.0357, height: screenheight*0.074)
+                .frame(width: 7, height: screenheight*0.074)
                 .rotationEffect(Angle(degrees: Double(observer.rating.overall*18)-90), anchor: UnitPoint(x: 0.5, y: 1))
                 .foregroundColor(Color(.darkGray))
                 .animation(.spring())
@@ -7677,6 +8155,7 @@ struct RatingMeter: View {
 
 //MARK: OverallMeter
 struct OverallMeter: View {
+    @Binding var index: Int
     let screenwidth = UIScreen.main.bounds.width
     let screenheight = UIScreen.main.bounds.height
     @EnvironmentObject var observer: observer
@@ -7684,7 +8163,7 @@ struct OverallMeter: View {
         VStack(spacing: 5) {
             Spacer()
             Text("Overall")
-                .font(Font.custom("ProximaNova-Regular", size: 24))
+                .font(Font.custom("ProximaNova-Regular", size: 18))
                 .fontWeight(.semibold)
                 .foregroundColor(Color("purp"))
             Text(String(Double(self.observer.rating.overall)))
@@ -7710,16 +8189,27 @@ struct OverallMeter: View {
                                 .frame(width: screenheight*0.099, height: screenheight*0.0495)
                                 .foregroundColor(Color(.white))
                         }.frame(width: screenheight*0.17, height: screenheight*0.085)
-                    }
+                    }.cornerRadius(10)
                     Spacer()
                 }
-                RatingMeter()
+                ZStack(alignment: .bottom) {
+                    RoundedRectangle(cornerRadius: 3.5)
+                        .frame(width: 7, height: screenheight*0.074)
+                        .rotationEffect(Angle(degrees: self.index == 0 ? Double(observer.rating.overall*18)-90 : -90), anchor: UnitPoint(x: 0.5, y: 1))
+                        .foregroundColor(Color(.darkGray))
+                        .animation(.spring())
+                    Circle()
+                        .frame(width: 15, height: 15)
+                        .foregroundColor(Color(.darkGray))
+                        .offset(y: 7.5)
+                }.frame(width: screenheight*0.17, height: screenheight*0.074)
+                //RatingMeter()
             }.frame(width: screenheight*0.17, height: screenheight*0.085)
                 .padding(.bottom, 5)
             Text(self.observer.userrates.count == 1 ? String(self.observer.userrates.count) + " Rating" : String(self.observer.userrates.count) + " Ratings")
                 .font(Font.custom("ProximaNova-Regular", size: 12))
                 .fontWeight(.semibold)
-                .foregroundColor(.black)
+                .foregroundColor(Color(.darkGray))
                 .padding(.bottom, 15)
         }.frame(height: screenheight*0.234)
     }
@@ -7728,6 +8218,7 @@ struct OverallMeter: View {
 
 //MARK: DetailsMeter
 struct DetailsMeter: View {
+    @Binding var index: Int
     let screenwidth = UIScreen.main.bounds.width
     let screenheight = UIScreen.main.bounds.height
     @EnvironmentObject var observer: observer
@@ -7770,7 +8261,7 @@ struct DetailsMeter: View {
                         ZStack(alignment: .bottom) {
                             RoundedRectangle(cornerRadius: 2.5)
                                 .frame(width: 5, height: 40)
-                                .rotationEffect(Angle(degrees: Double(observer.rating.appearance*18)-90), anchor: UnitPoint(x: 0.5, y: 1))
+                                .rotationEffect(Angle(degrees: self.index == 1 ? Double(observer.rating.appearance*18)-90 : -90), anchor: UnitPoint(x: 0.5, y: 1))
                                 .foregroundColor(Color(.darkGray))
                             Circle()
                                 .frame(width: 10, height: 10)
@@ -7814,7 +8305,7 @@ struct DetailsMeter: View {
                         ZStack(alignment: .bottom) {
                             RoundedRectangle(cornerRadius: 2.5)
                                 .frame(width: 5, height: 40)
-                                .rotationEffect(Angle(degrees: Double(observer.rating.personality*18)-90), anchor: UnitPoint(x: 0.5, y: 1))
+                                .rotationEffect(Angle(degrees: self.index == 1 ? Double(observer.rating.personality*18)-90 : -90), anchor: UnitPoint(x: 0.5, y: 1))
                                 .foregroundColor(Color(.darkGray))
                             Circle()
                                 .frame(width: 10, height: 10)
@@ -7841,9 +8332,9 @@ struct YourStatistics: View {
         ZStack {
             ScrollView([]) {
                 HStack {
-                    OverallMeter()
+                    OverallMeter(index: self.$index)
                         .frame(width: screenwidth/1.25)
-                    DetailsMeter()
+                    DetailsMeter(index: self.$index)
                         .frame(width: screenwidth/1.25)
                 }.frame(width: self.screenwidth/1.25).padding(.bottom, 10)
                 .offset(x: (screenwidth/2.5)+x+tempx)
@@ -7900,19 +8391,19 @@ struct RatingSettings: View {
             Text("Rate:")
                 .font(Font.custom("ProximaNova-Regular", size: 20))
                 .fontWeight(.semibold)
-                .foregroundColor(.black)
+                .foregroundColor(Color(.darkGray))
                 .padding(.top, screenheight*0.0123)
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
-                    .foregroundColor(Color("lightgray"))
+                    .foregroundColor(Color("lightgray")).opacity(0.2)
                     .frame(width: 240, height: screenheight*0.05)
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(.darkGray)).opacity(0.8)
                         .frame(width: 80, height: screenheight*0.05 - 2)
-                    RoundedRectangle(cornerRadius: 10)
+                    /*RoundedRectangle(cornerRadius: 10)
                         .foregroundColor(Color(.blue).opacity(0.5))
-                        .frame(width: 80, height: screenheight*0.05 - 2)
+                        .frame(width: 80, height: screenheight*0.05 - 2)*/
                 }.offset(x: self.gender*80)
                 HStack(spacing: 0) {
                     Button(action: {
@@ -7922,7 +8413,7 @@ struct RatingSettings: View {
                         Text("Male")
                             .font(Font.custom("ProximaNova-Regular", size: 16))
                             .fontWeight(.semibold)
-                            .foregroundColor(.white)
+                            .foregroundColor(self.gender == -1 ? .white : Color(.darkGray))
                             .lineLimit(1)
                             .frame(width: 80)
                             .minimumScaleFactor(0.01)
@@ -7934,7 +8425,7 @@ struct RatingSettings: View {
                         Text("Female")
                             .font(Font.custom("ProximaNova-Regular", size: 16))
                             .fontWeight(.semibold)
-                            .foregroundColor(.white)
+                            .foregroundColor(self.gender == 0 ? .white : Color(.darkGray))
                             .lineLimit(1)
                             .frame(width: 80)
                             .minimumScaleFactor(0.01)
@@ -7946,7 +8437,7 @@ struct RatingSettings: View {
                         Text("Everyone")
                             .font(Font.custom("ProximaNova-Regular", size: 16))
                             .fontWeight(.semibold)
-                            .foregroundColor(.white)
+                            .foregroundColor(self.gender == 1 ? .white : Color(.darkGray))
                             .lineLimit(1)
                             .frame(width: 80)
                             .minimumScaleFactor(0.01)
@@ -7956,19 +8447,19 @@ struct RatingSettings: View {
             Text("Get Rated By:")
                 .font(Font.custom("ProximaNova-Regular", size: 20))
                 .fontWeight(.semibold)
-                .foregroundColor(.black)
+                .foregroundColor(Color(.darkGray))
             
             ZStack {
                 RoundedRectangle(cornerRadius: 10)
-                    .foregroundColor(Color("lightgray"))
+                    .foregroundColor(Color("lightgray")).opacity(0.2)
                     .frame(width: 240, height: screenheight*0.05)
                 ZStack {
                     RoundedRectangle(cornerRadius: 10)
-                        .foregroundColor(.white)
+                        .foregroundColor(Color(.darkGray)).opacity(0.8)
                         .frame(width: 80, height: screenheight*0.05 - 2)
-                    RoundedRectangle(cornerRadius: 10)
+                    /*RoundedRectangle(cornerRadius: 10)
                         .foregroundColor(Color(.blue).opacity(0.5))
-                        .frame(width: 80, height: screenheight*0.05 - 2)
+                        .frame(width: 80, height: screenheight*0.05 - 2)*/
                 }.offset(x: self.ratinggender*80)
                 HStack(spacing: 0) {
                     Button(action: {
@@ -7978,7 +8469,7 @@ struct RatingSettings: View {
                         Text("Male")
                             .font(Font.custom("ProximaNova-Regular", size: 16))
                             .fontWeight(.semibold)
-                            .foregroundColor(.white)
+                            .foregroundColor(self.ratinggender == -1 ? .white : Color(.darkGray))
                             .lineLimit(1)
                             .frame(width: 80)
                             .minimumScaleFactor(0.01)
@@ -7990,7 +8481,7 @@ struct RatingSettings: View {
                         Text("Female")
                             .font(Font.custom("ProximaNova-Regular", size: 16))
                             .fontWeight(.semibold)
-                            .foregroundColor(.white)
+                            .foregroundColor(self.ratinggender == 0 ? .white : Color(.darkGray))
                             .lineLimit(1)
                             .frame(width: 80)
                             .minimumScaleFactor(0.01)
@@ -8002,7 +8493,7 @@ struct RatingSettings: View {
                         Text("Everyone")
                             .font(Font.custom("ProximaNova-Regular", size: 16))
                             .fontWeight(.semibold)
-                            .foregroundColor(.white)
+                            .foregroundColor(self.ratinggender == 1 ? .white : Color(.darkGray))
                             .lineLimit(1)
                             .frame(width: 80)
                             .minimumScaleFactor(0.01)
@@ -8014,18 +8505,20 @@ struct RatingSettings: View {
                 Text("Age Range:")
                     .font(Font.custom("ProximaNova-Regular", size: 20))
                     .fontWeight(.semibold)
-                    .foregroundColor(.black)
+                    .foregroundColor(Color(.darkGray))
                     .padding(.trailing, 10)
-                Text(self.width < 0 ? "18 - " : String(Int(self.width/2.71 + 18)) + " - ")
-                    .font(Font.custom("ProximaNova-Regular", size: 18))
-                    .fontWeight(.semibold)
-                    .foregroundColor(Color(.blue).opacity(0.5))
-                    .animation(nil)
-                Text(self.width1 > 220 || Int(self.width1/2.71 + 18) >= 99 ? "99" : String(Int(self.width1/2.71 + 18)))
-                    .font(Font.custom("ProximaNova-Regular", size: 18))
-                    .fontWeight(.semibold)
-                    .foregroundColor(Color(.blue).opacity(0.5))
-                    .animation(nil)
+                HStack(spacing: 0) {
+                    Text(self.width < 0 ? "18 - " : String(Int(self.width/2.71 + 18)) + " - ")
+                        .font(Font.custom("ProximaNova-Regular", size: 18))
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color(.blue).opacity(0.5))
+                        .animation(nil)
+                    Text(self.width1 > 220 || Int(self.width1/2.71 + 18) >= 99 ? "99" : String(Int(self.width1/2.71 + 18)))
+                        .font(Font.custom("ProximaNova-Regular", size: 18))
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color(.blue).opacity(0.5))
+                        .animation(nil)
+                }.padding(5)//.background(Color(.darkGray).cornerRadius(5))
                 Spacer()
             }.frame(width: 240)
             
@@ -8037,14 +8530,14 @@ struct RatingSettings: View {
                     .animation(nil)
                 RoundedRectangle(cornerRadius: 2.5)
                     .frame(width: self.width1 - self.width + 15, height: 5)
-                    .foregroundColor(Color(.blue).opacity(0.5))
-                    .background(Color(.white))
+                    .foregroundColor(Color(.darkGray)).opacity(0.8)
+                    //.background(Color(.white))
                     .offset(x: self.width)
                     .animation(nil)
                 Circle()
-                    .foregroundColor(Color(.blue).opacity(0.5))
+                    .foregroundColor(Color(.darkGray))
                     .frame(width: self.first ? 20 : 15, height: self.first ? 20 : 15)
-                    .background(Circle().foregroundColor(.white))
+                    //.background(Circle().foregroundColor(.white))
                     .offset(x: self.width)
                     .gesture(DragGesture().onChanged({ (value) in
                         if value.location.x >= -5 && value.location.x <= self.width1 - 15 {
@@ -8055,9 +8548,9 @@ struct RatingSettings: View {
                         self.first.toggle()
                     })).animation(nil)
                 Circle()
-                    .foregroundColor(Color(.blue).opacity(0.5))
+                    .foregroundColor(Color(.darkGray))//.opacity(0.5))
                     .frame(width: self.second ? 20 : 15, height: self.second ? 20 : 15)
-                    .background(Circle().foregroundColor(.white))
+                    //.background(Circle().foregroundColor(.white))
                     .offset(x: self.width1)
                     .highPriorityGesture(DragGesture().onChanged({ (value) in
                         if value.location.x <= 225 && value.location.x >= self.width + 15 {
@@ -9505,6 +9998,7 @@ struct Bar: View {
                                 .font(Font.custom("ProximaNova-Regular", size: 20))
                                 .fontWeight(.semibold)
                                 .foregroundColor(Color(.white))
+                                .fixedSize(horizontal: true, vertical: true)
                         }
                         Spacer().frame(width: ((self.screenwidth/20)*10) - (self.screenwidth/20)*rating.overall)
                     }
@@ -9519,7 +10013,7 @@ struct Bar: View {
                     .frame(width: screenheight*0.032, height: screenheight*0.007)
                     .aspectRatio(contentMode: .fit)
                     .padding(screenheight*0.01).padding(.vertical, screenheight*0.011)
-                    .foregroundColor(Color(.blue).opacity(0.5))
+                    .foregroundColor(Color(.darkGray))
                     //.foregroundColor(.white)
                     //.background(Color(.blue).opacity(0.3).cornerRadius(screenheight*0.015))
             }.buttonStyle(PlainButtonStyle())
