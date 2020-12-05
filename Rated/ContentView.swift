@@ -4650,12 +4650,13 @@ struct RatingView: View {
     @State var connectionstatus = true
     @State var refreshing: Int = 0
     
-    @State var openness = [false, false, false, true, false, false, false]
-    @State var conscientiousness = [false, false, false, true, false, false, false]
-    @State var extraversion = [false, false, false, true, false, false, false]
-    @State var agreeableness = [false, false, false, true, false, false, false]
-    @State var neuroticism = [false, false, false, true, false, false, false]
+    @State var openness = [false, false, false, false, false, false, false]
+    @State var conscientiousness = [false, false, false, false, false, false, false]
+    @State var extraversion = [false, false, false, false, false, false, false]
+    @State var agreeableness = [false, false, false, false, false, false, false]
+    @State var neuroticism = [false, false, false, false, false, false, false]
     
+    @State var traits = true
     @State var edu = true
     @State var occu = true
     @State var sport = true
@@ -4822,12 +4823,31 @@ struct RatingView: View {
                                                     ScrollView(.vertical, showsIndicators: false) {
                                                         //MARK: Personality Traits
                                                         VStack {
-                                                            Text("Personality Traits")
-                                                                .font(Font.custom("ProximaNova-Regular", size: 20))
-                                                                .fontWeight(.semibold)
-                                                                .foregroundColor(Color(.darkGray))
-                                                            PersonalityTraitsView(openness: self.$openness, conscientiousness: self.$conscientiousness, extraversion: self.$extraversion, agreeableness: self.$agreeableness, neuroticism: self.$neuroticism)
-                                                        }.frame(width: self.screenwidth*0.8 + 10).padding(5).background(Color(.white).cornerRadius(15))
+                                                            HStack {
+                                                                Image("heart")
+                                                                    .renderingMode(.template)
+                                                                    .resizable()
+                                                                    .frame(width: 18, height: 18)
+                                                                    .foregroundColor(Color("personality"))
+                                                                    .padding(.leading, 10)
+                                                                Text("Personality Traits")
+                                                                    .font(Font.custom("ProximaNova-Regular", size: 20))
+                                                                    .fontWeight(.semibold)
+                                                                    .foregroundColor(Color(.darkGray))
+                                                                Spacer()
+                                                                Image(systemName: "chevron.down")
+                                                                    .font(Font.system(size: 15, weight: .heavy))
+                                                                    .foregroundColor(Color("personality"))
+                                                                    .rotationEffect(.degrees(self.traits ? 180 : 0))
+                                                                    .padding(.trailing, 10)
+                                                            }.padding(.horizontal, 10).background(Color(.white))
+                                                                .onTapGesture {
+                                                                    self.traits.toggle()
+                                                            }
+                                                            if self.traits {
+                                                                PersonalityTraitsView(openness: self.$openness, conscientiousness: self.$conscientiousness, extraversion: self.$extraversion, agreeableness: self.$agreeableness, neuroticism: self.$neuroticism)
+                                                            }
+                                                        }.frame(width: self.screenwidth*0.8 + 20).padding(.vertical, 20).background(Color(.white).cornerRadius(15)).padding(.top, 10)
                                                         
                                                         VStack(spacing: 5) {
                                                             Group {
@@ -4845,12 +4865,13 @@ struct RatingView: View {
                                                                                 .fontWeight(.semibold)
                                                                                 .foregroundColor(Color(.darkGray))
                                                                             Spacer()
-                                                                            Image(systemName: self.edu ? "chevron.up" : "chevron.down")
+                                                                            Image(systemName: "chevron.down")
                                                                                 .font(Font.system(size: 15, weight: .heavy))
-                                                                                .foregroundColor(Color(.darkGray))
-                                                                        }.padding(10).background(Color(.white)).onTapGesture {
+                                                                                .foregroundColor(Color("personality"))
+                                                                                .rotationEffect(.degrees(self.edu ? 180 : 0))
+                                                                        }.padding(.horizontal, 10).padding(.top, 5).background(Color(.white)).onTapGesture {
                                                                             self.edu.toggle()
-                                                                        }
+                                                                        }.padding(.bottom, self.edu ? 5 : 0)
                                                                         if edu {
                                                                             ForEach(self.observer.users[self.observer.rated].Education, id: \.self) { education in
                                                                                 HStack {
@@ -4876,7 +4897,7 @@ struct RatingView: View {
                                                                                     .background(Color(.darkGray).cornerRadius(10))
                                                                             }
                                                                         }
-                                                                    }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.edu ? 10 : 0)
+                                                                    }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.edu ? 5 : 0)
                                                                         .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))//.padding(.vertical, 10)
                                                                     Divider().frame(width: self.screenwidth*0.8 + 10)
                                                                 }
@@ -4894,12 +4915,13 @@ struct RatingView: View {
                                                                                 .fontWeight(.semibold)
                                                                                 .foregroundColor(Color(.darkGray))
                                                                             Spacer()
-                                                                            Image(systemName: self.occu ? "chevron.up" : "chevron.down")
+                                                                            Image(systemName: "chevron.down")
                                                                                 .font(Font.system(size: 15, weight: .heavy))
-                                                                                .foregroundColor(Color(.darkGray))
-                                                                        }.padding(10).background(Color(.white)).onTapGesture {
+                                                                                .foregroundColor(Color("personality"))
+                                                                                .rotationEffect(.degrees(self.occu ? 180 : 0))
+                                                                        }.padding(.horizontal, 10).background(Color(.white)).onTapGesture {
                                                                             self.occu.toggle()
-                                                                        }
+                                                                        }.padding(.bottom, self.occu ? 5 : 0)
                                                                         if occu {
                                                                             ForEach(0...(self.observer.users[self.observer.rated].Occupation1.count-1), id: \.self) { num in
                                                                                 HStack {
@@ -4925,7 +4947,7 @@ struct RatingView: View {
                                                                                     .background(Color(.darkGray).cornerRadius(10))
                                                                             }
                                                                         }
-                                                                    }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.occu ? 10 : 0)
+                                                                    }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.occu ? 5 : 0)
                                                                     .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))
                                                                     Divider().frame(width: self.screenwidth*0.8 + 10)
                                                                 }
@@ -4944,12 +4966,13 @@ struct RatingView: View {
                                                                             .fontWeight(.semibold)
                                                                             .foregroundColor(Color(.darkGray))
                                                                         Spacer()
-                                                                        Image(systemName: self.sport ? "chevron.up" : "chevron.down")
+                                                                        Image(systemName: "chevron.down")
                                                                             .font(Font.system(size: 15, weight: .heavy))
-                                                                            .foregroundColor(Color(.darkGray))
-                                                                    }.padding(10).background(Color(.white)).onTapGesture {
+                                                                            .foregroundColor(Color("personality"))
+                                                                            .rotationEffect(.degrees(self.sport ? 180 : 0))
+                                                                    }.padding(.horizontal, 10).background(Color(.white)).onTapGesture {
                                                                         self.sport.toggle()
-                                                                    }
+                                                                    }.padding(.bottom, self.sport ? 5 : 0)
                                                                     if sport {
                                                                         ForEach(self.observer.users[self.observer.rated].Sports, id: \.self) { sp in
                                                                             HStack {
@@ -4970,7 +4993,7 @@ struct RatingView: View {
                                                                                 .background(Color(.darkGray).cornerRadius(10))
                                                                         }
                                                                     }
-                                                                }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.sport ? 10 : 0)
+                                                                }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.sport ? 5 : 0)
                                                                 .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))
                                                                 Divider().frame(width: self.screenwidth*0.8 + 10)
                                                             }
@@ -4988,12 +5011,13 @@ struct RatingView: View {
                                                                             .fontWeight(.semibold)
                                                                             .foregroundColor(Color(.darkGray))
                                                                         Spacer()
-                                                                        Image(systemName: self.hobby ? "chevron.up" : "chevron.down")
+                                                                        Image(systemName: "chevron.down")
                                                                             .font(Font.system(size: 15, weight: .heavy))
-                                                                            .foregroundColor(Color(.darkGray))
-                                                                    }.padding(10).background(Color(.white)).onTapGesture {
+                                                                            .foregroundColor(Color("personality"))
+                                                                            .rotationEffect(.degrees(self.hobby ? 180 : 0))
+                                                                    }.padding(.horizontal, 10).background(Color(.white)).onTapGesture {
                                                                         self.hobby.toggle()
-                                                                    }
+                                                                    }.padding(.bottom, self.hobby ? 5 : 0)
                                                                     if hobby {
                                                                         ForEach(self.observer.users[self.observer.rated].Hobbies, id: \.self) { hb in
                                                                             HStack {
@@ -5014,7 +5038,7 @@ struct RatingView: View {
                                                                                 .background(Color(.darkGray).cornerRadius(10))
                                                                         }
                                                                     }
-                                                                }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.hobby ? 10 : 0)
+                                                                }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.hobby ? 5 : 0)
                                                                 .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))
                                                                 Divider().frame(width: self.screenwidth*0.8 + 10)
                                                             }
@@ -5033,12 +5057,13 @@ struct RatingView: View {
                                                                             .fontWeight(.semibold)
                                                                             .foregroundColor(Color(.darkGray))
                                                                         Spacer()
-                                                                        Image(systemName: self.mnt ? "chevron.up" : "chevron.down")
+                                                                        Image(systemName: "chevron.down")
                                                                             .font(Font.system(size: 15, weight: .heavy))
-                                                                            .foregroundColor(Color(.darkGray))
-                                                                    }.padding(10).background(Color(.white)).onTapGesture {
+                                                                            .foregroundColor(Color("personality"))
+                                                                            .rotationEffect(.degrees(self.mnt ? 180 : 0))
+                                                                    }.padding(.horizontal, 10).background(Color(.white)).onTapGesture {
                                                                         self.mnt.toggle()
-                                                                    }
+                                                                    }.padding(.bottom, self.mnt ? 5 : 0)
                                                                     if mnt {
                                                                         ForEach(0...(self.observer.users[self.observer.rated].MovieTV1.count-1), id: \.self) { num in
                                                                             HStack {
@@ -5064,7 +5089,7 @@ struct RatingView: View {
                                                                                 .background(Color(.darkGray).cornerRadius(10))
                                                                         }
                                                                     }
-                                                                }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.mnt ? 10 : 0)
+                                                                }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.mnt ? 5 : 0)
                                                                 .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))
                                                                 Divider().frame(width: self.screenwidth*0.8 + 10)
                                                             }
@@ -5082,12 +5107,13 @@ struct RatingView: View {
                                                                             .fontWeight(.semibold)
                                                                             .foregroundColor(Color(.darkGray))
                                                                         Spacer()
-                                                                        Image(systemName: self.mus ? "chevron.up" : "chevron.down")
+                                                                        Image(systemName: "chevron.down")
                                                                             .font(Font.system(size: 15, weight: .heavy))
-                                                                            .foregroundColor(Color(.darkGray))
-                                                                    }.padding(10).background(Color(.white)).onTapGesture {
+                                                                            .foregroundColor(Color("personality"))
+                                                                            .rotationEffect(.degrees(self.mus ? 180 : 0))
+                                                                    }.padding(.horizontal, 10).background(Color(.white)).onTapGesture {
                                                                         self.mus.toggle()
-                                                                    }
+                                                                    }.padding(.bottom, self.mus ? 5 : 0)
                                                                     if mus {
                                                                         ForEach(0...(self.observer.users[self.observer.rated].Music1.count-1), id: \.self) { num in
                                                                             HStack {
@@ -5113,9 +5139,10 @@ struct RatingView: View {
                                                                                 .background(Color(.darkGray).cornerRadius(10))
                                                                         }
                                                                     }
-                                                                }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.mus ? 10 : 0)
+                                                                }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.mus ? 5 : 0)
                                                                 .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))
                                                             }
+                                                            Spacer().frame(height: 1)
                                                         }.background(Color(.white).cornerRadius(15))
                                                     }.frame(width: screenwidth - 20, height: screenheight*0.7 - 20).background(Color(.clear)).cornerRadius(30).animation(.spring())
                                                     
@@ -5193,6 +5220,11 @@ struct RatingView: View {
                                         }
                                         Button(action: {
                                             self.bio.toggle()
+                                            self.openness[self.observer.users[self.observer.rated].Traits[0]-1] = true
+                                            self.conscientiousness[self.observer.users[self.observer.rated].Traits[1]-1] = true
+                                            self.extraversion[self.observer.users[self.observer.rated].Traits[2]-1] = true
+                                            self.agreeableness[self.observer.users[self.observer.rated].Traits[3]-1] = true
+                                            self.neuroticism[self.observer.users[self.observer.rated].Traits[4]-1] = true
                                         }) {
                                             Image(self.bio ? "eye" : "heart")
                                                 .resizable()
@@ -6016,7 +6048,7 @@ struct PersonalityTraitsView: View {
     @State var a = false
     @State var n = false
     var body: some View {
-        VStack(spacing: 2.5) {
+        VStack(spacing: 10) {
             HStack(alignment: .top, spacing: self.o ? 0 : 10) {
                 Image("openness")
                     .renderingMode(.template)
@@ -6024,47 +6056,48 @@ struct PersonalityTraitsView: View {
                     .frame(width: 30, height: 30)
                     .foregroundColor(Color(.darkGray))
                     .padding(.leading, 5)
-                VStack(spacing: 2.5) {
+                    .offset(x: self.o ? 27.5 : 0)
+                VStack(spacing: 5) {
                     HStack(spacing: 2.5) {
                         Circle()
-                            .strokeBorder(lineWidth: 2.5)
+                            .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
                             .frame(width: 25, height: 25)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(openness[0] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(openness[0] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
-                            .strokeBorder(lineWidth: 2.5)
+                            .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
                             .frame(width: 25, height: 25)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(openness[1] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(openness[1] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
-                            .strokeBorder(lineWidth: 2.5)
+                            .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
                             .frame(width: 25, height: 25)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(openness[2] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(openness[2] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
-                            .strokeBorder(lineWidth: 2.5)
+                            .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
                             .frame(width: 25, height: 25)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(openness[3] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(openness[3] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
-                            .strokeBorder(lineWidth: 2.5)
+                            .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
                             .frame(width: 25, height: 25)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(openness[4] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(openness[4] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
-                            .strokeBorder(lineWidth: 2.5)
+                            .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
                             .frame(width: 25, height: 25)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(openness[5] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(openness[5] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
-                            .strokeBorder(lineWidth: 2.5)
+                            .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
                             .frame(width: 25, height: 25)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(openness[6] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(openness[6] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                     }
                     if o {
                         HStack(alignment: .top) {
-                            Text("calculative practical")
+                            Text("practical calculative")
                                 .font(Font.custom("ProximaNova-Regular", size: 10))
                                 .fontWeight(.semibold)
                                 .foregroundColor(Color(.darkGray))
@@ -6090,16 +6123,20 @@ struct PersonalityTraitsView: View {
                                 .fixedSize(horizontal: false, vertical: true)
                         }.padding(.horizontal, 15)
                     }
-                    
                 }
                 Button(action: {
                     self.o.toggle()
+                    self.c = false
+                    self.e = false
+                    self.a = false
+                    self.n = false
                 }) {
                     Image("info")
                         .renderingMode(.template)
                         .resizable()
-                        .frame(width: 30, height: 30)
+                        .frame(width: 20, height: 20)
                         .foregroundColor(Color(.darkGray))
+                        .offset(x: self.o ? -27.5 : 0, y: 2.5)
                 }
             }
             HStack(alignment: .top, spacing: self.c ? 0 : 10) {
@@ -6109,43 +6146,44 @@ struct PersonalityTraitsView: View {
                     .frame(width: 30, height: 30)
                     .foregroundColor(Color(.darkGray))
                     .padding(.leading, 5)
+                    .offset(x: self.c ? 27.5 : 0)
                 VStack(spacing: 2.5) {
-                    HStack(spacing: 5) {
+                    HStack(spacing: 2.5) {
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(conscientiousness[0] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(conscientiousness[0] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(conscientiousness[1] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(conscientiousness[1] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(conscientiousness[2] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(conscientiousness[2] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(conscientiousness[3] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(conscientiousness[3] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(conscientiousness[4] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(conscientiousness[4] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(conscientiousness[5] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(conscientiousness[5] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(conscientiousness[6] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(conscientiousness[6] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                     }
                     if c {
                         HStack(alignment: .top) {
@@ -6173,17 +6211,22 @@ struct PersonalityTraitsView: View {
                                 .multilineTextAlignment(.center)
                                 .frame(width: 65)
                                 .fixedSize(horizontal: false, vertical: true)
-                        }//.padding(.horizontal, 30)
+                        }.padding(.horizontal, 15)
                     }
                 }
                 Button(action: {
                     self.c.toggle()
+                    self.o = false
+                    self.e = false
+                    self.a = false
+                    self.n = false
                 }) {
                     Image("info")
                         .renderingMode(.template)
                         .resizable()
-                        .frame(width: 30, height: 30)
+                        .frame(width: 20, height: 20)
                         .foregroundColor(Color(.darkGray))
+                        .offset(x: self.c ? -27.5 : 0, y: 2.5)
                 }
             }
             HStack(alignment: .top, spacing: self.e ? 0 : 10) {
@@ -6193,47 +6236,48 @@ struct PersonalityTraitsView: View {
                     .frame(width: 30, height: 30)
                     .foregroundColor(Color(.darkGray))
                     .padding(.leading, 5)
+                    .offset(x: self.e ? 27.5 : 0)
                 VStack(spacing: 2.5) {
-                    HStack(spacing: 5) {
+                    HStack(spacing: 2.5) {
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(extraversion[0] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(extraversion[0] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(extraversion[1] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(extraversion[1] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(extraversion[2] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(extraversion[2] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(extraversion[3] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(extraversion[3] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(extraversion[4] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(extraversion[4] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(extraversion[5] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(extraversion[5] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(extraversion[6] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(extraversion[6] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                     }
                     if e {
                         HStack(alignment: .top) {
-                            Text("reserved solitary")
+                            Text("solitary reserved")
                                 .font(Font.custom("ProximaNova-Regular", size: 10))
                                 .fontWeight(.semibold)
                                 .foregroundColor(Color(.darkGray))
@@ -6257,17 +6301,22 @@ struct PersonalityTraitsView: View {
                                 .multilineTextAlignment(.center)
                                 .frame(width: 65)
                                 .fixedSize(horizontal: false, vertical: true)
-                        }//.padding(.horizontal, 30)
+                        }.padding(.horizontal, 15)
                     }
                 }
                 Button(action: {
                     self.e.toggle()
+                    self.c = false
+                    self.o = false
+                    self.a = false
+                    self.n = false
                 }) {
                     Image("info")
                         .renderingMode(.template)
                         .resizable()
-                        .frame(width: 30, height: 30)
+                        .frame(width: 20, height: 20)
                         .foregroundColor(Color(.darkGray))
+                        .offset(x: self.e ? -27.5 : 0, y: 2.5)
                 }
             }
             HStack(alignment: .top, spacing: self.a ? 0 : 10) {
@@ -6277,48 +6326,49 @@ struct PersonalityTraitsView: View {
                     .frame(width: 30, height: 30)
                     .foregroundColor(Color(.darkGray))
                     .padding(.leading, 5)
+                    .offset(x: self.a ? 27.5 : 0)
                 
                 VStack(spacing: 2.5) {
-                    HStack(spacing: 5) {
+                    HStack(spacing: 2.5) {
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(agreeableness[0] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(agreeableness[0] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(agreeableness[1] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(agreeableness[1] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(agreeableness[2] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(agreeableness[2] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(agreeableness[3] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(agreeableness[3] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(agreeableness[4] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(agreeableness[4] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(agreeableness[5] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(agreeableness[5] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(agreeableness[6] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(agreeableness[6] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                     }
                     if a {
                         HStack(alignment: .top) {
-                            Text("critical \n hostile")
+                            Text("hostile \n critical")
                                 .font(Font.custom("ProximaNova-Regular", size: 10))
                                 .fontWeight(.semibold)
                                 .foregroundColor(Color(.darkGray))
@@ -6342,18 +6392,22 @@ struct PersonalityTraitsView: View {
                                 .multilineTextAlignment(.center)
                                 .frame(width: 65)
                                 .fixedSize(horizontal: false, vertical: true)
-                        }//.padding(.horizontal, 30)
+                        }.padding(.horizontal, 15)
                     }
-                    
                 }
                 Button(action: {
                     self.a.toggle()
+                    self.c = false
+                    self.e = false
+                    self.o = false
+                    self.n = false
                 }) {
                     Image("info")
                         .renderingMode(.template)
                         .resizable()
-                        .frame(width: 30, height: 30)
+                        .frame(width: 20, height: 20)
                         .foregroundColor(Color(.darkGray))
+                        .offset(x: self.a ? -27.5 : 0, y: 2.5)
                 }
             }
             HStack(alignment: .top, spacing: self.n ? 0 : 10) {
@@ -6363,48 +6417,49 @@ struct PersonalityTraitsView: View {
                     .frame(width: 30, height: 30)
                     .foregroundColor(Color(.darkGray))
                     .padding(.leading, 5)
+                    .offset(x: self.n ? 27.5 : 0)
             
                 VStack(spacing: 2.5) {
-                    HStack(spacing: 5) {
+                    HStack(spacing: 2.5) {
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(neuroticism[0] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(neuroticism[0] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(neuroticism[1] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(neuroticism[1] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(neuroticism[2] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(neuroticism[2] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(neuroticism[3] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(neuroticism[3] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(neuroticism[4] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(neuroticism[4] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(neuroticism[5] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(neuroticism[5] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                         Circle()
                             .strokeBorder(lineWidth: 5)
                             .foregroundColor(Color(.darkGray))
-                            .frame(width: 27.5, height: 27.5)
-                            .overlay(Circle().foregroundColor(Color("purp").opacity(neuroticism[6] ? 0.6 : 0)).frame(width: 15.5, height: 15.5))
+                            .frame(width: 25, height: 25)
+                            .overlay(Circle().foregroundColor(Color("personality").opacity(neuroticism[6] ? 1 : 0)).frame(width: 15.5, height: 15.5))
                     }
                     if n {
                         HStack(alignment: .top) {
-                            Text("confident secure")
+                            Text("secure confident")
                                 .font(Font.custom("ProximaNova-Regular", size: 10))
                                 .fontWeight(.semibold)
                                 .foregroundColor(Color(.darkGray))
@@ -6428,18 +6483,22 @@ struct PersonalityTraitsView: View {
                                 .multilineTextAlignment(.center)
                                 .frame(width: 65)
                                 .fixedSize(horizontal: false, vertical: true)
-                        }//.padding(.horizontal, 30)
+                        }.padding(.horizontal, 15)
                     }
-                    
                 }
                 Button(action: {
                     self.n.toggle()
+                    self.c = false
+                    self.e = false
+                    self.a = false
+                    self.o = false
                 }) {
                     Image("info")
                         .renderingMode(.template)
                         .resizable()
-                        .frame(width: 30, height: 30)
+                        .frame(width: 20, height: 20)
                         .foregroundColor(Color(.darkGray))
+                        .offset(x: self.n ? -27.5 : 0, y: 2.5)
                 }
             }
         }//.scaleEffect(0.9)
@@ -8225,12 +8284,17 @@ struct DetailsMeter: View {
     var body: some View {
         VStack {
             HStack(spacing: 30) {
-                VStack(spacing: 5) {
+                VStack(spacing: 0) {
                     Text("Appearance")
                         .font(Font.custom("ProximaNova-Regular", size: 20))
                         .fontWeight(.semibold)
                         .foregroundColor(Color("appearance"))
                         .padding(.top, 10)
+                    Image("eye")
+                        .renderingMode(.template)
+                        .resizable()
+                        .frame(width: 25, height: 25)
+                        .foregroundColor(Color("appearance"))
                     Text(String(Double(self.observer.rating.appearance)))
                         .font(Font.custom("ProximaNova-Regular", size: 16))
                         .fontWeight(.semibold)
@@ -8254,7 +8318,7 @@ struct DetailsMeter: View {
                                         .frame(width: 50, height: 25)
                                         .foregroundColor(Color(.white))
                                 }.frame(width: 100, height: 50)
-                            }
+                            }.cornerRadius(10)
                             Spacer()
                         }
                         
@@ -8270,12 +8334,18 @@ struct DetailsMeter: View {
                         }.frame(width: 100, height: 40)
                     }.frame(width: 100, height: 60)
                 }
-                VStack(spacing: 5) {
+                VStack(spacing: 0) {
                     Text("Personality")
                         .font(Font.custom("ProximaNova-Regular", size: 20))
                         .fontWeight(.semibold)
                         .foregroundColor(Color("personality"))
                         .padding(.top, 10)
+                    Image("heart")
+                        .renderingMode(.template)
+                        .resizable()
+                        .frame(width: 20, height: 20)
+                        .foregroundColor(Color("personality"))
+                        .padding(2.5)
                     Text(String(Double(self.observer.rating.personality)))
                         .font(Font.custom("ProximaNova-Regular", size: 16))
                         .fontWeight(.semibold)
@@ -8299,7 +8369,7 @@ struct DetailsMeter: View {
                                         .frame(width: 50, height: 25)
                                         .foregroundColor(Color(.white))
                                 }.frame(width: 100, height: 50)
-                            }
+                            }.cornerRadius(10)
                             Spacer()
                         }
                         ZStack(alignment: .bottom) {
@@ -8625,98 +8695,6 @@ struct RecentRatings: View {
                 }.padding(.vertical, 10)
             }.frame(maxHeight: screenheight*0.35)
         }.frame(maxHeight: screenheight*0.35)
-    }
-}
-
-
-//MARK: Profile
-struct Profile: View {
-    @Binding var images: [Data]
-    @Binding var bio: [String]
-    @Binding var selected: [Bool]
-    @Binding var name: String
-    @Binding var age: String
-    @State var count: Int = 0
-    @State var screenwidth = UIScreen.main.bounds.width
-    @State var screenheight = UIScreen.main.bounds.height
-    
-    var body: some View {
-        ZStack {
-            VStack {
-                ZStack {
-                    Image(uiImage: UIImage(data: self.images[self.count])!)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: screenwidth - 20, height: (screenwidth - 20)*1.3)
-                        .animation(nil)
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
-                    HStack {
-                        Button(action: {
-                            if self.count == 0 {
-                            }
-                            else {
-                                self.count -= 1
-                            }
-                        }) {
-                            Color(.white).opacity(0.0)
-                                .frame(width: screenwidth/3, height: (screenwidth - 20)*1.3)
-                        }
-                        Spacer()
-                        Button(action: {
-                            if self.count == 3 {
-                            }
-                            else {
-                                self.count += 1
-                            }
-                        }) {
-                            Color(.white).opacity(0.0)
-                                .frame(width: screenwidth/3, height: (screenwidth - 20)*1.3)
-                        }
-                    }.padding(.horizontal, 20)
-                }
-                Spacer()
-            }.frame(width: screenwidth-20, height: screenheight/1.25)
-                .cornerRadius(20)
-            VStack {
-                Spacer()
-                HStack {
-                    HStack {
-                        Text(self.name.uppercased())
-                            .font(Font.custom("ProximaNova-Regular", size: 24))
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color("personality"))
-                            .padding(.leading, 10)
-                            .animation(nil)
-                        Text(self.age)
-                            .font(Font.custom("ProximaNova-Regular", size: 24))
-                            .fontWeight(.semibold)
-                            .foregroundColor(Color("personality").opacity(0.5))
-                            .padding(.trailing, 10)
-                            .animation(nil)
-                    }.background(Color(.white).opacity(0.75).frame(height: 40).cornerRadius(7.5).shadow(radius: 20)).padding(.leading, 10)
-                    Spacer()
-                }/*
-                ZStack {
-                    ZStack {
-                        Color("lightgray")
-                            .opacity(0.95)
-                            .frame(width: screenwidth - 20, height: screenheight/3.25)
-                            .cornerRadius(20)
-                        ScrollView(.vertical, showsIndicators: false) {
-                            
-                            ForEach(self.bio, id: \.self) { str in
-                                VStack(spacing: 0) {
-                                    if (String(str.prefix(1)) as NSString).integerValue == 1 {
-                                        BioCardsFP(index: (String(str.prefix(3).suffix(2)) as NSString).integerValue, text: String(str)[3..<str.count]).animation(nil)
-                                    }
-                                }.frame(width: self.screenwidth - 40)
-                            }
-                        }.frame(width: screenwidth - 40, height: screenheight/3.25 - 20).cornerRadius(15)
-                    }
-                }.frame(height: screenheight/3.25)*/
-            }.frame(width: screenwidth-20, height: screenheight/1.25)
-            .cornerRadius(20)
-        }.frame(width: screenwidth, height: screenheight)
     }
 }
 
