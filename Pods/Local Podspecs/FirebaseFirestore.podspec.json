@@ -1,0 +1,26 @@
+{
+  "name": "FirebaseFirestore",
+  "version": "1.19.0",
+  "summary": "A replica Firebase Firestore podspec.",
+  "description": "A replica Firebase Firestore podspec that provides pre-compiled binaries/frameworks instead",
+  "homepage": "http://invertase.io",
+  "license": "Apache-2.0",
+  "source": {
+    "path": "."
+  },
+  "cocoapods_version": ">= 1.9.1",
+  "authors": "Invertase Limited",
+  "vendored_frameworks": "FirebaseFirestore/*.xcframework",
+  "preserve_paths": "FirebaseFirestore/*.xcframework",
+  "resources": "FirebaseFirestore/Resources/*.bundle",
+  "pod_target_xcconfig": {
+    "OTHER_LDFLAGS": "-lObjC"
+  },
+  "static_framework": true,
+  "platforms": {
+    "osx": null,
+    "ios": null,
+    "tvos": null,
+    "watchos": null
+  }
+}

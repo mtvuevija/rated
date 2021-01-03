@@ -9,9 +9,10 @@ target 'Rated' do
 pod 'Firebase/Analytics'
 pod 'Firebase/Auth'
 pod 'Firebase/Storage'
-pod 'Firebase/Firestore'
 pod 'SDWebImageSwiftUI'
 pod 'Google-Mobile-Ads-SDK'
+pod 'FirebaseFirestore', :git =>
+'https://github.com/invertase/firestore-ios-sdk-frameworks.git', :tag => '6.34.0'
 
   target 'RatedTests' do
     inherit! :search_paths

@@ -9,6 +9,10 @@
 /* Begin PBXBuildFile section */
 		2A188F0E2EBA95675DF87409 /* Pods_Rated_RatedUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 62D5F1AFC62D7D4DD8FD221A /* Pods_Rated_RatedUITests.framework */; };
 		BF44ADC1A37B0667D0CC97CA /* Pods_RatedTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 233A30E772A71C3E9237553C /* Pods_RatedTests.framework */; };
+		C0110EAA25A184CA00C6AC63 /* Rating.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0110EA925A184CA00C6AC63 /* Rating.swift */; };
+		C0110EAC25A1856500C6AC63 /* Extraneous.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0110EAB25A1856500C6AC63 /* Extraneous.swift */; };
+		C02E35F225A17BFE00315E12 /* SignIn.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02E35F125A17BFE00315E12 /* SignIn.swift */; };
+		C02E35F425A17C5F00315E12 /* SignUp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02E35F325A17C5F00315E12 /* SignUp.swift */; };
 		C036562024C280FF00B98A75 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C036561F24C280FF00B98A75 /* AppDelegate.swift */; };
 		C036562224C280FF00B98A75 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C036562124C280FF00B98A75 /* SceneDelegate.swift */; };
 		C036562424C280FF00B98A75 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C036562324C280FF00B98A75 /* ContentView.swift */; };
@@ -20,9 +24,10 @@
 		C03DAF1924D9081900CF9497 /* SwiftUICharts in Frameworks */ = {isa = PBXBuildFile; productRef = C03DAF1824D9081900CF9497 /* SwiftUICharts */; };
 		C040B2FD24CABD4D00F7A31A /* Gilroy-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = C040B2FC24CABD4400F7A31A /* Gilroy-Light.otf */; };
 		C040B2FE24CABD5000F7A31A /* Gilroy-ExtraBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = C040B2FB24CABD4200F7A31A /* Gilroy-ExtraBold.otf */; };
-		C06D58FB24F8C19F00013E71 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C06D58FA24F8C19F00013E71 /* GoogleService-Info.plist */; };
+		C075F60225A182C6009E8BFC /* Home.swift in Sources */ = {isa = PBXBuildFile; fileRef = C075F60125A182C6009E8BFC /* Home.swift */; };
 		C0901BF124FB8653007C12B9 /* ProximaNova-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = C0901BEE24FB80B8007C12B9 /* ProximaNova-Regular.otf */; };
 		C0901BF224FB86FE007C12B9 /* Proxima Nova Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = C0901BEC24FB80B8007C12B9 /* Proxima Nova Bold.otf */; };
+		C0D4351E259D43AB00BAB796 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C0D4351D259D43AB00BAB796 /* GoogleService-Info.plist */; };
 		DF33118BFCF92EE7221C290D /* Pods_Rated.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A621CF1661BE32D20272F12 /* Pods_Rated.framework */; };
 /* End PBXBuildFile section */
 
@@ -51,6 +56,10 @@
 		6A621CF1661BE32D20272F12 /* Pods_Rated.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Rated.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9370968BC1AF6F7F20DCC1F0 /* Pods-Rated.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rated.debug.xcconfig"; path = "Target Support Files/Pods-Rated/Pods-Rated.debug.xcconfig"; sourceTree = "<group>"; };
 		9CAFA42EE8B4CD36BA54C6F1 /* Pods-RatedTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RatedTests.release.xcconfig"; path = "Target Support Files/Pods-RatedTests/Pods-RatedTests.release.xcconfig"; sourceTree = "<group>"; };
+		C0110EA925A184CA00C6AC63 /* Rating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rating.swift; sourceTree = "<group>"; };
+		C0110EAB25A1856500C6AC63 /* Extraneous.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extraneous.swift; sourceTree = "<group>"; };
+		C02E35F125A17BFE00315E12 /* SignIn.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignIn.swift; sourceTree = "<group>"; };
+		C02E35F325A17C5F00315E12 /* SignUp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUp.swift; sourceTree = "<group>"; };
 		C036561C24C280FF00B98A75 /* Rated.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Rated.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C036561F24C280FF00B98A75 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C036562124C280FF00B98A75 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -67,7 +76,7 @@
 		C036564324C2810100B98A75 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C040B2FB24CABD4200F7A31A /* Gilroy-ExtraBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gilroy-ExtraBold.otf"; sourceTree = "<group>"; };
 		C040B2FC24CABD4400F7A31A /* Gilroy-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gilroy-Light.otf"; sourceTree = "<group>"; };
-		C06D58FA24F8C19F00013E71 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		C075F60125A182C6009E8BFC /* Home.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Home.swift; sourceTree = "<group>"; };
 		C0901BE724FB80B7007C12B9 /* Proxima Nova Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Proxima Nova Thin.otf"; path = "../../../../../Downloads/proxima_ssv/Proxima Nova Thin.otf"; sourceTree = "<group>"; };
 		C0901BE824FB80B7007C12B9 /* Proxima Nova Black.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Proxima Nova Black.otf"; path = "../../../../../Downloads/proxima_ssv/Proxima Nova Black.otf"; sourceTree = "<group>"; };
 		C0901BE924FB80B7007C12B9 /* Proxima Nova Alt Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Proxima Nova Alt Light.otf"; path = "../../../../../Downloads/proxima_ssv/Proxima Nova Alt Light.otf"; sourceTree = "<group>"; };
@@ -76,6 +85,7 @@
 		C0901BEC24FB80B8007C12B9 /* Proxima Nova Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Proxima Nova Bold.otf"; path = "../../../../../Downloads/proxima_ssv/Proxima Nova Bold.otf"; sourceTree = "<group>"; };
 		C0901BED24FB80B8007C12B9 /* Proxima Nova Alt Thin.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Proxima Nova Alt Thin.otf"; path = "../../../../../Downloads/proxima_ssv/Proxima Nova Alt Thin.otf"; sourceTree = "<group>"; };
 		C0901BEE24FB80B8007C12B9 /* ProximaNova-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "ProximaNova-Regular.otf"; path = "../../../../../Downloads/proxima_ssv/ProximaNova-Regular.otf"; sourceTree = "<group>"; };
+		C0D4351D259D43AB00BAB796 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		DF088259FBA3D2B49ED5702E /* Pods-RatedTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RatedTests.debug.xcconfig"; path = "Target Support Files/Pods-RatedTests/Pods-RatedTests.debug.xcconfig"; sourceTree = "<group>"; };
 		F53429266DC795AAA7132DD8 /* Pods-Rated-RatedUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Rated-RatedUITests.release.xcconfig"; path = "Target Support Files/Pods-Rated-RatedUITests/Pods-Rated-RatedUITests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -147,10 +157,15 @@
 		C036561E24C280FF00B98A75 /* Rated */ = {
 			isa = PBXGroup;
 			children = (
-				C06D58FA24F8C19F00013E71 /* GoogleService-Info.plist */,
+				C0D4351D259D43AB00BAB796 /* GoogleService-Info.plist */,
 				C036561F24C280FF00B98A75 /* AppDelegate.swift */,
 				C036562124C280FF00B98A75 /* SceneDelegate.swift */,
 				C036562324C280FF00B98A75 /* ContentView.swift */,
+				C0110EAB25A1856500C6AC63 /* Extraneous.swift */,
+				C0110EA925A184CA00C6AC63 /* Rating.swift */,
+				C075F60125A182C6009E8BFC /* Home.swift */,
+				C02E35F325A17C5F00315E12 /* SignUp.swift */,
+				C02E35F125A17BFE00315E12 /* SignIn.swift */,
 				C036562524C2810100B98A75 /* Assets.xcassets */,
 				C036562A24C2810100B98A75 /* LaunchScreen.storyboard */,
 				C040B2E824CAB02500F7A31A /* Fonts */,
@@ -221,10 +236,12 @@
 			buildConfigurationList = C036564624C2810100B98A75 /* Build configuration list for PBXNativeTarget "Rated" */;
 			buildPhases = (
 				887C777404A25D83DBCEB6B1 /* [CP] Check Pods Manifest.lock */,
+				09E6117DEF596F98843E92DF /* [CP] Prepare Artifacts */,
 				C036561824C280FF00B98A75 /* Sources */,
 				C036561924C280FF00B98A75 /* Frameworks */,
 				C036561A24C280FF00B98A75 /* Resources */,
 				8EA0429C10013E1397211EE5 /* [CP] Embed Pods Frameworks */,
+				24930ED0C230C75C29AD2ECB /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -262,10 +279,12 @@
 			buildConfigurationList = C036564C24C2810100B98A75 /* Build configuration list for PBXNativeTarget "RatedUITests" */;
 			buildPhases = (
 				D54BA9731A45843B109303F3 /* [CP] Check Pods Manifest.lock */,
+				DD845F7C7EABED78842CDC1A /* [CP] Prepare Artifacts */,
 				C036563924C2810100B98A75 /* Sources */,
 				C036563A24C2810100B98A75 /* Frameworks */,
 				C036563B24C2810100B98A75 /* Resources */,
 				CE962CCB8C8714C6CA5301D4 /* [CP] Embed Pods Frameworks */,
+				4C786C868997D89013F8FF61 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -330,12 +349,12 @@
 			files = (
 				C040B2FE24CABD5000F7A31A /* Gilroy-ExtraBold.otf in Resources */,
 				C0901BF224FB86FE007C12B9 /* Proxima Nova Bold.otf in Resources */,
+				C0D4351E259D43AB00BAB796 /* GoogleService-Info.plist in Resources */,
 				C0901BF124FB8653007C12B9 /* ProximaNova-Regular.otf in Resources */,
 				C036562C24C2810100B98A75 /* LaunchScreen.storyboard in Resources */,
 				C036562924C2810100B98A75 /* Preview Assets.xcassets in Resources */,
 				C036562624C2810100B98A75 /* Assets.xcassets in Resources */,
 				C040B2FD24CABD4D00F7A31A /* Gilroy-Light.otf in Resources */,
-				C06D58FB24F8C19F00013E71 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,6 +375,57 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		09E6117DEF596F98843E92DF /* [CP] Prepare Artifacts */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Rated/Pods-Rated-artifacts-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Prepare Artifacts";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Rated/Pods-Rated-artifacts-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Rated/Pods-Rated-artifacts.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		24930ED0C230C75C29AD2ECB /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Rated/Pods-Rated-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Rated/Pods-Rated-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Rated/Pods-Rated-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		4C786C868997D89013F8FF61 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Rated-RatedUITests/Pods-Rated-RatedUITests-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Rated-RatedUITests/Pods-Rated-RatedUITests-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Rated-RatedUITests/Pods-Rated-RatedUITests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		674B7DC5A5A240004A508777 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -456,6 +526,23 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		DD845F7C7EABED78842CDC1A /* [CP] Prepare Artifacts */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Rated-RatedUITests/Pods-Rated-RatedUITests-artifacts-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Prepare Artifacts";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Rated-RatedUITests/Pods-Rated-RatedUITests-artifacts-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Rated-RatedUITests/Pods-Rated-RatedUITests-artifacts.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -464,8 +551,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				C036562024C280FF00B98A75 /* AppDelegate.swift in Sources */,
+				C0110EAC25A1856500C6AC63 /* Extraneous.swift in Sources */,
 				C036562224C280FF00B98A75 /* SceneDelegate.swift in Sources */,
 				C036562424C280FF00B98A75 /* ContentView.swift in Sources */,
+				C02E35F225A17BFE00315E12 /* SignIn.swift in Sources */,
+				C075F60225A182C6009E8BFC /* Home.swift in Sources */,
+				C02E35F425A17C5F00315E12 /* SignUp.swift in Sources */,
+				C0110EAA25A184CA00C6AC63 /* Rating.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -3,21 +3,21 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>84498921870-dm67q5segk92c54hf2ti49g2smtvkpel.apps.googleusercontent.com</string>
+	<string>30840414819-mlic29c7eoha920fhjtuakmjfmm998lj.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.84498921870-dm67q5segk92c54hf2ti49g2smtvkpel</string>
+	<string>com.googleusercontent.apps.30840414819-mlic29c7eoha920fhjtuakmjfmm998lj</string>
 	<key>API_KEY</key>
-	<string>AIzaSyB2c_xrpDSK8WlPN2AjBJhAhymGrBkQJfo</string>
+	<string>AIzaSyDYEp3UOm6g2_H-g1AuKZaciAnc0OEJqVE</string>
 	<key>GCM_SENDER_ID</key>
-	<string>84498921870</string>
+	<string>30840414819</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.evijadigital.rated</string>
+	<string>com.evijadigital.Rated</string>
 	<key>PROJECT_ID</key>
-	<string>rated-4372a</string>
+	<string>rated-c09f8</string>
 	<key>STORAGE_BUCKET</key>
-	<string>rated-4372a.appspot.com</string>
+	<string>rated-c09f8.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
 	<false></false>
 	<key>IS_ANALYTICS_ENABLED</key>
@@ -29,8 +29,10 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:84498921870:ios:597f4376cadd62f1fa0cdf</string>
+	<string>1:30840414819:ios:d8f577db33ea137aa94e56</string>
 	<key>DATABASE_URL</key>
-	<string>https://rated-4372a.firebaseio.com</string>
+	<string>https://rated-c09f8.firebaseio.com</string>
+	<key>ADMOB_APP_ID</key>
+	<string>ca-app-pub-8107068593888585~3824412013</string>
 </dict>
 </plist>
