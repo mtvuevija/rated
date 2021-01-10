@@ -240,7 +240,7 @@ struct HomeView: View {
                                                 Image("stats")
                                                     .renderingMode(.template)
                                                     .resizable()
-                                                    .frame(width: 20, height: 20)
+                                                    .frame(width: self.screenheight*0.025, height: self.screenheight*0.025)
                                                     .foregroundColor(self.stats ? Color(.darkGray) : Color(.gray).opacity(0.5))
                                                     
                                             }.frame(width: screenwidth/2.5, height: screenheight*0.05)
@@ -262,7 +262,7 @@ struct HomeView: View {
                                                 Image("settings")
                                                     .renderingMode(.template)
                                                     .resizable()
-                                                    .frame(width: 20, height: 20)
+                                                    .frame(width: self.screenheight*0.025, height: self.screenheight*0.025)
                                                     .foregroundColor(self.stats ? Color(.gray).opacity(0.5) : Color(.darkGray))
                                             }.frame(width: screenwidth/2.5, height: screenheight*0.025)
                                         }
@@ -1020,5 +1020,516 @@ struct HomeView: View {
                 self.recentratings = true
             }
         }
+    }
+}
+
+//MARK: RatingMeter
+struct RatingMeter: View {
+    let screenwidth = UIScreen.main.bounds.width
+    let screenheight = UIScreen.main.bounds.height
+    @EnvironmentObject var observer: observer
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            RoundedRectangle(cornerRadius: 3.5)
+                .frame(width: 7, height: screenheight*0.074)
+                .rotationEffect(Angle(degrees: Double(observer.rating.overall*18)-90), anchor: UnitPoint(x: 0.5, y: 1))
+                .foregroundColor(Color(.darkGray))
+                .animation(.spring())
+            Circle()
+                .frame(width: 15, height: 15)
+                .foregroundColor(Color(.darkGray))
+                .offset(y: 7.5)
+        }.frame(width: screenheight*0.17, height: screenheight*0.074)
+    }
+}
+
+
+//MARK: OverallMeter
+struct OverallMeter: View {
+    @Binding var index: Int
+    let screenwidth = UIScreen.main.bounds.width
+    let screenheight = UIScreen.main.bounds.height
+    @EnvironmentObject var observer: observer
+    var body: some View {
+        VStack(spacing: 5) {
+            Spacer()
+            Text("Overall")
+                .font(Font.custom("ProximaNova-Regular", size: 18))
+                .fontWeight(.semibold)
+                .foregroundColor(Color("purp"))
+            Text(String(Double(self.observer.rating.overall)))
+                .font(Font.custom("ProximaNova-Regular", size: 20))
+                .fontWeight(.semibold)
+                .foregroundColor(Color("purp"))
+            ZStack {
+                VStack {
+                    ZStack {
+                        Meter(endangle: 180)
+                            .rotation(Angle(degrees: 180), anchor: .bottom)
+                            .frame(width: screenheight*0.17, height: screenheight*0.085)
+                            .foregroundColor(Color("lightgray"))
+                        Meter(endangle: Double(self.observer.rating.overall*18))
+                            .rotation(Angle(degrees: 180), anchor: .bottom)
+                            .frame(width: screenheight*0.17, height: screenheight*0.085)
+                            .foregroundColor(Color("purp"))
+                            .animation(.spring())
+                        VStack {
+                            Spacer()
+                            Meter(endangle: Double(180))
+                                .rotation(Angle(degrees: 180), anchor: .bottom)
+                                .frame(width: screenheight*0.099, height: screenheight*0.0495)
+                                .foregroundColor(Color(.white))
+                        }.frame(width: screenheight*0.17, height: screenheight*0.085)
+                    }.cornerRadius(10)
+                    Spacer()
+                }
+                ZStack(alignment: .bottom) {
+                    RoundedRectangle(cornerRadius: 3.5)
+                        .frame(width: 7, height: screenheight*0.074)
+                        .rotationEffect(Angle(degrees: self.index == 0 ? Double(observer.rating.overall*18)-90 : -90), anchor: UnitPoint(x: 0.5, y: 1))
+                        .foregroundColor(Color(.darkGray))
+                        .animation(.spring())
+                    Circle()
+                        .frame(width: 15, height: 15)
+                        .foregroundColor(Color(.darkGray))
+                        .offset(y: 7.5)
+                }.frame(width: screenheight*0.17, height: screenheight*0.074)
+                //RatingMeter()
+            }.frame(width: screenheight*0.17, height: screenheight*0.085)
+                .padding(.bottom, 5)
+            Text(self.observer.userrates.count == 1 ? String(self.observer.userrates.count) + " Rating" : String(self.observer.userrates.count) + " Ratings")
+                .font(Font.custom("ProximaNova-Regular", size: 12))
+                .fontWeight(.semibold)
+                .foregroundColor(Color(.darkGray))
+                .padding(.bottom, 15)
+        }.frame(height: screenheight*0.234)
+    }
+}
+
+
+//MARK: DetailsMeter
+struct DetailsMeter: View {
+    @Binding var index: Int
+    let screenwidth = UIScreen.main.bounds.width
+    let screenheight = UIScreen.main.bounds.height
+    @EnvironmentObject var observer: observer
+    var body: some View {
+        VStack {
+            HStack(spacing: 30) {
+                VStack(spacing: 0) {
+                    Text("Appearance")
+                        .font(Font.custom("ProximaNova-Regular", size: 20))
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color("appearance"))
+                        .padding(.top, 10)
+                    Image("eye")
+                        .renderingMode(.template)
+                        .resizable()
+                        .frame(width: 25, height: 25)
+                        .foregroundColor(Color("appearance"))
+                    Text(String(Double(self.observer.rating.appearance)))
+                        .font(Font.custom("ProximaNova-Regular", size: 16))
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color("appearance"))
+                    ZStack {
+                        VStack {
+                            ZStack {
+                                Meter(endangle: 180)
+                                    .rotation(Angle(degrees: 180), anchor: .bottom)
+                                    .frame(width: 100, height: 50)
+                                    .foregroundColor(Color("lightgray"))
+                                Meter(endangle: Double(self.observer.rating.appearance*18))
+                                    .rotation(Angle(degrees: 180), anchor: .bottom)
+                                    .frame(width: 100, height: 50)
+                                    .foregroundColor(Color("appearance"))
+                                    .animation(.spring())
+                                VStack {
+                                    Spacer()
+                                    Meter(endangle: Double(180))
+                                        .rotation(Angle(degrees: 180), anchor: .bottom)
+                                        .frame(width: 50, height: 25)
+                                        .foregroundColor(Color(.white))
+                                }.frame(width: 100, height: 50)
+                            }.cornerRadius(10)
+                            Spacer()
+                        }
+                        
+                        ZStack(alignment: .bottom) {
+                            RoundedRectangle(cornerRadius: 2.5)
+                                .frame(width: 5, height: 40)
+                                .rotationEffect(Angle(degrees: self.index == 1 ? Double(observer.rating.appearance*18)-90 : -90), anchor: UnitPoint(x: 0.5, y: 1))
+                                .foregroundColor(Color(.darkGray))
+                            Circle()
+                                .frame(width: 10, height: 10)
+                                .foregroundColor(Color(.darkGray))
+                                .offset(y: 5)
+                        }.frame(width: 100, height: 40)
+                    }.frame(width: 100, height: 60)
+                }
+                VStack(spacing: 0) {
+                    Text("Personality")
+                        .font(Font.custom("ProximaNova-Regular", size: 20))
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color("personality"))
+                        .padding(.top, 10)
+                    Image("heart")
+                        .renderingMode(.template)
+                        .resizable()
+                        .frame(width: 20, height: 20)
+                        .foregroundColor(Color("personality"))
+                        .padding(2.5)
+                    Text(String(Double(self.observer.rating.personality)))
+                        .font(Font.custom("ProximaNova-Regular", size: 16))
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color("personality"))
+                    ZStack {
+                        VStack {
+                            ZStack {
+                                Meter(endangle: 180)
+                                    .rotation(Angle(degrees: 180), anchor: .bottom)
+                                    .frame(width: 100, height: 50)
+                                    .foregroundColor(Color("lightgray"))
+                                Meter(endangle: Double(self.observer.rating.personality*18))
+                                    .rotation(Angle(degrees: 180), anchor: .bottom)
+                                    .frame(width: 100, height: 50)
+                                    .foregroundColor(Color("personality"))
+                                    .animation(.spring())
+                                VStack {
+                                    Spacer()
+                                    Meter(endangle: Double(180))
+                                        .rotation(Angle(degrees: 180), anchor: .bottom)
+                                        .frame(width: 50, height: 25)
+                                        .foregroundColor(Color(.white))
+                                }.frame(width: 100, height: 50)
+                            }.cornerRadius(10)
+                            Spacer()
+                        }
+                        ZStack(alignment: .bottom) {
+                            RoundedRectangle(cornerRadius: 2.5)
+                                .frame(width: 5, height: 40)
+                                .rotationEffect(Angle(degrees: self.index == 1 ? Double(observer.rating.personality*18)-90 : -90), anchor: UnitPoint(x: 0.5, y: 1))
+                                .foregroundColor(Color(.darkGray))
+                            Circle()
+                                .frame(width: 10, height: 10)
+                                .foregroundColor(Color(.darkGray))
+                                .offset(y: 5)
+                        }.frame(width: 100, height: 40)
+                    }.frame(width: 100, height: 60)
+                }
+            }.padding(.bottom, 15)
+        }.frame(height: screenheight*0.234)
+    }
+}
+
+
+//MARK: Your Statistics
+struct YourStatistics: View {
+    let screenwidth = UIScreen.main.bounds.width
+    let screenheight = UIScreen.main.bounds.height
+    @State var x: CGFloat = 0
+    @State var tempx: CGFloat = 0
+    @State var index = 0
+    @EnvironmentObject var observer: observer
+    var body: some View {
+        ZStack {
+            ScrollView([]) {
+                HStack {
+                    OverallMeter(index: self.$index)
+                        .frame(width: screenwidth/1.25)
+                    DetailsMeter(index: self.$index)
+                        .frame(width: screenwidth/1.25)
+                }.frame(width: self.screenwidth/1.25).padding(.bottom, 10)
+                .offset(x: (screenwidth/2.5)+x+tempx)
+                .highPriorityGesture(DragGesture().onChanged({ (value) in
+                    self.tempx = value.translation.width
+                }).onEnded({ (value) in
+                    if value.translation.width < -self.screenwidth/4 && self.index == 0 {
+                        self.x = -self.screenwidth/1.25
+                        self.index = 1
+                    }
+                    else if value.translation.width > self.screenwidth/4 && self.index == 1 {
+                        self.x = 0
+                        self.index = 0
+                    }
+                    else if self.index == 0 {
+                        self.x = 0
+                        
+                    }
+                    else if self.index == 1 {
+                        self.x = -self.screenwidth/1.25
+                    }
+                    self.tempx = 0
+                }))
+            }.frame(height: screenheight*0.234)
+            VStack {
+                Spacer()
+                HStack(spacing: 5) {
+                    Circle()
+                        .foregroundColor(self.index == 0 ? Color(.gray).opacity(0.8) : Color("lightgray"))
+                        .frame(width: self.index == 0 ? 7.5 : 6.5, height: self.index == 0 ? 7.5 : 6.5)
+                    Circle()
+                        .foregroundColor(self.index != 0 ? Color(.gray).opacity(0.8) : Color("lightgray"))
+                        .frame(width: self.index != 0 ? 7.5 : 6.5, height: self.index != 0 ? 7.5 : 6.5)
+                }.padding(.bottom, 5)
+            }.frame(height: screenheight*0.234)
+        }.frame(width: screenwidth/1.25).padding(5).background(Color(.white).cornerRadius(25).shadow(color: Color("lightgray").opacity(0.6), radius: 10))
+    }
+}
+
+
+//MARK: Rating Settings
+struct RatingSettings: View {
+    @EnvironmentObject var observer: observer
+    let screenwidth = UIScreen.main.bounds.width
+    let screenheight = UIScreen.main.bounds.height
+    @Binding var gender: CGFloat
+    @Binding var ratinggender: CGFloat
+    @Binding var width: CGFloat
+    @Binding var width1: CGFloat
+    @State var first = false
+    @State var second = false
+    var body: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Text("Rate:")
+                .font(Font.custom("ProximaNova-Regular", size: 18))
+                .fontWeight(.semibold)
+                .foregroundColor(Color(.darkGray))
+                .padding(.top, screenheight*0.0123)
+            ZStack {
+                RoundedRectangle(cornerRadius: 17.5)
+                    .foregroundColor(Color("lightgray")).opacity(0.5)
+                    .frame(width: self.screenheight*0.3, height: screenheight*0.05)
+                ZStack {
+                    RoundedRectangle(cornerRadius: 17.5)
+                        .foregroundColor(Color("purp"))
+                        .frame(width: (self.screenheight*0.3)/3, height: screenheight*0.05 - 2)
+                        .background(Color(.white))
+                        .cornerRadius(17.5)
+                    /*RoundedRectangle(cornerRadius: 10)
+                        .foregroundColor(Color(.blue).opacity(0.5))
+                        .frame(width: 80, height: screenheight*0.05 - 2)*/
+                }.offset(x: self.gender*(self.screenheight*0.3)/3)
+                HStack(spacing: 0) {
+                    Button(action: {
+                        self.gender = -1
+                        //self.observer.myprofile.Preferences[0] = "Male"
+                    }) {
+                        Text("Male")
+                            .font(Font.custom("ProximaNova-Regular", size: 16))
+                            .fontWeight(.semibold)
+                            .foregroundColor(self.gender == -1 ? .white : Color("purp"))
+                            .lineLimit(1)
+                            .frame(width: (self.screenheight*0.3)/3)
+                            .minimumScaleFactor(0.01)
+                    }
+                    Button(action: {
+                        self.gender = 0
+                        //self.observer.myprofile.Preferences[0] = "Female"
+                    }) {
+                        Text("Female")
+                            .font(Font.custom("ProximaNova-Regular", size: 16))
+                            .fontWeight(.semibold)
+                            .foregroundColor(self.gender == 0 ? .white : Color("purp"))
+                            .lineLimit(1)
+                            .frame(width: (self.screenheight*0.3)/3)
+                            .minimumScaleFactor(0.01)
+                    }
+                    Button(action: {
+                        self.gender = 1
+                        //self.observer.myprofile.Preferences[0] = "Everyone"
+                    }) {
+                        Text("Everyone")
+                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                            .fontWeight(.semibold)
+                            .foregroundColor(self.gender == 1 ? .white : Color("purp"))
+                            .lineLimit(1)
+                            .frame(width: (self.screenheight*0.3)/3)
+                            .minimumScaleFactor(0.01)
+                    }
+                }.frame(width: 240, height: screenheight*0.05)
+            }
+            Text("Get Rated By:")
+                .font(Font.custom("ProximaNova-Regular", size: 18))
+                .fontWeight(.semibold)
+                .foregroundColor(Color(.darkGray))
+            
+            ZStack {
+                RoundedRectangle(cornerRadius: 17.5)
+                    .foregroundColor(Color("lightgray")).opacity(0.5)
+                    .frame(width: (self.screenheight*0.3), height: screenheight*0.05)
+                ZStack {
+                    RoundedRectangle(cornerRadius: 17.5)
+                        .foregroundColor(Color("purp"))
+                        .frame(width: (self.screenheight*0.3)/3, height: screenheight*0.05 - 2)
+                        .background(Color(.white))
+                        .cornerRadius(17.5)
+                    /*RoundedRectangle(cornerRadius: 10)
+                        .foregroundColor(Color(.blue).opacity(0.5))
+                        .frame(width: 80, height: screenheight*0.05 - 2)*/
+                }.offset(x: self.ratinggender*(self.screenheight*0.3)/3)
+                HStack(spacing: 0) {
+                    Button(action: {
+                        self.ratinggender = -1
+                        //self.observer.myprofile.Preferences[1] = "Male"
+                    }) {
+                        Text("Male")
+                            .font(Font.custom("ProximaNova-Regular", size: 16))
+                            .fontWeight(.semibold)
+                            .foregroundColor(self.ratinggender == -1 ? .white : Color("purp"))
+                            .lineLimit(1)
+                            .frame(width: (self.screenheight*0.3)/3)
+                            .minimumScaleFactor(0.01)
+                    }
+                    Button(action: {
+                        self.ratinggender = 0
+                        //self.observer.myprofile.Preferences[1] = "Female"
+                    }) {
+                        Text("Female")
+                            .font(Font.custom("ProximaNova-Regular", size: 16))
+                            .fontWeight(.semibold)
+                            .foregroundColor(self.ratinggender == 0 ? .white : Color("purp"))
+                            .lineLimit(1)
+                            .frame(width: (self.screenheight*0.3)/3)
+                            .minimumScaleFactor(0.01)
+                    }
+                    Button(action: {
+                        self.ratinggender = 1
+                        //self.observer.myprofile.Preferences[1] = "Everyone"
+                    }) {
+                        Text("Everyone")
+                            .font(Font.custom("ProximaNova-Regular", size: 14))
+                            .fontWeight(.semibold)
+                            .foregroundColor(self.ratinggender == 1 ? .white : Color("purp"))
+                            .lineLimit(1)
+                            .frame(width: (self.screenheight*0.3)/3)
+                            .minimumScaleFactor(0.01)
+                    }
+                }.frame(width: 240, height: screenheight*0.05)
+            }
+            
+            HStack(spacing: 0) {
+                Text("Age Range:")
+                    .font(Font.custom("ProximaNova-Regular", size: 18))
+                    .fontWeight(.semibold)
+                    .foregroundColor(Color(.darkGray))
+                    .padding(.trailing, 5)
+                HStack(spacing: 0) {
+                    Text(self.width < 0 ? "18 - " : String(Int(self.width/2.71 + 18)) + " - ")
+                        .font(Font.custom("ProximaNova-Regular", size: 18))
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color(.blue).opacity(0.5))
+                        .animation(nil)
+                    Text(self.width1 > 220 || Int(self.width1/2.71 + 18) >= 99 ? "99" : String(Int(self.width1/2.71 + 18)))
+                        .font(Font.custom("ProximaNova-Regular", size: 18))
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color(.blue).opacity(0.5))
+                        .animation(nil)
+                }.padding(5)//.background(Color(.darkGray).cornerRadius(5))
+                Spacer()
+            }.frame(width: 240)
+            
+            ZStack(alignment: .leading) {
+                RoundedRectangle(cornerRadius: 2.5)
+                    .frame(width: 220, height: 5)
+                    .foregroundColor(Color("lightgray"))
+                    .padding(.leading, 10)
+                    .animation(nil)
+                RoundedRectangle(cornerRadius: 2.5)
+                    .frame(width: self.width1 - self.width + 15, height: 5)
+                    .foregroundColor(Color("purp"))
+                    .background(Color(.white))
+                    .offset(x: self.width)
+                    .animation(nil)
+                Circle()
+                    .foregroundColor(Color(.darkGray))
+                    .frame(width: self.first ? 20 : 15, height: self.first ? 20 : 15)
+                    //.background(Circle().foregroundColor(.white))
+                    .offset(x: self.width)
+                    .gesture(DragGesture().onChanged({ (value) in
+                        if value.location.x >= -5 && value.location.x <= self.width1 - 15 {
+                            self.width = value.location.x
+                        }
+                        self.first = true
+                    }).onEnded({ (value) in
+                        self.first = false
+                    })).animation(nil)
+                Circle()
+                    .foregroundColor(Color(.darkGray))//.opacity(0.5))
+                    .frame(width: self.second ? 20 : 15, height: self.second ? 20 : 15)
+                    //.background(Circle().foregroundColor(.white))
+                    .offset(x: self.width1)
+                    .highPriorityGesture(DragGesture().onChanged({ (value) in
+                        if value.location.x <= 225 && value.location.x >= self.width + 15 {
+                            self.width1 = value.location.x
+                        }
+                        self.second = true
+                    }).onEnded({ (value) in
+                        self.second = false
+                    })).animation(nil)
+                if self.first {
+                    Text(self.width < 0 ? "18" : String(Int(self.width/2.71 + 18)))
+                        .font(Font.custom("ProximaNova-Regular", size: 14))
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color(.blue).opacity(0.5))
+                        .offset(x: self.width+1.5, y: -15)
+                        .animation(nil)
+                }
+                if self.second {
+                    Text(self.width1 > 220 || Int(self.width1/2.71 + 18) >= 99 ? "99" : String(Int(self.width1/2.71 + 18)))
+                        .font(Font.custom("ProximaNova-Regular", size: 14))
+                        .fontWeight(.semibold)
+                        .foregroundColor(Color(.blue).opacity(0.5))
+                        .offset(x: self.width1+1.5, y: -15)
+                        .animation(nil)
+                }
+            }.frame(height: screenheight*0.05)
+        }.frame(width: screenwidth/1.25).background(Color(.white).cornerRadius(25).shadow(color: Color("lightgray").opacity(0.6), radius: 10)).onAppear {
+            if self.observer.myprofile.Preferences[0] == "Male" {
+                self.gender = -1
+            }
+            else if self.observer.myprofile.Preferences[0] == "Female" {
+                self.gender = 0
+            }
+            else {
+                self.gender = 1
+            }
+            if self.observer.myprofile.Preferences[1] == "Male" {
+                self.ratinggender = -1
+            }
+            else if self.observer.myprofile.Preferences[1] == "Female" {
+                self.ratinggender = 0
+            }
+            else {
+                self.ratinggender = 1
+            }
+            self.width = CGFloat((self.observer.myprofile.Preferences[2].prefix(2) as NSString).doubleValue-18)*2.71
+            self.width1 = CGFloat((self.observer.myprofile.Preferences[2].suffix(2) as NSString).doubleValue-18)*2.71
+            
+        }
+    }
+}
+
+
+//MARK: Recent Ratings
+struct RecentRatings: View {
+    @Binding var unlockindex: Int
+    @Binding var unlock: Bool
+    @Binding var homecomment: Bool
+    @Binding var showprofile: Bool
+    let screenwidth = UIScreen.main.bounds.width
+    let screenheight = UIScreen.main.bounds.height
+    @EnvironmentObject var observer: observer
+    var body: some View {
+        VStack(spacing: 5) {
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 13) {
+                    if self.observer.numrates >= 0 {
+                        ForEach((0...self.observer.numrates).reversed(), id:\.self) {index in
+                            Bar(unlockindex: self.$unlockindex, unlock: self.$unlock, homecomment: self.$homecomment, showprofile: self.$showprofile, index: index, rating: ratingtype(overall: CGFloat((self.observer.userrates[index].prefix(9).suffix(3) as NSString).doubleValue), appearance: CGFloat((self.observer.userrates[index].prefix(3) as NSString).doubleValue), personality: CGFloat((self.observer.userrates[index].prefix(6).suffix(3) as NSString).doubleValue)))
+                        }
+                    }
+                }.padding(.vertical, 10)
+            }.frame(maxHeight: screenheight*0.35)
+        }.frame(maxHeight: screenheight*0.35)
     }
 }

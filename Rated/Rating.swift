@@ -265,7 +265,7 @@ struct RatingView: View {
                                                                                 .font(Font.system(size: 15, weight: .heavy))
                                                                                 .foregroundColor(Color(.darkGray))
                                                                                 .rotationEffect(.degrees(self.edu ? 180 : 0))
-                                                                        }.padding(.horizontal, 10).padding(.top, 5).background(Color(.white)).onTapGesture {
+                                                                        }.padding(.horizontal, 10).padding(.vertical, 5).background(Color(.white)).onTapGesture {
                                                                             self.edu.toggle()
                                                                         }.padding(.bottom, self.edu ? 5 : 0)
                                                                         if edu {
@@ -275,29 +275,28 @@ struct RatingView: View {
                                                                                         .renderingMode(.template)
                                                                                         .resizable()
                                                                                         .frame(width: 20, height: 20)
-                                                                                        .foregroundColor(Color(.white))
+                                                                                        .foregroundColor(Color(.darkGray))
                                                                                         .padding(.leading, 10)
                                                                                     VStack(alignment: .leading, spacing: 0) {
                                                                                         Text(String(education.prefix(education.count-4)))
                                                                                             .font(Font.custom("ProximaNova-Regular", size: 16))
                                                                                             .fontWeight(.semibold)
-                                                                                            .foregroundColor(Color(.white))
+                                                                                            .foregroundColor(Color(.darkGray))
                                                                                         Text(String(education.suffix(4)))
                                                                                             .font(Font.custom("ProximaNova-Regular", size: 14))
                                                                                             .fontWeight(.semibold)
-                                                                                            .foregroundColor(Color(.white))
+                                                                                            .foregroundColor(Color(.darkGray))
                                                                                             .opacity(0.5)
                                                                                     }
                                                                                     Spacer()
                                                                                 }.frame(width: self.screenwidth*0.7, height: 45)
-                                                                                    .background(Color(.darkGray).cornerRadius(10))
-                                                                                    //.background(Color("personality").overlay(RoundedRectangle(cornerRadius: 10).stroke(lineWidth: 5).foregroundColor(Color(.darkGray)))).padding(2.5).cornerRadius(10)
-                                                                                //.overlay(RoundedRectangle(cornerRadius: 10).stroke(lineWidth: 5).foregroundColor(.Color(.darkGray)).cornerRadius(10))
+                                                                                    .background(Color(.white).cornerRadius(10).shadow(color: Color("lightgray"), radius: 15))
+                                                                                    .padding(.vertical, 2.5)
                                                                             }
                                                                         }
                                                                     }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.edu ? 5 : 0)
-                                                                        .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))//.padding(.vertical, 10)
-                                                                    RoundedRectangle(cornerRadius: 2).frame(width: self.screenwidth*0.8 - 20, height: 4).foregroundColor(Color("personality"))
+                                                                        .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15)).padding(.vertical, 2.5)
+                                                                    RoundedRectangle(cornerRadius: 0.5).frame(width: self.screenwidth*0.8 - 20, height: 1).foregroundColor(Color(.darkGray))
                                                                 }
                                                                 if self.observer.users[self.observer.rated].Occupation1.count > 0 {
                                                                     //MARK: Occupation
@@ -327,27 +326,28 @@ struct RatingView: View {
                                                                                         .renderingMode(.template)
                                                                                         .resizable()
                                                                                         .frame(width: 20, height: 20)
-                                                                                        .foregroundColor(Color(.white))
+                                                                                        .foregroundColor(Color(.darkGray))
                                                                                         .padding(.leading, 10)
                                                                                     VStack(alignment: .leading, spacing: 0) {
                                                                                         Text(self.observer.users[self.observer.rated].Occupation1[num])
                                                                                             .font(Font.custom("ProximaNova-Regular", size: 16))
                                                                                             .fontWeight(.semibold)
-                                                                                            .foregroundColor(Color(.white))
+                                                                                            .foregroundColor(Color(.darkGray))
                                                                                         Text(self.observer.users[self.observer.rated].Occupation2[num])
                                                                                             .font(Font.custom("ProximaNova-Regular", size: 14))
                                                                                             .fontWeight(.semibold)
-                                                                                            .foregroundColor(Color(.white))
+                                                                                            .foregroundColor(Color(.darkGray))
                                                                                             .opacity(0.5)
                                                                                     }
                                                                                     Spacer()
                                                                                 }.frame(width: self.screenwidth*0.7, height: 45)
-                                                                                    .background(Color(.darkGray).cornerRadius(10))
+                                                                                    .background(Color(.white).cornerRadius(10).shadow(color: Color("lightgray"), radius: 15))
+                                                                                    .padding(.vertical, 2.5)
                                                                             }
                                                                         }
                                                                     }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.occu ? 5 : 0)
                                                                     .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))
-                                                                    RoundedRectangle(cornerRadius: 2).frame(width: self.screenwidth*0.8 - 20, height: 4).foregroundColor(Color("personality"))
+                                                                    RoundedRectangle(cornerRadius: 0.5).frame(width: self.screenwidth*0.8 - 20, height: 1).foregroundColor(Color(.darkGray))
                                                                 }
                                                             }
                                                             if self.observer.users[self.observer.rated].Sports.count > 0 {
@@ -378,22 +378,23 @@ struct RatingView: View {
                                                                                     .renderingMode(.template)
                                                                                     .resizable()
                                                                                     .frame(width: 20, height: 20)
-                                                                                    .foregroundColor(Color(.white))
+                                                                                    .foregroundColor(Color(.darkGray))
                                                                                     .padding(.leading, 10)
                                                                                 VStack(alignment: .leading, spacing: 0) {
                                                                                     Text(sp)
-                                                                                        .font(Font.custom("ProximaNova-Regular", size: 18))
+                                                                                        .font(Font.custom("ProximaNova-Regular", size: 16))
                                                                                         .fontWeight(.semibold)
-                                                                                        .foregroundColor(Color(.white))
+                                                                                        .foregroundColor(Color(.darkGray))
                                                                                 }
                                                                                 Spacer()
                                                                             }.frame(width: self.screenwidth*0.7, height: 40)
-                                                                                .background(Color(.darkGray).cornerRadius(10))
+                                                                                .background(Color(.white).cornerRadius(10).shadow(color: Color("lightgray"), radius: 15))
+                                                                                .padding(.vertical, 2.5)
                                                                         }
                                                                     }
                                                                 }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.sport ? 5 : 0)
                                                                 .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))
-                                                                RoundedRectangle(cornerRadius: 2).frame(width: self.screenwidth*0.8 - 20, height: 4).foregroundColor(Color("personality"))
+                                                                RoundedRectangle(cornerRadius: 0.5).frame(width: self.screenwidth*0.8 - 20, height: 1).foregroundColor(Color(.darkGray))
                                                             }
                                                             if self.observer.users[self.observer.rated].Hobbies.count > 0 {
                                                                 //MARK: Hobbies
@@ -411,7 +412,7 @@ struct RatingView: View {
                                                                         Spacer()
                                                                         Image(systemName: "chevron.down")
                                                                             .font(Font.system(size: 15, weight: .heavy))
-                                                                            .foregroundColor(Color("personality"))
+                                                                            .foregroundColor(Color(.darkGray))
                                                                             .rotationEffect(.degrees(self.hobby ? 180 : 0))
                                                                     }.padding(.horizontal, 10).background(Color(.white)).onTapGesture {
                                                                         self.hobby.toggle()
@@ -423,22 +424,23 @@ struct RatingView: View {
                                                                                     .renderingMode(.template)
                                                                                     .resizable()
                                                                                     .frame(width: 20, height: 20)
-                                                                                    .foregroundColor(Color(.white))
+                                                                                    .foregroundColor(Color(.darkGray))
                                                                                     .padding(.leading, 10)
                                                                                 VStack(alignment: .leading, spacing: 2.5) {
                                                                                     Text(hb)
                                                                                         .font(Font.custom("ProximaNova-Regular", size: 18))
                                                                                         .fontWeight(.semibold)
-                                                                                        .foregroundColor(Color(.white))
+                                                                                        .foregroundColor(Color(.darkGray))
                                                                                 }
                                                                                 Spacer()
                                                                             }.frame(width: self.screenwidth*0.7, height: 40)
-                                                                                .background(Color(.darkGray).cornerRadius(10))
+                                                                                .background(Color(.white).cornerRadius(10).shadow(color: Color("lightgray"), radius: 15))
+                                                                                .padding(.vertical, 2.5)
                                                                         }
                                                                     }
                                                                 }.frame(width: self.screenwidth*0.8).padding(10).padding(.bottom, self.hobby ? 5 : 0)
                                                                 .background(Color(.white).shadow(color: Color(.black).opacity(0.1), radius: 15, x: 10, y: 10).shadow(color: .white, radius: 15, x: -10, y: -10).cornerRadius(15))
-                                                                RoundedRectangle(cornerRadius: 2).frame(width: self.screenwidth*0.8 - 20, height: 4).foregroundColor(Color("personality"))
+                                                                RoundedRectangle(cornerRadius: 0.5).frame(width: self.screenwidth*0.8 - 20, height: 1).foregroundColor(Color(.darkGray))
                                                             }
                                                             
                                                             if self.observer.users[self.observer.rated].MovieTV1.count > 0 {
@@ -1101,11 +1103,11 @@ struct RatingView: View {
                                             .frame(width: 50, height: 50)
                                     }.buttonStyle(PlainButtonStyle())
                                 }
-                            }.padding(.all, 10).background(Color(.white).cornerRadius(15)).blur(radius: !self.observer.socialunlock ? 6: 0)
+                            }.padding(.all, 10).background(Color(.white).cornerRadius(15)).blur(radius: !self.observer.socialunlock ? 2: 0)
                             if !self.observer.socialunlock {
                                 Image("lock")
                                     .resizable()
-                                    .frame(width: 80, height: 80)
+                                    .frame(width: 50, height: 50)
                             }
                         }
                         if !self.observer.socialunlock {
